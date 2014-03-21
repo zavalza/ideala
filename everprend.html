@@ -1,13 +1,36 @@
 <head>
-  <title>everprend</title>
-</head>
-
-<body>
-  {{> hello}}
+   <title>Everprend</title>
+ </head>
+ <body>
+ <div class="navbar navbar-inverse navbar-fixed-top">
+       <div class="navbar-inner">
+         <div class="container">
+           <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+             <span class="icon-bar"></span>
+             <span class="icon-bar"></span>
+             <span class="icon-bar"></span>
+           </button>
+           <a class="brand" href="#">Everprend</a>
+           <div class="nav-collapse collapse">
+             <ul class="nav">
+               <li class="active"><a href="#">Home</a></li>
+               <li><a href="#about">Acerca de</a></li>
+               <li><a href="#contact">Contacto</a></li>
+             </ul>
+           </div><!--/.nav-collapse -->
+         </div>
+       </div>
+     </div>
+     <div class="container">
+       <h1>Ingresa para continuar</h1>
+       <p>
+         {{loginButtons}}
+       </p>
+    </div>
+    <div class="container">
+        <h2>Networking entre gente maravillosa, emprendedores, innovadores, empresas, inversores y statups</h2>
+        <p>En el mundo existen alrededor de 400 millones de emprendedores en 54 países, pero no se encuentran conectados.<br />
+        Dia a dia existen mas personas que quieren unirse a grandes proyectos o están tratando de emprender cosas asombrosas,Everprend es una plataforma en la cual queremos juntar a esas personas increibles para que logren crear y desarrollar sus ideas.
+        </p>
+    </div>
 </body>
-
-<template name="hello">
-  <h1>Hello World!</h1>
-  {{greeting}}
-  <input type="button" value="Click" />
-</template>
