@@ -1,3 +1,13 @@
-body {
-  padding-top: 60px;
+body{
 }
+#Welcome
+	{
+		position: relative;
+		margin: 0;
+		background: url('header1.jpg');
+		background-size: cover;
+		background-position: center center;
+		padding: 14em 0 14em 0;
+		text-align: center;
+		color: #ffffff;
+	}
