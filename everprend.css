@@ -1,7 +1,4 @@
-body{
-}
-#Welcome
-	{
+.welcome{
 		position: relative;
 		margin: 0;
 		background: url('header1.jpg');
@@ -10,4 +7,7 @@ body{
 		padding: 14em 0 14em 0;
 		text-align: center;
 		color: #ffffff;
-	}
+}
+.registerForm{
+	padding-top: 60px;
+}

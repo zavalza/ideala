@@ -1,15 +1,23 @@
 if (Meteor.isClient) {
-  Template.hello.greeting = function () {
-    return "Welcome to everprend.";
-  };
 
-  Template.hello.events({
-    'click input': function () {
-      // template data, if any, is available in 'this'
-      if (typeof console !== 'undefined')
-        console.log("You pressed the button");
+  Template.welcome.events({
+    'click .login': function (evt, tmpl) {
+      Session.set("showLogin", !Session.get("showLogin"));
+      return false
+    }, 
+    'click .signup' : function(evt, tmpl){
+      Session.set("showRegisterForm", !Session.get("showRegisterForm"));
+      return false
     }
   });
+
+  Template.welcome.showLogin = function() {
+    return Session.get("showLogin");
+  };
+
+  Template.main.showRegisterForm = function() {
+    return Session.get("showRegisterForm");
+  };
 }
 
 if (Meteor.isServer) {
