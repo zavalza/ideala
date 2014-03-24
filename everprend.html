@@ -108,13 +108,13 @@
 </template>
 <template name="registerForm">
 <div class="container">
-<form name="registerForm">
+<form name="registerForm" method="post">
   <div class="span8">
     <div class="registerForm">
     <br>
     <textarea class="span8" id="idea" placeholder="Cuéntanos tu idea"></textarea><br>
-    <input type="text" class="form-control" id="nameOfidea" placeholder="Ponle un nombre">
-    <input type="text" name="typeOfIdea" id="typeOfIdea" placeholder="Palabras clave (Separadas por coma)">
+    <input type="text" class="form-control" id="nameOfIdea" placeholder="Ponle un nombre">
+    <input type="text" class="form-control" id="tagsOfIdea" placeholder="Palabras clave (Separadas por coma)">
     <label for="role">¿Cuál es tu rol dentro de ella?</label>
     <select name="role" id="role">
       <option value="administration">Administrarlo</option>
@@ -127,16 +127,17 @@
     <label for="startDate">¿Cuánto tiempo llevas trabajando en ella?</label>
     <input type="date" class="form-control" id="startDate">
     <h4>Forma de contacto</h4>
-    <button type="submit" class="btn btn-primary login">Tengo cuenta</button>
-    <button type="submit" class="btn btn-primary newUser">Usuario nuevo</button>
-    <button type="submit" class="btn btn-primary loginFacebook">Login con Facebook</button>
-    <button type="submit" class="btn btn-primary loginTwitter">Login con Twitter</button>
+    <button class="btn btn-primary login">Tengo cuenta</button>
+    <button class="btn btn-primary newUser">Usuario nuevo</button>
+    <button class="btn btn-primary loginFacebook">Login con Facebook</button>
+    <button class="btn btn-primary loginTwitter">Login con Twitter</button>
     {{#if showLogin}}
     {{>loginForm}}
     {{/if}}
     {{#if showNewUser}}
     {{>newUserForm}}
     {{/if}}
+    <button type="submit" class="btn btn-success ready">Listo</button>
   </div>
 </form>
 </div>

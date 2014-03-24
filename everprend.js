@@ -1,3 +1,5 @@
+Ideas = new Meteor.Collection("ideas")
+
 if (Meteor.isClient) {
 
   Template.navigation.events({
@@ -32,8 +34,23 @@ if (Meteor.isClient) {
       Session.set("showNewUser", !Session.get("showNewUser"));
       Session.set("showLogin", false);
       return false
+    },
+
+    'submit form' : function (evt, tmpl) {
+
+      var idea = document.getElementById("idea").value;
+      // Posible busqueda de nombres existentes
+      var nameOfIdea = document.getElementById("nameOfIdea").value;
+      //Separacion de tags
+      var tagsOfIdea = document.getElementById("tagsOfIdea").value;
+      var doc = {idea: idea, name: nameOfIdea, tags: tagsOfIdea, referrer: document.referrer, timestamp: new Date()}
+
+      Meteor.call("insertIdea", doc);
+     
+      return false;
     }
   });
+
 
   Template.welcome.showLogin = function() {
     return Session.get("showLogin");
@@ -56,4 +73,11 @@ if (Meteor.isServer) {
   Meteor.startup(function () {
     // code to run on server at startup
   });
+
+  Meteor.methods({
+      insertIdea: function(doc) {
+          console.log('Adding Idea');
+          Ideas.insert(doc);
+      }
+  })
 }
