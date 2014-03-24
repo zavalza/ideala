@@ -1,13 +1,23 @@
 .welcome{
-		position: relative;
-		margin: 0;
-		background: url('header1.jpg');
-		background-size: cover;
-		background-position: center center;
-		padding: 14em 0 14em 0;
-		text-align: center;
-		color: #ffffff;
+	position: relative;
+	margin: 0;
+	background: url('header1.jpg');
+	background-size: cover;
+	background-position: center center;
+	padding: 14em 0 14em 0;
+	text-align: center;
+	color: #ffffff;
 }
 .registerForm{
 	padding-top: 60px;
+}
+.footer{
+	height: 2em;
+	background-color: black;
+	color: white;
+	text-align: center;
+	position:relative;
+    bottom:0;
+    width:100%;
+    margin:0 auto;
 }
