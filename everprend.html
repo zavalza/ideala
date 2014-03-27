@@ -19,8 +19,7 @@
            <a class="brand" href="#">Everprend</a>
            <div class="nav-collapse collapse">
              <ul class="nav">
-               <li class="home"><a href="#">Home</a></li>
-               <li class="signup"><a href="#signup">Registro</a></li>
+               <li class="home"><a href="#home">Home</a></li>
                <li class="about"><a href="#about">Acerca de</a></li>
                <li class="contact"><a href="#contact">Contacto</a></li>
              </ul>
@@ -30,11 +29,11 @@
   </div>
 </template>
 <template name="main">
-  {{#if showRegisterForm}}
-    {{>registerForm}}
-  {{else}}
-    {{>welcome}}
-    {{>features}}
+  {{#if showPersons}}
+    {{>persons}}
+    {{else}}
+      {{>welcome}}
+      {{>features}}
   {{/if}}
 </template>
 <template name="footer">
@@ -46,14 +45,10 @@
 <div class="welcome">
   <h1>Bienvenido a Everprend</h1>
   <p>Una nueva plataforma para conectar emprendedores y sus ideas</p>
-   <button type="submit" class="btn btn-primary login">Ingresa</button>
-   <button type="submit" class="btn btn-success signup">Registro</button>
-   {{#if showLogin}}
-    {{>loginForm}}
-    {{/if}}
-    <!-- {{#if showRegisterForm}}
+   <button class="btn btn-info signup">Registro</button>
+    {{#if showRegisterForm}}
     {{>registerForm}}
-    {{/if}} -->
+    {{/if}}
 </div>
 </template>
 <template name="features">
@@ -107,11 +102,8 @@
 </form>
 </template>
 <template name="registerForm">
-<div class="container">
 <form name="registerForm" method="post">
-  <div class="span8">
-    <div class="registerForm">
-    <br>
+  <div class="form-group registerForm">
     <textarea class="span8" id="idea" placeholder="Cuéntanos tu idea"></textarea><br>
     <input type="text" class="form-control" id="nameOfIdea" placeholder="Ponle un nombre">
     <input type="text" class="form-control" id="tagsOfIdea" placeholder="Palabras clave (Separadas por coma)">
@@ -137,9 +129,20 @@
     {{#if showNewUser}}
     {{>newUserForm}}
     {{/if}}
-    <button type="submit" class="btn btn-success ready">Listo</button>
+    <button class="btn btn-success ready">Listo</button>
   </div>
 </form>
-</div>
 <br>
+</template>
+<template name="persons">
+  <div class="persons">
+  <h2>Conéctate</h2>
+  {{#each item}}
+      {{> person}}
+  {{/each}}
+ </div>
+</template>
+<template name="person">
+  <div class="person">
+    {{> idea}}
 </template>
