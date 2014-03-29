@@ -5,7 +5,7 @@ if (Meteor.isClient) {
 
   Template.navigation.events({
     'click .home': function (evt, tmpl) {
-      Session.set("showPersons", false)
+      Session.set("showPeople", false)
       return false
     }
   });
@@ -36,11 +36,11 @@ if (Meteor.isClient) {
       var tagsOfIdea = document.getElementById("tagsOfIdea").value;
       var doc = {idea: idea, name: nameOfIdea, tags: tagsOfIdea, referrer: document.referrer, timestamp: new Date()}
       var words = tagsOfIdea.split(',');
-      var ids = Meteor.call("searchPersons", "idea");
-      Session.set("resultIds", ids);
+      Meteor.subscribe('people_to_contact', words); //Al parecer se van a estar actualizando siempre los resultados que verá, no parece tan malo,
+      //requiere su lógica, 
       Meteor.call("insertIdea", doc);
       Session.set("showRegisterForm", false);
-      Session.set("showPersons", true);
+      Session.set("showPeople", true);
       return false
     }
   });
@@ -54,8 +54,8 @@ if (Meteor.isClient) {
     return Session.get("showRegisterForm");
   };
 
-  Template.main.showPersons = function() {
-    return Session.get("showPersons");
+  Template.main.showPeople = function() {
+    return Session.get("showPeople");
   };
 
  Template.registerForm.showLogin = function() {
@@ -66,13 +66,26 @@ if (Meteor.isClient) {
   return Session.get("showNewUser");
   };
 
-
-  Template.persons.item = function(){
-    return Session.get("resultIds");
-  };
+  Template.people.helpers({
+  people_to_contact: function() {
+  return Ideas.find({});
+  }
+  });
 }
 
 if (Meteor.isServer) {
+
+  Meteor.publish('people_to_contact', function(searchText) {
+         var doc = {};
+    var ideasIds = Meteor.call("searchPeople",searchText);
+    if (ideasIds) {
+        doc._id = {
+            $in: ideasIds
+        };
+    }
+    return Ideas.find(doc);
+  });
+
   Meteor.startup(function () {
     // code to run on server at startup
     //Comment this line the first time, so Meteor can find the index_name afterwards
@@ -91,39 +104,41 @@ if (Meteor.isServer) {
     });
   });
 
-  Meteor.methods({
+    Meteor.methods({
       insertIdea: function(doc) {
           console.log('Adding Idea');
           Ideas.insert(doc);
       },
 
-      _searchPersons: function (searchText) {
+      _searchPeople: function (searchText) {
       var Future = Npm.require('fibers/future');
       var future = new Future();
       MongoInternals.defaultRemoteCollectionDriver().mongo.db.executeDbCommand({
           text:'ideas', //Collection
-          search: 'idea', //String to search
-          project: {
-          id: 1 // Only take the ids
-          }
-       }
-       , function(error, results) {
+          search: 'idea', //String to search, sustitute with words
+          limit:3 
+          // project: { //No funciona en nuestra base de datos
+          // id: 1 // Only take the ids
+          // }
+          }, function(error, results) {
         console.log(results)
         if (results && results.documents[0].ok === 1) {
-          future.ret(results.documents[0].results);
+          future.return(results.documents[0].results);
+          console.log(results.documents[0].results[0].obj)
           }
           else {
-              future.ret("error");
+              future.return("error");
+              console.log("Error in text search")
           }
       });
       return future.wait();
       },
 
       // Helper that extracts the ids from the search results
-      searchPersons: function (searchText) {
+      searchPeople: function (searchText) {
       if (searchText && searchText !== '') {
           console.log('Searching...');
-          var searchResults = Meteor.call("_searchPersons", searchText);
+          var searchResults = Meteor.call("_searchPeople", searchText);
           console.log('Results back');
           var ids = [];
           for (var i = 0; i < searchResults.length; i++) {
@@ -133,6 +148,8 @@ if (Meteor.isServer) {
       }
       }
   });
+
+
 
   // Meteor.publish('persons', function(searchText) {
   //   var doc = {};

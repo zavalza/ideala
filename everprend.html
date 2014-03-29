@@ -29,8 +29,8 @@
   </div>
 </template>
 <template name="main">
-  {{#if showPersons}}
-    {{>persons}}
+  {{#if showPeople}}
+    {{>people}}
     {{else}}
       {{>welcome}}
       {{>features}}
@@ -134,15 +134,15 @@
 </form>
 <br>
 </template>
-<template name="persons">
-  <div class="persons">
+<template name="people">
+  <div class="people">
   <h2>Conéctate</h2>
-  {{#each item}}
-      {{> person}}
+  {{#each people_to_contact}}
+      {{> idea}}
   {{/each}}
  </div>
 </template>
-<template name="person">
-  <div class="person">
-    {{> idea}}
+<template name="idea">
+  <div class="idea">
+    {{ idea}}
 </template>
