@@ -36,7 +36,7 @@ if (Meteor.isClient) {
       var tagsOfIdea = document.getElementById("tagsOfIdea").value;
       var doc = {idea: idea, name: nameOfIdea, tags: tagsOfIdea, referrer: document.referrer, timestamp: new Date()}
       var words = tagsOfIdea.split(',');
-      var ids = Meteor.call("searchPersons", words);
+      var ids = Meteor.call("searchPersons", "idea");
       Session.set("resultIds", ids);
       Meteor.call("insertIdea", doc);
       Session.set("showRegisterForm", false);
@@ -101,19 +101,20 @@ if (Meteor.isServer) {
       var Future = Npm.require('fibers/future');
       var future = new Future();
       MongoInternals.defaultRemoteCollectionDriver().mongo.db.executeDbCommand({
-          text: 'idea',
-          search: searchText,
+          text:'ideas', //Collection
+          search: 'idea', //String to search
           project: {
-            id: 1 // Only take the ids
+          id: 1 // Only take the ids
           }
-       //}
-       // , function(error, results) {
-       //    if (results && results.documents[0].ok === 1) {
-       //        future.ret(results.documents[0].results);
-       //    }
-       //    else {
-       //        future.ret('');
-       //    }
+       }
+       , function(error, results) {
+        console.log(results)
+        if (results && results.documents[0].ok === 1) {
+          future.ret(results.documents[0].results);
+          }
+          else {
+              future.ret("error");
+          }
       });
       return future.wait();
       },
