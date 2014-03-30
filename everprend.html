@@ -43,11 +43,11 @@
 </template>
 <template name="welcome">
 <div class="welcome">
-  <h1>Bienvenido a Everprend</h1>
-  <p>Una nueva plataforma para conectar emprendedores y sus ideas</p>
-   <button class="btn btn-info signup">Registro</button>
+  
     {{#if showRegisterForm}}
     {{>registerForm}}
+    {{else}}
+    {{>welcomeMessage}}
     {{/if}}
 </div>
 </template>
@@ -145,4 +145,9 @@
 <template name="idea">
   <div class="idea">
     {{ idea}}
+</template>
+<template name="welcomeMessage">
+<h1>Bienvenido a Everprend</h1>
+<p>Una nueva plataforma para conectar emprendedores y sus ideas</p>
+<button class="btn btn-info signup">Registro</button>
 </template>

@@ -35,7 +35,7 @@ if (Meteor.isClient) {
       //Separacion de tags
       var tagsOfIdea = document.getElementById("tagsOfIdea").value;
       var doc = {idea: idea, name: nameOfIdea, tags: tagsOfIdea, referrer: document.referrer, timestamp: new Date()}
-      var words = tagsOfIdea.split(',');
+      var words = tagsOfIdea.replace(',',' ');
       Meteor.subscribe('people_to_contact', words); //Al parecer se van a estar actualizando siempre los resultados que verá, no parece tan malo,
       //requiere su lógica, 
       Meteor.call("insertIdea", doc);
@@ -115,8 +115,8 @@ if (Meteor.isServer) {
       var future = new Future();
       MongoInternals.defaultRemoteCollectionDriver().mongo.db.executeDbCommand({
           text:'ideas', //Collection
-          search: 'idea', //String to search, sustitute with words
-          limit:3 
+          search: searchText, //String to search, sustitute with words
+          //limit:3 
           // project: { //No funciona en nuestra base de datos
           // id: 1 // Only take the ids
           // }
@@ -127,7 +127,7 @@ if (Meteor.isServer) {
           console.log(results.documents[0].results[0].obj)
           }
           else {
-              future.return("error");
+              future.return("{}");
               console.log("Error in text search")
           }
       });
