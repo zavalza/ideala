@@ -1,32 +1,62 @@
-Ideas = new Meteor.Collection("ideas");
+Ideas = new Meteor.Collection("ideas")
 
 if (Meteor.isClient) {
+
 
   Template.navigation.events({
     'click .home': function (evt, tmpl) {
       Session.set("showPeople", false)
       return false
+    },
+    'click .name': function (evt, tmpl) {
+      Meteor.logout()
+      return false
     }
   });
 
    Template.main.events({
-    'click .login': function (evt, tmpl) {
+    'click .entrar': function (evt, tmpl) {
       Session.set("showLogin", !Session.get("showLogin"));
+      Session.set("showRegisterForm", true);
       Session.set("showNewUser", false);
       return false
     },
     'click .newUser': function (evt, tmpl) {
-      Session.set("showNewUser", !Session.get("showNewUser"));
-      Session.set("showLogin", false);
+      Session.set("showNewUser", true);
+      Session.set("showLogin", true);
       return false
     },
 
     'click .signup' : function(evt, tmpl){
+      evt.preventDefault();
+      var role = document.getElementById("role").value;
+      var idea = document.getElementById("idea").value;
+      // Posible busqueda de nombres existentes
+      var nameOfIdea = document.getElementById("nameOfIdea").value;
+      //Separacion de tags
+      var tagsOfIdea = document.getElementById("tagsOfIdea").value;
+      var words = tagsOfIdea.replace(',',' ');
+      //var userId = Meteor.userId();
+      var doc = {
+                idea: idea, 
+                nameOfIdea: nameOfIdea,
+                tagsOfIdea: tagsOfIdea,
+                peopleInvolved:{
+                              userId: 0,
+                              role:role
+                            },
+                referrer: document.referrer, timestamp: new Date()
+                };
+      Session.set("ideaData", doc);
+      Session.set("words",words);
+      Session.set("userRole",role);
       Session.set("showRegisterForm", !Session.get("showRegisterForm"));
+      Session.set("showLogin", true);
       return false
     },
 
     'click .ready' : function (evt, tmpl) {
+
       var firstName, lastName;
       var role = document.getElementById("role").value;
       var idea = document.getElementById("idea").value;
@@ -63,11 +93,23 @@ if (Meteor.isClient) {
       var password = tmpl.find('#password').value;
       Meteor.loginWithPassword(username, password);
       Meteor.subscribe("userData");
+      var doc = Session.get('ideaData');
+      var userId = Meteor.userId();
+      var words= Session.get("words");
+      var userRole= Session.get("userRole");
+      Meteor.subscribe('people_to_contact', words); //Al parecer se van a estar actualizando siempre los resultados que verá, no parece tan malo,
+      //requiere su lógica,
+      if(doc)
+      {
+      Meteor.call("insertIdea", doc);
+      Meteor.call("updateUserProfile",userId, userRole);
+      } 
+      Session.set("showPeople", true);
       return false;
     }
   });
 
- Template.newUserForm.events({
+  Template.newUserForm.events({
     'click .createUser' : function(evt, tmpl) {
       evt.preventDefault();
       var firstName = tmpl.find('#firstName').value;
@@ -96,7 +138,9 @@ if (Meteor.isClient) {
                                           }
 
                           });
-
+      Session.set("showNewUser", false);
+      Session.set("showLogin", false);
+      Session.set("showPeople", true);
       return false;
     }
   });
@@ -114,15 +158,15 @@ if (Meteor.isClient) {
     return Session.get("showPeople");
   };
 
- Template.registerForm.showLogin = function() {
+ Template.main.showLogin = function() {
   return Session.get("showLogin");
   };
 
-  Template.registerForm.showNewUser = function() {
+  Template.loginForm.showNewUser = function() {
   return Session.get("showNewUser");
   };
 
-  Template.people.helpers({
+   Template.people.helpers({
   people_to_contact: function() {
     return Ideas.find({});
   }
@@ -137,6 +181,7 @@ if (Meteor.isClient) {
 
 if (Meteor.isServer) {
 
+  
   Meteor.publish('people_to_contact', function(searchText) {
          var doc = {};
     var ideasIds = Meteor.call("searchPeople",searchText);
@@ -235,17 +280,4 @@ if (Meteor.isServer) {
       }
       }
   });
-
-
-
-  // Meteor.publish('persons', function(searchText) {
-  //   var doc = {};
-  //   var peersonsIds = searchPersons(searchText);
-  //   if (personsIds) {
-  //       doc._id = {
-  //           $in: personsIds
-  //       };
-  //   }
-  //   return Ideas.find(doc);
-  // });
 }

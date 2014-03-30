@@ -1,145 +1,151 @@
 <head>
    <title>Everprend</title>
- </head>
+   <link href='http://fonts.googleapis.com/css?family=Muli' rel='stylesheet' type='text/css'>
+</head>
+
 <body>
    {{>navigation}}
    {{> main }}
-   {{> footer}}
+
 </body>
 
+ <!-- Barra de navegacion-->
 <template name="navigation">
-  <div class="navbar navbar-inverse navbar-fixed-top">
-       <div class="navbar-inner">
-         <div class="container">
-           <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-             <span class="icon-bar"></span>
-             <span class="icon-bar"></span>
-             <span class="icon-bar"></span>
-           </button>
-           <a class="brand" href="#">Everprend</a>
-           <div class="nav-collapse collapse">
-             <ul class="nav">
-               <li class="home"><a href="#home">Home</a></li>
-               <li class="about"><a href="#about">Acerca de</a></li>
-               <li class="contact"><a href="#contact">Contacto</a></li>
-               {{#if currentUser}}
-               <li class="name"><a href="#profile">{{>userData}}</a></li>
-              {{/if}}
-             </ul>
-           </div>
-         </div>
-       </div>
-  </div>
+  <header>
+          <div class="container">
+            <h1><a href="">Everprend</a></h1>
+              <nav>
+                <ul>
+                  <!--<li><a href="#">Acerca de</a></li>
+                  <li><a href="#">Contacto</a></li>
+                  <li><a href="#" class="Registro">Registro</a></li>-->
+                  {{#if currentUser}}
+                  <li class="name"><a class="name" href="#profile">{{>userData}}</a></li>
+                  {{/if}}
+                </ul>
+              </nav>
+          </div>
+  </header>
 </template>
+
 <template name="main">
-  {{#if showPeople}}
-    {{>people}}
-    {{else}}
-      {{>welcome}}
-      {{>features}}
+  {{#if currentUser}}
+  {{>people}}
+  {{else}}
+  {{>welcome}}
   {{/if}}
 </template>
-<template name="footer">
-  <div class="footer">
-    Everprend 2014
-  </div>
-</template>
+
+  <!-- Seccion:"Welcome"-->
 <template name="welcome">
-<div class="welcome">
-  
-    {{#if showRegisterForm}}
-    {{>registerForm}}
-    {{else}}
-    {{>welcomeMessage}}
-    {{/if}}
-</div>
-</template>
-<template name="features">
-<div class="container">
-  <div class="row">
-    <div class="span4">
-      <section>
-        <header>
-          <h3>Social</h3>
-        </header>
-        <p>Everprend es una plataforma social en donde puedes ponerte en contacto con gente increible que esta creando algo innovador</p>
-      </section>
-    </div>
-    <div class="span4">
-      <section>
-        <header>
-          <h3>Efectivo y poderoso</h3>
-        </header>
-        <p>Como miembro de esta plataforma tendras los mejores recursos para ayudar a completar tus ideas innovadoras</p>
-      </section>
-    </div>
-    <div class="span4">
-      <section>
-        <header>
-          <h3>Trabaja en la nube</h3>
-        </header>
-        <p>Si encuentras un cofundador o alguien que quiera trabajar contigo y se encuentran del otro lado del mundo, que te parece trabajar directamente desde la plataforma.</p>
-      </section>
-    </div>
+  <div class="wpage">
+      {{#if showRegisterForm}}
+      {{>registerForm}}
+      {{else}}
+        {{#if showLogin}}
+                {{>loginForm}}
+                {{else}}
+                {{>welcomeMessage}}
+                {{/if}}
+      {{/if}}
   </div>
-</div>
 </template>
-<template name="loginForm">
-<form name="loginForm">
-  <div class="form-group">
-  <br>
-  <input type="email" class="form-control" id="username" placeholder="Usuario">
-  <input type="password" class="form-control" id="password" placeholder="Contraseña">
-  <input type="submit" class="tryLogin" value="Login">
-  </div>
-</form>
+
+<template name="welcomeMessage">
+    <h1>Bienvenido a Everprend</h1>
+    <p>Una nueva plataforma para conectar emprendedores y sus ideas</p>
+    <br>
+    <br>
+    <p class="submit"><input id="submitBoton" class="entrar" type="submit" name="commit" value="Registrar una idea"></p>
 </template>
-<template name="newUserForm">
-<form id="newUserForm" name="newUserForm">
-  <div class="form-group">
-  <br>
-  <input type="text" class="form-control" id="firstName" placeholder="Nombre">
-  <input type="text" class="form-control" id="lastName" placeholder="Apellido"><br>
-  <input type="text" class="form-control"  id="username" placeholder="Usuario"><br>
-  <input type="email" class="form-control"  id="email" placeholder="Correo Electrónico">
-  <input type="password" class="form-control" id="password" placeholder="Contraseña">
-  <input type="submit" id="submit" class="createUser" value="Crear cuenta">
-  </div>
-</form>
-</template>
+
+  <!-- Seccion:"RegisterForm"-->
 <template name="registerForm">
-<form name="registerForm" method="post">
-  <div class="form-group registerForm">
-    <textarea class="span8" id="idea" placeholder="Cuéntanos tu idea"></textarea><br>
-    <input type="text" class="form-control" id="nameOfIdea" placeholder="Ponle un nombre">
-    <input type="text" class="form-control" id="tagsOfIdea" placeholder="Palabras clave (Separadas por coma)">
-    <label for="role">¿Cuál es tu rol dentro de ella?</label>
-    <select name="role" id="role">
-      <option value="administration">Administrarlo</option>
-      <option value="technical">Ejecutarlo (Parte técnica)</option>
-      <option value="design"> Diseñarlo</option>
-      <option value="sell">Venderlo</option>
-      <option value="marketing">Difundirlo/Promocionarlo</option>
-      <option value="money"> Financearlo</option>
-    </select>
-    <label for="startDate">¿Cuánto tiempo llevas trabajando en ella?</label>
-    <input type="date" class="form-control" id="startDate">
-    <h4>Forma de contacto</h4>
-    <button class="btn btn-primary login">Tengo cuenta</button>
-    <button class="btn btn-primary newUser">Usuario nuevo</button>
-    <button class="btn btn-primary loginFacebook">Login con Facebook</button>
-    <button class="btn btn-primary loginTwitter">Login con Twitter</button>
-    {{#if showLogin}}
-    {{>loginForm}}
-    {{/if}}
+  <section class="container">
+    <div class="RIdea">
+        <h1>Registra una Idea</h1>
+          <form method="post" action="index.html">
+                <p><textarea type="text" id="idea" placeholder="Cuéntanos tu idea"></textarea></p>
+                <p><input type="text" class="form-control" id="nameOfIdea" placeholder="Ponle un nombre"></p>
+                <p><input type="text" name="typeOfIdea" id="tagsOfIdea" placeholder="Palabras clave de tu idea"><p>
+                <p>¿Desde cuando trabajas en ella?</p>
+                <input type="date" name="fecha">
+                <p>¿Cual es tu rol?</p>
+              <select name="role" id="role">
+                <option value="administration">Administrarlo</option>
+                <option value="technical">Ejecutarlo (Parte técnica)</option>
+                <option value="design"> Diseñarlo</option>
+                <option value="sell">Venderlo</option>
+                <option value="marketing">Difundirlo/Promocionarlo</option>
+                <option value="money"> Financearlo</option>
+               </select>
+               <p>Datos de contacto</p>
+                <p class="submit"><input id="submitCC"  type="submit"  class="signup" name="commit" value="Registrar"></p>
+                
+          </form>
+    </div>
+  </section>
+</template>
+
+<!-- Seccion:"LogInForm"-->
+<template name="loginForm">
+  <section class="container">
+          <div class="login">
+                <h1>Inicia Sesión </h1>
+                  <form method="post" action="index.html">
+                    <a href=""><img src="loginfacebook.png"></a>
+                    <input type="submit" class="newUser" id="submitCC" name="commit" value="Crear una cuenta">
+                    <p><input type="text" id="username" name="login" value="" placeholder="Usuario"></p>
+                    <p><input type="password" id="password" name="password" value="" placeholder="Contraseña"></p>
+                    <p class="remember_me">
+                      <label>
+                          <input type="checkbox" name="remember_me" id="remember_me">
+                           Recordar en esta computadora
+                        </label>
+                    </p>
+                    <p class="submit"><input type="submit" class="tryLogin" id="submitBoton" name="commit" value="Entrar"></p>
+                    <div class="login-help">
+              <p>¿Olvidaste tu contraseña? <a href="index.html">Haz clic aquí para resetearla</a>.</p>
+          </div>
     {{#if showNewUser}}
     {{>newUserForm}}
     {{/if}}
-    <button class="btn btn-success ready">Listo</button>
-  </div>
-</form>
-<br>
+        </form>
+          </div>
+      </section>
 </template>
+
+<!-- Seccion:"newUserForm"-->
+<template name="newUserForm">
+  <section>
+    <div class="userR">
+      <h1>Registrate</h1>
+      <form name="newUserForm">
+        <p><input type="text" class="form-control" id="firstName" placeholder="Nombre"></p>
+        <p><input type="text" class="form-control" id="lastName" placeholder="Apellido"></p>
+        <input type="text" class="form-control" id="username" placeholder="usuario">
+        <p><input type="text" class="form-control" id="email" placeholder="Correo Electrónico"></p>
+        <p><input type="password" class="form-control" id="password" placeholder="Contraseña"></p>
+        <p class="submit"><input id="submitBoton" class="createUser"type="submit" name="commit" value="Registrarse"></p>
+        <form>
+    </div>
+  </section>
+</template>
+
+<!-- Seccion:"ResultadodeIdeasSimilares"-->
+<template name="busquedaIdeas">
+  <section class="container">
+          <div class="cuadroIdea">
+              <h1>Everprend</h1> 
+              <p>Descripción:</p>
+              <p id="descriptionIdea">Una plataforma para conectar ideas y emprendedores alrededor del mundo</p>
+            <p>Usuario:</p>
+            <p>Paul Zavalza</p>
+            <div id="correoUser"> paulzavalza@gmail.com</div>
+          </div>
+        </section>
+</template>
+
 <template name="people">
   <div class="people">
   <h2>Conéctate</h2>
@@ -158,12 +164,7 @@
 </template>
 <template name="person">
   <div class="person">
-    {{ role }}
-</template>
-<template name="welcomeMessage">
-<h1>Bienvenido a Everprend</h1>
-<p>Una nueva plataforma para conectar emprendedores y sus ideas</p>
-<button class="btn btn-info signup">Registro</button>
+    {{ peopleInvolved.role }}
 </template>
 <template name="userData">
 {{#each user}}

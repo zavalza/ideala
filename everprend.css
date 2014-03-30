@@ -1,26 +1,509 @@
-.welcome{
-	position: relative;
-	margin: 0;
-	background: url('header1.jpg');
-	background-size: cover;
-	background-position: center center;
-	padding: 14em 0 14em 0;
-	text-align: center;
-	color: #ffffff;
+/* CSS General*/
+*
+	{
+		margin: 0;
+  		padding: 0;
+  		font-family: 'Muli', sans-serif;
+	}
+body 
+	{
+  		font-weight: normal;
+  		background: url('h1.jpg');
+		background-repeat: no-repeat;
+		background-size: 100%;
+		background-attachment: fixed;
+		height: 750px;
+	}
+.container
+	{
+		width: 1150px;
+  		margin: 0 auto;
+	}
+
+/* CSS Nav*/
+a.Registro
+	{
+		color:white;
+	}
+header,nav,h1,a
+	{
+  		margin: 0;
+  		padding: 0;
+	}
+header 
+	{
+  		top: 0;
+  		left: 0;
+  		right: 0;
+  		z-index: 5;
+  		height: 50px;
+  		line-height: 50px;
+  		background: transparent;
+	}
+header h1
+	{
+		float:left;
+	}
+header h1 a 
+	{	
+  		display: block;
+  		padding: 0 15px;
+  		font-size: 18px;
+  		text-decoration: none;
+  		color:black;
+	}
+nav,ul,li
+	{
+		margin: 0;
+  		padding: 0;
+  		border: 0;
+  		font-size: 100%;
+  		vertical-align: baseline;
+	}
+ul 
+	{
+  		list-style: none;
+	}
+header nav 
+	{
+  		float: right;
+	}
+header nav li
+	{
+  		float: left;
+	}
+header nav a 
+	{
+  		display: block;
+  		padding: 0 15px;
+  		color: #1C1C1C;
+  		text-decoration: none;
+	}
+header nav a:hover 
+	{
+  		background: rgba(255, 255, 255, 0.1);
+	}
+
+header nav span 
+	{
+  		margin-left: 10px;
+  		font-size: 11px;
+  		color: white;
+	}
+/* CSS Welcome page*/
+div.wpage
+	{
+		width: 100%;
+		height: 450px;
+		position: relative;
+		margin: 0;
+		margin-top: 75px;
+		text-align: center;
+		color: #ff8000;
+	}
+div.wpage p
+	{
+		color:#1C1C1C;
+	}
+
+/* CSS LoginForm*/
+.login 
+	{
+  		position: relative;
+  		margin: 0 auto;
+  		padding: 20px 20px 20px;
+  		width: 310px;
+  		background: white;
+  		border-radius: 3px;
+  		-webkit-box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+  		box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+	}
+.login:before 
+	{
+  		content: '';
+  		position: absolute;
+  		top: -8px;
+  		right: -8px;
+  		bottom: -8px;
+  		left: -8px;
+  		z-index: -1;
+  		background: rgba(0, 0, 0, 0.08);
+  		border-radius: 4px;
+	}
+.login h1 
+	{
+  		margin: -20px -20px 21px;
+  		line-height: 40px;
+  		font-size: 15px;
+  		font-weight: bold;
+  		color: #555;
+  		text-align: center;
+  		text-shadow: 0 1px white;
+  		background: #f3f3f3;
+  		border-bottom: 1px solid #cfcfcf;
+  		border-radius: 3px 3px 0 0;
+  		background-image: -webkit-linear-gradient(top, whiteffd, #eef2f5);
+  		background-image: -moz-linear-gradient(top, whiteffd, #eef2f5);
+  		background-image: -o-linear-gradient(top, whiteffd, #eef2f5);
+  		background-image: linear-gradient(to bottom, whiteffd, #eef2f5);
+  		-webkit-box-shadow: 0 1px whitesmoke;
+  		box-shadow: 0 1px whitesmoke;	
+	}
+.login p 
+	{
+  		margin: 20px 0 0;
+	}
+.login p:first-child 
+	{
+  		margin-top: 0;
+	}
+.login input[type=text], .login input[type=password] 
+	{
+  		width: 278px;
+	}
+.login p.remember_me 
+	{
+  		float: left;
+  		line-height: 31px;
+	}
+.login p.remember_me label 
+	{
+  		font-size: 12px;
+  		color: #777;
+  		cursor: pointer;
+	}
+.login p.remember_me input 
+	{
+  		position: relative;
+  		bottom: 1px;
+  		margin-right: 4px;
+  		vertical-align: middle;
+	}
+.login p.submit 
+	{
+  		text-align: right;
+	}
+.login-help 
+	{
+  		margin: 20px 0;
+  		font-size: 11px;
+  		color: black;
+  		text-align: center;
+	}
+.login-help a 
+	{
+  		color: orange;
+  		text-decoration: none;
+	}
+.login-help a:hover 
+	{
+  		text-decoration: underline;
+	}
+
+/* Buttons*/
+input#submitCC
+	{
+  		padding: 0 50px;
+  		height: 40px;
+  		font-size: 12px;
+  		text-align: center;
+  		color: white;
+  		border: 1px solid;
+  		border-color: orange;
+  		outline: 0;
+  		-webkit-box-sizing: content-box;
+  		-moz-box-sizing: content-box;
+  		box-sizing: content-box;
+  		background-color: orange;
+	}
+input#submitCC:active 
+	{
+  		background: orange;
+  		border-color: yellow;
+  		-webkit-box-shadow: inset 0 0 3px orange;
+  		box-shadow: inset 0 0 3px orange;
+	}
+
+/*CSS Registro Idea*/
+.RIdea
+	{
+  		position: relative;
+  		margin: 0 auto;
+  		padding: 20px 20px 20px;
+  		width: 310px;
+  		background: white;
+  		border-radius: 3px;
+  		-webkit-box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+  		box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);	
+	}
+.RIdea:before 
+	{
+  		content: '';
+  		position: absolute;
+  		top: -8px;
+  		right: -8px;
+  		bottom: -8px;
+  		left: -8px;
+  		z-index: -1;
+  		background: rgba(0, 0, 0, 0.08);
+  		border-radius: 4px;
+	}
+.RIdea h1 
+	{
+  		margin: -20px -20px 21px;
+  		line-height: 40px;
+		font-size: 15px;
+		font-weight: bold;
+		color: #555;
+		text-align: center;
+		text-shadow: 0 1px white;
+		background: #f3f3f3;
+		border-bottom: 1px solid #cfcfcf;
+		border-radius: 3px 3px 0 0;
+		background-image: -webkit-linear-gradient(top, whiteffd, #eef2f5);
+		background-image: -moz-linear-gradient(top, whiteffd, #eef2f5);
+		background-image: -o-linear-gradient(top, whiteffd, #eef2f5);
+		background-image: linear-gradient(to bottom, whiteffd, #eef2f5);
+		-webkit-box-shadow: 0 1px whitesmoke;
+		 box-shadow: 0 1px whitesmoke;
+	}
+.RIdea p 
+	{
+  		margin: 20px 0 0;
+	}
+.RIdea p:first-child 
+	{
+  		margin-top: 0;
+	}
+.RIdea input[type=text], .login input[type=password] 
+	{
+  		width: 278px;
+	}
+.RIdea p.remember_me 
+	{
+  		float: left;
+  		line-height: 31px;
+	}
+.RIdea p.remember_me label 
+	{
+  		font-size: 12px;
+  		color: #777;
+  		cursor: pointer;
+	}
+.RIdea p.remember_me input 
+	{
+  		position: relative;
+  		bottom: 1px;
+  		margin-right: 4px;
+  		vertical-align: middle;
+	}
+.RIdea p.submit 
+	{
+  		text-align: right;
+	}
+
+
+:-moz-placeholder 
+	{
+  		color: #c9c9c9 !important;
+  		font-size: 13px;
+	}
+
+::-webkit-input-placeholder 
+	{
+  		color: #ccc;
+  		font-size: 13px;
+	}
+
+input 
+	{
+  		
+  		font-size: 14px;
+	}
+
+select
+	{
+ 		margin: 15px;
+  		padding: 0 10px;
+  		width: 278px;
+  		height: 34px;
+  		color: #404040;
+  		background: white;
+  		border: 1px solid;
+  		border-color: #c4c4c4 #d1d1d1 #d4d4d4;
+  		border-radius: 2px;
+  		outline: 5px solid #eff4f7;
+  		-moz-outline-radius: 3px;
+  		-webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.12);
+  		box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.12);
+	}
+textarea[type=text]
+	{
+		margin: 5px;
+		padding: 0 10px;
+		width: 278px;
+		height: 200px;
+		color: #404040;
+		background: white;
+		border: 1px solid;
+		border-color: #c4c4c4 #d1d1d1 #d4d4d4;
+		border-radius: 2px;
+		outline: 5px solid #eff4f7;
+  		-moz-outline-radius: 3px;
+  		-webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.12);
+  		box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.12);
+	}	
+input[type=text], input[type=password] 
+	{
+  		margin: 5px;
+  		padding: 0 10px;
+  		width: 200px;
+  		height: 34px;
+  		color: #404040;
+  		background: white;
+  		border: 1px solid;
+  		border-color: #c4c4c4 #d1d1d1 #d4d4d4;
+  		border-radius: 2px;
+  		outline: 5px solid #eff4f7;
+  		-moz-outline-radius: 3px;
+  		-webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.12);
+  		box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.12);
+	}
+input[type=text]:focus, input[type=password]:focus 
+	{
+  		border-color: #7dc9e2;
+  		outline-color: #dceefc;
+  		outline-offset: 0;
+	}
+
+input#submitBoton 
+	{
+  		padding: 0 18px;
+  		height: 29px;
+  		font-size: 12px;
+  		font-weight: bold;
+  		color: #527881;
+  		text-shadow: 0 1px #e3f1f1;
+  		background: #cde5ef;
+  		border: 1px solid;
+  		border-color: #b4ccce #b3c0c8 #9eb9c2;
+  		border-radius: 16px;
+  		outline: 0;
+  		-webkit-box-sizing: content-box;
+  		-moz-box-sizing: content-box;
+  		box-sizing: content-box;
+  		background-image: -webkit-linear-gradient(top, #edf5f8, #cde5ef);
+  		background-image: -moz-linear-gradient(top, #edf5f8, #cde5ef);
+  		background-image: -o-linear-gradient(top, #edf5f8, #cde5ef);
+  		background-image: linear-gradient(to bottom, #edf5f8, #cde5ef);
+  		-webkit-box-shadow: inset 0 1px white, 0 1px 2px rgba(0, 0, 0, 0.15);
+  		box-shadow: inset 0 1px white, 0 1px 2px rgba(0, 0, 0, 0.15);
+	}
+input#submitBoton:active 
+	{
+  		background: #cde5ef;
+  		border-color: #9eb9c2 #b3c0c8 #b4ccce;
+  		-webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.2);
+  		box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.2);
+	}
+/* RegisterNewUser */
+.userR {
+  position: relative;
+  margin: 0 auto;
+  padding: 20px 20px 20px;
+  width: 310px;
+  background: white;
+  border-radius: 3px;
+  -webkit-box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
 }
-.registerForm{
-	padding-top: 60px;
+.userR:before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  bottom: -8px;
+  left: -8px;
+  z-index: -1;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 4px;
 }
-.people{
-	padding-top: 60px;
+.userR h1 {
+  margin: -20px -20px 21px;
+  line-height: 40px;
+  font-size: 15px;
+  font-weight: bold;
+  color: #555;
+  text-align: center;
+  text-shadow: 0 1px white;
+  background: #f3f3f3;
+  border-bottom: 1px solid #cfcfcf;
+  border-radius: 3px 3px 0 0;
+  background-image: -webkit-linear-gradient(top, whiteffd, #eef2f5);
+  background-image: -moz-linear-gradient(top, whiteffd, #eef2f5);
+  background-image: -o-linear-gradient(top, whiteffd, #eef2f5);
+  background-image: linear-gradient(to bottom, whiteffd, #eef2f5);
+  -webkit-box-shadow: 0 1px whitesmoke;
+  box-shadow: 0 1px whitesmoke;
 }
-.footer{
-	height: 2em;
-	background-color: black;
-	color: white;
-	text-align: center;
-	position:relative;
-    bottom:0;
-    width:100%;
-    margin:0 auto;
+.userR p {
+  margin: 20px 0 0;
 }
+.userR p:first-child {
+  margin-top: 0;
+}
+.userR input[type=text], .login input[type=password] {
+  width: 278px;
+}
+.userR p.remember_me {
+  float: left;
+  line-height: 31px;
+}
+.userR p.remember_me label {
+  font-size: 12px;
+  color: #777;
+  cursor: pointer;
+}
+.userR p.remember_me input {
+  position: relative;
+  bottom: 1px;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+.userR p.submit {
+  text-align: right;
+}
+/* Despliegue de Ideas Css*/
+.cuadroIdea{
+  position: relative;
+  margin: 0 auto;
+  padding: 20px 20px 20px;
+  width: 600px;
+  background: white;
+  border-radius: 3px;
+  
+}
+.cuadroIdea p {
+  margin: 20px 0 0;
+  text-decoration: italic;
+}
+p#descriptionIdea
+{
+  text-align: left;
+  font-style: italic;
+}
+div#correoUser
+  {
+      padding: 0 50px;
+      height: 40px;
+      font-size: 12px;
+      text-align: center;
+      color: white;
+      border: 1px solid;
+      border-color: orange;
+      outline: 0;
+      -webkit-box-sizing: content-box;
+      -moz-box-sizing: content-box;
+      box-sizing: content-box;
+      background-color: orange;
+  }
