@@ -91,13 +91,15 @@
 </form>
 </template>
 <template name="newUserForm">
-<form name="newUserForm">
+<form id="newUserForm" name="newUserForm">
   <div class="form-group">
   <br>
   <input type="text" class="form-control" id="firstName" placeholder="Nombre">
   <input type="text" class="form-control" id="lastName" placeholder="Apellido"><br>
-  <input type="email" class="form-control" id="email" placeholder="Correo Electrónico">
+  <input type="text" class="form-control" name="username" id="username" placeholder="Usuario"><br>
+  <input type="email" class="form-control" name="email" id="email" placeholder="Correo Electrónico">
   <input type="password" class="form-control" id="password" placeholder="Contraseña">
+  <input type="submit" id="submit" class="createUser" value="Crear cuenta">
   </div>
 </form>
 </template>
