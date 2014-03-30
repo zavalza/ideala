@@ -22,6 +22,9 @@
                <li class="home"><a href="#home">Home</a></li>
                <li class="about"><a href="#about">Acerca de</a></li>
                <li class="contact"><a href="#contact">Contacto</a></li>
+               {{#if currentUser}}
+               <li class="name"><a href="#profile">{{>userData}}</a></li>
+              {{/if}}
              </ul>
            </div>
          </div>
@@ -85,8 +88,9 @@
 <form name="loginForm">
   <div class="form-group">
   <br>
-  <input type="email" class="form-control" id="email" placeholder="Correo Electrónico">
+  <input type="email" class="form-control" id="username" placeholder="Usuario">
   <input type="password" class="form-control" id="password" placeholder="Contraseña">
+  <input type="submit" class="tryLogin" value="Login">
   </div>
 </form>
 </template>
@@ -160,4 +164,9 @@
 <h1>Bienvenido a Everprend</h1>
 <p>Una nueva plataforma para conectar emprendedores y sus ideas</p>
 <button class="btn btn-info signup">Registro</button>
+</template>
+<template name="userData">
+{{#each user}}
+{{username}}
+{{/each}}
 </template>

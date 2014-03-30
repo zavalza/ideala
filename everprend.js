@@ -2,8 +2,6 @@ Ideas = new Meteor.Collection("ideas");
 
 if (Meteor.isClient) {
 
-  Meteor.subscribe("userData");
-
   Template.navigation.events({
     'click .home': function (evt, tmpl) {
       Session.set("showPeople", false)
@@ -58,6 +56,17 @@ if (Meteor.isClient) {
       Session.set("showRegisterForm", false);
       Session.set("showPeople", true);
       return false
+    }
+  });
+
+  Template.loginForm.events({
+    'click .tryLogin' : function (evt, tmpl) {
+      evt.preventDefault();
+      var username = tmpl.find('#username').value;
+      var password = tmpl.find('#password').value;
+      Meteor.loginWithPassword(username, password);
+      Meteor.subscribe("userData");
+      return false;
     }
   });
 
@@ -120,6 +129,12 @@ if (Meteor.isClient) {
     return Ideas.find({});
   }
   });
+
+  Template.userData.helpers({
+  user: function() {
+    return Meteor.users.find({});
+  }
+  });
 }
 
 if (Meteor.isServer) {
@@ -144,9 +159,11 @@ if (Meteor.isServer) {
   });
 
   Meteor.publish("userData", function () {
+  console.log("publishing user data");
   if (this.userId) {
-    return Meteor.users.find({_id: this.userId},
-                             {fields: {'other': 1, 'things': 1}});
+    console.log(this.userId);
+    console.log("inside if");
+    return Meteor.users.find({_id: this.userId});
   } else {
     this.ready();
   }
