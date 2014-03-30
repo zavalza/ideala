@@ -137,9 +137,11 @@
 <template name="people">
   <div class="people">
   <h2>Conéctate</h2>
-  {{#each people_to_contact}}
-      {{> idea}}
-  {{/each}}
+    {{#each people_to_contact}}
+        {{> idea}}
+    {{else}}
+      <h3> No hubo resultados </h3>
+    {{/each}}
  </div>
 </template>
 <template name="idea">

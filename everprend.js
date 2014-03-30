@@ -36,7 +36,7 @@ if (Meteor.isClient) {
       var tagsOfIdea = document.getElementById("tagsOfIdea").value;
       var doc = {idea: idea, name: nameOfIdea, tags: tagsOfIdea, referrer: document.referrer, timestamp: new Date()}
       var words = tagsOfIdea.replace(',',' ');
-      Meteor.subscribe('people_to_contact', words); //Al parecer se van a estar actualizando siempre los resultados que verá, no parece tan malo,
+      Meteor.subscribe('people_to_contact', words, Session.set("noPeople",false)); //Al parecer se van a estar actualizando siempre los resultados que verá, no parece tan malo,
       //requiere su lógica, 
       Meteor.call("insertIdea", doc);
       Session.set("showRegisterForm", false);
@@ -68,7 +68,7 @@ if (Meteor.isClient) {
 
   Template.people.helpers({
   people_to_contact: function() {
-  return Ideas.find({});
+    return Ideas.find({});
   }
   });
 }
@@ -78,12 +78,20 @@ if (Meteor.isServer) {
   Meteor.publish('people_to_contact', function(searchText) {
          var doc = {};
     var ideasIds = Meteor.call("searchPeople",searchText);
+    console.log(ideasIds);
     if (ideasIds) {
         doc._id = {
             $in: ideasIds
         };
+        console.log(doc);
+      return Ideas.find(doc);
     }
-    return Ideas.find(doc);
+    else
+    {
+      console.log("subscription retrieves error");
+      this.error();
+    }
+
   });
 
   Meteor.startup(function () {
@@ -122,13 +130,13 @@ if (Meteor.isServer) {
           // }
           }, function(error, results) {
         console.log(results)
-        if (results && results.documents[0].ok === 1) {
+        if (results.documents[0].results[0] && results.documents[0].ok === 1) {
           future.return(results.documents[0].results);
-          console.log(results.documents[0].results[0].obj)
+          //console.log(results.documents[0].results[0].obj)
           }
           else {
-              future.return("{}");
-              console.log("Error in text search")
+              future.return('');
+              console.log("No results in text search")
           }
       });
       return future.wait();
@@ -144,6 +152,7 @@ if (Meteor.isServer) {
           for (var i = 0; i < searchResults.length; i++) {
               ids.push(searchResults[i].obj._id);
           }
+          console.log(ids);
           return ids;
       }
       }
