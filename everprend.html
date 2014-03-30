@@ -138,6 +138,7 @@
   <div class="people">
   <h2>Conéctate</h2>
     {{#each people_to_contact}}
+        {{> person}}
         {{> idea}}
     {{else}}
       <h3> No hubo resultados </h3>
@@ -146,7 +147,12 @@
 </template>
 <template name="idea">
   <div class="idea">
+    {{ nameOfIdea}}
     {{ idea}}
+</template>
+<template name="person">
+  <div class="person">
+    {{ role }}
 </template>
 <template name="welcomeMessage">
 <h1>Bienvenido a Everprend</h1>

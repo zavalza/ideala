@@ -1,4 +1,4 @@
-Ideas = new Meteor.Collection("ideas")
+Ideas = new Meteor.Collection("ideas");
 
 if (Meteor.isClient) {
 
@@ -28,15 +28,30 @@ if (Meteor.isClient) {
     },
 
     'click .ready' : function (evt, tmpl) {
-
+      var firstName, lastName;
+      var role = document.getElementById("role").value;
       var idea = document.getElementById("idea").value;
       // Posible busqueda de nombres existentes
       var nameOfIdea = document.getElementById("nameOfIdea").value;
       //Separacion de tags
       var tagsOfIdea = document.getElementById("tagsOfIdea").value;
-      var doc = {idea: idea, name: nameOfIdea, tags: tagsOfIdea, referrer: document.referrer, timestamp: new Date()}
+      if(Session.equals("showNewUser", true))
+      {
+
+      }
+      var doc = {
+                idea: idea, 
+                nameOfIdea: nameOfIdea,
+                tagsOfIdea: tagsOfIdea,
+                peopleInvolved:{
+                              firstName: firstName,
+                              lastName:lastName,
+                              role:role
+                            },
+                referrer: document.referrer, timestamp: new Date()
+                }
       var words = tagsOfIdea.replace(',',' ');
-      Meteor.subscribe('people_to_contact', words, Session.set("noPeople",false)); //Al parecer se van a estar actualizando siempre los resultados que verá, no parece tan malo,
+      Meteor.subscribe('people_to_contact', words); //Al parecer se van a estar actualizando siempre los resultados que verá, no parece tan malo,
       //requiere su lógica, 
       Meteor.call("insertIdea", doc);
       Session.set("showRegisterForm", false);
@@ -106,7 +121,7 @@ if (Meteor.isServer) {
     //text
     Ideas._ensureIndex({
         idea: 'text',
-        tags: 'text'
+        tagsOfIdea: 'text'
     }, {
         name: 'peopleFinder'
     });
