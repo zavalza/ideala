@@ -34,25 +34,22 @@ if (Meteor.isClient) {
       var nameOfIdea = document.getElementById("nameOfIdea").value;
       //Separacion de tags
       var tagsOfIdea = document.getElementById("tagsOfIdea").value;
-      if(Session.equals("showNewUser", true))
-      {
-
-      }
+      var userId = Meteor.userId();
       var doc = {
                 idea: idea, 
                 nameOfIdea: nameOfIdea,
                 tagsOfIdea: tagsOfIdea,
                 peopleInvolved:{
-                              firstName: firstName,
-                              lastName:lastName,
+                              userId: userId,
                               role:role
                             },
                 referrer: document.referrer, timestamp: new Date()
-                }
+                };
       var words = tagsOfIdea.replace(',',' ');
       Meteor.subscribe('people_to_contact', words); //Al parecer se van a estar actualizando siempre los resultados que verá, no parece tan malo,
       //requiere su lógica, 
       Meteor.call("insertIdea", doc);
+      Meteor.call("updateUserProfile",userId, role);
       Session.set("showRegisterForm", false);
       Session.set("showPeople", true);
       return false
@@ -87,7 +84,8 @@ if (Meteor.isClient) {
                           password : password,
                           profile: {
                                     firstName:firstName,
-                                    lastName:lastName
+                                    lastName:lastName,
+                                    roles:[],
                                   }
                           }, function(err){
                                           if (err) {
@@ -191,6 +189,11 @@ if (Meteor.isServer) {
       insertIdea: function(doc) {
           console.log('Adding Idea');
           Ideas.insert(doc);
+      },
+
+      updateUserProfile:function(userId, role){
+        Meteor.users.update({_id: userId},
+          {$push: {'profile.roles':role}});
       },
 
       _searchPeople: function (searchText) {
