@@ -64,20 +64,31 @@ if (Meteor.isClient) {
  Template.newUserForm.events({
     'click .createUser' : function(evt, tmpl) {
       evt.preventDefault();
-      var email = tmpl.find('#email').value
-        , password = tmpl.find('#password').value;
+      var firstName = tmpl.find('#firstName').value;
+      var lastName = tmpl.find('#lastName').value;
+      var username = tmpl.find('#username').value;
+      var email = tmpl.find('#email').value;;
+      var password = tmpl.find('#password').value;
 
         // Trim and validate the input
 
-      Accounts.createUser({email: email, password : password}, function(err){
-          if (err) {
-            // Inform the user that account creation failed
-          } else {
-            // Success. Account has been created and the user
-            // has logged in successfully. 
-          }
+      Accounts.createUser({
+                          username:username,
+                          email: email,
+                          password : password,
+                          profile: {
+                                    firstName:firstName,
+                                    lastName:lastName
+                                  }
+                          }, function(err){
+                                          if (err) {
+                                            // Inform the user that account creation failed
+                                          } else {
+                                            // Success. Account has been created and the user
+                                            // has logged in successfully. 
+                                          }
 
-        });
+                          });
 
       return false;
     }
