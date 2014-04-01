@@ -39,14 +39,18 @@
   <!-- Seccion:"Welcome"-->
 <template name="welcome">
   <div class="wpage">
-      {{#if showRegisterForm}}
-      {{>registerForm}}
+      {{#if showLogin}}
+          {{>loginForm}}
       {{else}}
-        {{#if showLogin}}
-                {{>loginForm}}
-                {{else}}
+          {{#if showNewUser}}
+              {{>newUserForm}}
+          {{else}}
+              {{#if showRegisterForm}}
+                {{>registerForm}}
+              {{else}}
                 {{>welcomeMessage}}
-                {{/if}}
+              {{/if}}
+          {{/if}}
       {{/if}}
   </div>
 </template>
@@ -79,7 +83,6 @@
                 <option value="marketing">Difundirlo/Promocionarlo</option>
                 <option value="money"> Financearlo</option>
                </select>
-               <p>Datos de contacto</p>
                 <p class="submit"><input id="submitCC"  type="submit"  class="signup" name="commit" value="Registrar"></p>
                 
           </form>
@@ -95,7 +98,7 @@
                   <form method="post" action="index.html">
                     <a href=""><img src="loginfacebook.png"></a>
                     <input type="submit" class="newUser" id="submitCC" name="commit" value="Crear una cuenta">
-                    <p><input type="text" id="username" name="login" value="" placeholder="Usuario"></p>
+                    <p><input type="text" id="username" name="username" placeholder="Usuario"></p>
                     <p><input type="password" id="password" name="password" value="" placeholder="Contraseña"></p>
                     <p class="remember_me">
                       <label>
@@ -107,9 +110,6 @@
                     <div class="login-help">
               <p>¿Olvidaste tu contraseña? <a href="index.html">Haz clic aquí para resetearla</a>.</p>
           </div>
-    {{#if showNewUser}}
-    {{>newUserForm}}
-    {{/if}}
         </form>
           </div>
       </section>
@@ -119,11 +119,11 @@
 <template name="newUserForm">
   <section>
     <div class="userR">
-      <h1>Registrate</h1>
+      <h1>Datos de contacto</h1>
       <form name="newUserForm">
         <p><input type="text" class="form-control" id="firstName" placeholder="Nombre"></p>
         <p><input type="text" class="form-control" id="lastName" placeholder="Apellido"></p>
-        <input type="text" class="form-control" id="username" placeholder="usuario">
+        <p><input type="text" class="form-control" id="username" placeholder="Usuario"></p>
         <p><input type="text" class="form-control" id="email" placeholder="Correo Electrónico"></p>
         <p><input type="password" class="form-control" id="password" placeholder="Contraseña"></p>
         <p class="submit"><input id="submitBoton" class="createUser"type="submit" name="commit" value="Registrarse"></p>

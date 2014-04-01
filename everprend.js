@@ -16,14 +16,14 @@ if (Meteor.isClient) {
 
    Template.main.events({
     'click .entrar': function (evt, tmpl) {
-      Session.set("showLogin", !Session.get("showLogin"));
+      Session.set("showLogin", false);
       Session.set("showRegisterForm", true);
       Session.set("showNewUser", false);
       return false
     },
     'click .newUser': function (evt, tmpl) {
+      Session.set("showLogin", false);
       Session.set("showNewUser", true);
-      Session.set("showLogin", true);
       return false
     },
 
@@ -35,53 +35,22 @@ if (Meteor.isClient) {
       var nameOfIdea = document.getElementById("nameOfIdea").value;
       //Separacion de tags
       var tagsOfIdea = document.getElementById("tagsOfIdea").value;
-      var words = tagsOfIdea.replace(',',' ');
       //var userId = Meteor.userId();
       var doc = {
                 idea: idea, 
                 nameOfIdea: nameOfIdea,
                 tagsOfIdea: tagsOfIdea,
                 peopleInvolved:{
-                              userId: 0,
-                              role:role
+                              users: 0,
+                              roles:role
                             },
                 referrer: document.referrer, timestamp: new Date()
                 };
       Session.set("ideaData", doc);
-      Session.set("words",words);
+      Session.set("tagsOfIdea",tagsOfIdea);
       Session.set("userRole",role);
-      Session.set("showRegisterForm", !Session.get("showRegisterForm"));
-      Session.set("showLogin", true);
-      return false
-    },
-
-    'click .ready' : function (evt, tmpl) {
-
-      var firstName, lastName;
-      var role = document.getElementById("role").value;
-      var idea = document.getElementById("idea").value;
-      // Posible busqueda de nombres existentes
-      var nameOfIdea = document.getElementById("nameOfIdea").value;
-      //Separacion de tags
-      var tagsOfIdea = document.getElementById("tagsOfIdea").value;
-      var userId = Meteor.userId();
-      var doc = {
-                idea: idea, 
-                nameOfIdea: nameOfIdea,
-                tagsOfIdea: tagsOfIdea,
-                peopleInvolved:{
-                              userId: userId,
-                              role:role
-                            },
-                referrer: document.referrer, timestamp: new Date()
-                };
-      var words = tagsOfIdea.replace(',',' ');
-      Meteor.subscribe('people_to_contact', words); //Al parecer se van a estar actualizando siempre los resultados que verá, no parece tan malo,
-      //requiere su lógica, 
-      Meteor.call("insertIdea", doc);
-      Meteor.call("updateUserProfile",userId, role);
       Session.set("showRegisterForm", false);
-      Session.set("showPeople", true);
+      Session.set("showLogin", true);
       return false
     }
   });
@@ -91,18 +60,27 @@ if (Meteor.isClient) {
       evt.preventDefault();
       var username = tmpl.find('#username').value;
       var password = tmpl.find('#password').value;
-      Meteor.loginWithPassword(username, password);
+      var new_words= Session.get("tagsOfIdea").replace(',',' ');
+      var userRole= Session.get("userRole");
+      Meteor.loginWithPassword(username, password,
+        function(err){
+          if (err)
+          {
+            //To do if login was not successfull
+          }
+          else{
+            Meteor.call("updateUserProfile", Meteor.userId(), userRole, new_words);
+          }
+        });
       Meteor.subscribe("userData");
       var doc = Session.get('ideaData');
-      var userId = Meteor.userId();
-      var words= Session.get("words");
-      var userRole= Session.get("userRole");
-      Meteor.subscribe('people_to_contact', words); //Al parecer se van a estar actualizando siempre los resultados que verá, no parece tan malo,
-      //requiere su lógica,
+      //doc.peopleInvolved.userId.push(Meteor.userId());
+      old_words="idea"
+      //var old_words = Meteor.user.profile.words;
       if(doc)
       {
-      Meteor.call("insertIdea", doc);
-      Meteor.call("updateUserProfile",userId, userRole);
+        Meteor.subscribe('people_to_contact', old_words +" "+ new_words) //Probablemente los enviemos separadas, para darle peso a cada palabra
+        Meteor.call("insertIdea", doc);
       } 
       Session.set("showPeople", true);
       return false;
@@ -128,6 +106,7 @@ if (Meteor.isClient) {
                                     firstName:firstName,
                                     lastName:lastName,
                                     roles:[],
+                                    words:[],
                                   }
                           }, function(err){
                                           if (err) {
@@ -162,7 +141,7 @@ if (Meteor.isClient) {
   return Session.get("showLogin");
   };
 
-  Template.loginForm.showNewUser = function() {
+  Template.welcome.showNewUser = function() {
   return Session.get("showNewUser");
   };
 
@@ -202,10 +181,10 @@ if (Meteor.isServer) {
   });
 
   Meteor.publish("userData", function () {
-  console.log("publishing user data");
+  console.log("publishing user data of");
   if (this.userId) {
     console.log(this.userId);
-    console.log("inside if");
+    //console.log("inside if");
     return Meteor.users.find({_id: this.userId});
   } else {
     this.ready();
@@ -232,13 +211,24 @@ if (Meteor.isServer) {
 
     Meteor.methods({
       insertIdea: function(doc) {
-          console.log('Adding Idea');
+          console.log('Adding Idea with doc');
+          console.log(doc);
           Ideas.insert(doc);
       },
 
-      updateUserProfile:function(userId, role){
+      updateUserProfile:function(userId, role, words){
+        console.log(userId);
+        console.log(role);
+        console.log(words);
+        var wordsArray = words.split(/\s+/);
+        for(var i=0; i < wordsArray.length; i++)
+        {
+          Meteor.users.update({_id: userId},
+          {$push: {'profile.words':wordsArray[i]}} );
+        }
         Meteor.users.update({_id: userId},
           {$push: {'profile.roles':role}});
+        
       },
 
       _searchPeople: function (searchText) {
