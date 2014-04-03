@@ -59,8 +59,7 @@ if (Meteor.isClient) {
       evt.preventDefault();
       var username = tmpl.find('#username').value;
       var password = tmpl.find('#password').value;
-      var new_words= Session.get("tagsOfIdea").replace(',',' ');
-      var userRole= Session.get("userRole");
+
       Meteor.loginWithPassword(username, password,
         function(err){
           if (err)
@@ -68,7 +67,12 @@ if (Meteor.isClient) {
             //To do if login was not successfull
           }
           else{
-            Meteor.call("updateUserProfile", Meteor.userId(), userRole, new_words);
+            var new_words= Session.get("tagsOfIdea").replace(',',' ');
+            var userRole= Session.get("userRole");
+            if(new_words && userRole)
+            {
+                Meteor.call("updateUserProfile", Meteor.userId(), userRole, new_words);
+            }
             var doc = Session.get('ideaData');
             doc.peopleInvolved.users.push(Meteor.userId());
             var old_words = Meteor.user().profile.words;
@@ -94,7 +98,6 @@ if (Meteor.isClient) {
       var username = tmpl.find('#username').value;
       var email = tmpl.find('#email').value;;
       var password = tmpl.find('#password').value;
-
         // Trim and validate the input
 
       Accounts.createUser({
@@ -112,7 +115,20 @@ if (Meteor.isClient) {
                                             // Inform the user that account creation failed
                                           } else {
                                             // Success. Account has been created and the user
-                                            // has logged in successfully. 
+                                            // has logged in successfully.
+                                            var new_words= Session.get("tagsOfIdea").replace(',',' ');
+                                            var userRole= Session.get("userRole");
+                                            if(new_words && userRole)
+                                            {
+                                                Meteor.call("updateUserProfile", Meteor.userId(), userRole, new_words);
+                                            }
+                                            var doc = Session.get('ideaData');
+                                            doc.peopleInvolved.users.push(Meteor.userId());
+                                            if(doc)
+                                            {
+                                              Meteor.subscribe('people_to_contact', new_words)
+                                              Meteor.call("insertIdea", doc);
+                                            } 
                                           }
 
                           });
