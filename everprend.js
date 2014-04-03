@@ -35,14 +35,13 @@ if (Meteor.isClient) {
       var nameOfIdea = document.getElementById("nameOfIdea").value;
       //Separacion de tags
       var tagsOfIdea = document.getElementById("tagsOfIdea").value;
-      //var userId = Meteor.userId();
       var doc = {
                 idea: idea, 
                 nameOfIdea: nameOfIdea,
                 tagsOfIdea: tagsOfIdea,
                 peopleInvolved:{
-                              users: 0,
-                              roles:role
+                              users: [],
+                              roles:[role]
                             },
                 referrer: document.referrer, timestamp: new Date()
                 };
@@ -71,8 +70,7 @@ if (Meteor.isClient) {
           else{
             Meteor.call("updateUserProfile", Meteor.userId(), userRole, new_words);
             var doc = Session.get('ideaData');
-            //doc.peopleInvolved.userId.push(Meteor.userId());
-            //old_words="idea"
+            doc.peopleInvolved.users.push(Meteor.userId());
             var old_words = Meteor.user().profile.words;
             if(doc)
             {
