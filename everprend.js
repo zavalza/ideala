@@ -79,7 +79,7 @@ if (Meteor.isClient) {
             if(doc)
             {
               Meteor.subscribe('people_to_contact', old_words +" "+ new_words) //Probablemente los enviemos separadas, para darle peso a cada palabra
-              Meteor.call("insertIdea", doc);
+              Meteor.call("insertIdea", Meteor.userId(), doc);
             } 
           }
         });
@@ -109,6 +109,7 @@ if (Meteor.isClient) {
                                     lastName:lastName,
                                     roles:[],
                                     words:[],
+                                    ideas:[],
                                   }
                           }, function(err){
                                           if (err) {
@@ -127,7 +128,7 @@ if (Meteor.isClient) {
                                             if(doc)
                                             {
                                               Meteor.subscribe('people_to_contact', new_words)
-                                              Meteor.call("insertIdea", doc);
+                                              Meteor.call("insertIdea", Meteor.userId(), doc);
                                             } 
                                           }
 
@@ -178,7 +179,7 @@ if (Meteor.isServer) {
   
   Meteor.publish('people_to_contact', function(searchText) {
          var doc = {};
-    var ideasIds = Meteor.call("searchPeople",searchText);
+    var ideasIds = Meteor.call("searchIdeas",searchText);
     console.log(ideasIds);
     if (ideasIds) {
         doc._id = {
@@ -225,10 +226,12 @@ if (Meteor.isServer) {
   });
 
     Meteor.methods({
-      insertIdea: function(doc) {
+      insertIdea: function(userId, doc) {
           console.log('Adding Idea with doc');
           console.log(doc);
-          Ideas.insert(doc);
+          var ideaId = Ideas.insert(doc);
+          Meteor.users.update({_id: userId},
+          {$push: {'profile.ideas':ideaId}});
       },
 
       updateUserProfile:function(userId, role, words){
@@ -246,7 +249,7 @@ if (Meteor.isServer) {
         
       },
 
-      _searchPeople: function (searchText) {
+      _searchIdeas: function (searchText) {
       var Future = Npm.require('fibers/future');
       var future = new Future();
       MongoInternals.defaultRemoteCollectionDriver().mongo.db.executeDbCommand({
@@ -271,11 +274,11 @@ if (Meteor.isServer) {
       },
 
       // Helper that extracts the ids from the search results
-      searchPeople: function (searchText) {
+      searchIdeas: function (searchText) {
       if (searchText && searchText !== '') {
-          console.log('Searching...');
-          var searchResults = Meteor.call("_searchPeople", searchText);
-          console.log('Results back');
+          console.log('Searching Ideas...');
+          var searchResults = Meteor.call("_searchIdeas", searchText);
+          console.log('Ideas back');
           var ids = [];
           for (var i = 0; i < searchResults.length; i++) {
               ids.push(searchResults[i].obj._id);
