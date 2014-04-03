@@ -70,18 +70,19 @@ if (Meteor.isClient) {
           }
           else{
             Meteor.call("updateUserProfile", Meteor.userId(), userRole, new_words);
+            var doc = Session.get('ideaData');
+            //doc.peopleInvolved.userId.push(Meteor.userId());
+            //old_words="idea"
+            var old_words = Meteor.user().profile.words;
+            if(doc)
+            {
+              Meteor.subscribe('people_to_contact', old_words +" "+ new_words) //Probablemente los enviemos separadas, para darle peso a cada palabra
+              Meteor.call("insertIdea", doc);
+            } 
           }
         });
       Meteor.subscribe("userData");
-      var doc = Session.get('ideaData');
-      //doc.peopleInvolved.userId.push(Meteor.userId());
-      old_words="idea"
-      //var old_words = Meteor.user.profile.words;
-      if(doc)
-      {
-        Meteor.subscribe('people_to_contact', old_words +" "+ new_words) //Probablemente los enviemos separadas, para darle peso a cada palabra
-        Meteor.call("insertIdea", doc);
-      } 
+      
       Session.set("showPeople", true);
       return false;
     }
