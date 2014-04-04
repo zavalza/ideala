@@ -78,7 +78,7 @@ if (Meteor.isClient) {
             var old_words = Meteor.user().profile.words;
             if(doc)
             {
-              Meteor.subscribe('people_to_contact', old_words +" "+ new_words) //Probablemente los enviemos separadas, para darle peso a cada palabra
+              Meteor.subscribe('people_to_contact', userRole, old_words +" "+ new_words) //Probablemente los enviemos separadas, para darle peso a cada palabra
               Meteor.call("insertIdea", Meteor.userId(), doc);
             } 
           }
@@ -127,7 +127,7 @@ if (Meteor.isClient) {
                                             doc.peopleInvolved.users.push(Meteor.userId());
                                             if(doc)
                                             {
-                                              Meteor.subscribe('people_to_contact', new_words)
+                                              Meteor.subscribe('people_to_contact', userRole, new_words)
                                               Meteor.call("insertIdea", Meteor.userId(), doc);
                                             } 
                                           }
@@ -163,13 +163,13 @@ if (Meteor.isClient) {
 
    Template.people.helpers({
   people_to_contact: function() {
-    return Ideas.find({});
+    return Meteor.users.find({});
   }
   });
 
   Template.userData.helpers({
   user: function() {
-    return Meteor.users.find({});
+    return Meteor.users.find({_id:Meteor.userId()});
   }
   });
 }
@@ -177,16 +177,24 @@ if (Meteor.isClient) {
 if (Meteor.isServer) {
 
   
-  Meteor.publish('people_to_contact', function(searchText) {
+  Meteor.publish('people_to_contact', function(role, searchText) {
          var doc = {};
-    var ideasIds = Meteor.call("searchIdeas",searchText);
-    console.log(ideasIds);
-    if (ideasIds) {
+    var userIds = Meteor.call("searchIdeas",searchText);
+    console.log(userIds);
+    if (userIds) {
         doc._id = {
-            $in: ideasIds
+            $in: userIds
         };
-        console.log(doc);
-      return Ideas.find(doc);
+
+      var matchingPeople = Meteor.users.find(doc)
+        console.log(matchingPeople)
+      //   doc.roles = {
+      //       $nin: role
+      //   };
+      // var ideasWithoutUser = doc
+      //   //console.log(doc);
+
+      return matchingPeople;
     }
     else
     {
@@ -273,7 +281,7 @@ if (Meteor.isServer) {
       return future.wait();
       },
 
-      // Helper that extracts the ids from the search results
+      // Helper that extracts the users ids from the search results
       searchIdeas: function (searchText) {
       if (searchText && searchText !== '') {
           console.log('Searching Ideas...');
@@ -281,7 +289,10 @@ if (Meteor.isServer) {
           console.log('Ideas back');
           var ids = [];
           for (var i = 0; i < searchResults.length; i++) {
-              ids.push(searchResults[i].obj._id);
+              for( var j = 0; j < searchResults[i].obj.peopleInvolved.users.length; j++)
+              {
+                ids.push(searchResults[i].obj.peopleInvolved.users[j]);
+              }
           }
           console.log(ids);
           return ids;
