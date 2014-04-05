@@ -164,6 +164,9 @@ if (Meteor.isClient) {
 
    Template.people.helpers({
   people_to_contact: function() {
+    return Meteor.users.find({});
+  },
+  matching_idea: function(){
     return Ideas.find({});
   }
   });
@@ -180,6 +183,7 @@ if (Meteor.isServer) {
   
   Meteor.publish('people_to_contact', function(role, searchText) {
          var doc = {};
+         var doc2 = {};
     //array of ids, rows are ideasIds and columns are usersIds
     var Ids = Meteor.call("searchIdeas",searchText);
     var ideasIds = new Array();
@@ -203,8 +207,13 @@ if (Meteor.isServer) {
         // doc.peopleInvolved.users={
         //     $in: usersIds
         // };
-
-      var matchingPeople = Ideas.find(doc)
+    if(usersIds){
+      doc2._id={
+          $in:usersIds
+      }
+    }
+      var matchingIdeas = Ideas.find(doc)
+      var matchingPeople = Meteor.users.find(doc2)
         //console.log(matchingPeople)
       //   doc.roles = {
       //       $nin: role
@@ -212,7 +221,7 @@ if (Meteor.isServer) {
       // var ideasWithoutUser = doc
       //   //console.log(doc);
 
-      return matchingPeople;
+      return [matchingIdeas, matchingPeople];
     }
     else
     {

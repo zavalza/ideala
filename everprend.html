@@ -149,9 +149,11 @@
 <template name="people">
   <div class="people">
   <h2>Conéctate</h2>
-    {{#each people_to_contact}}
-        {{> person}}
+    {{#each matching_idea}}
         {{> idea}}
+        {{#each people_to_contact}}
+          {{> person}}
+        {{/each}}
     {{else}}
       <h3> No hubo resultados </h3>
     {{/each}}
@@ -164,7 +166,6 @@
 </template>
 <template name="person">
   <div class="person">
-    {{peopleInvolved.users}} 
     {{profile.firstName}}
     {{profile.lastName}}
     {{#each emails}}
