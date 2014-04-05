@@ -67,6 +67,7 @@ if (Meteor.isClient) {
             //To do if login was not successfull
           }
           else{
+            Session.set("User", Meteor.users.find({_id:Meteor.userId()}).fetch());
             var new_words= Session.get("tagsOfIdea").replace(',',' ');
             var userRole= Session.get("userRole");
             if(new_words && userRole)
@@ -140,6 +141,9 @@ if (Meteor.isClient) {
     }
   });
 
+  Template.navigation.currentUser = function(){
+    return Session.get("User");
+  }
 
   Template.welcome.showLogin = function() {
     return Session.get("showLogin");
@@ -179,6 +183,7 @@ if (Meteor.isServer) {
   
   Meteor.publish('people_to_contact', function(role, searchText) {
          var doc = {};
+    //array of ids, rows are ideasIds and columns are usersIds
     var userIds = Meteor.call("searchIdeas",searchText);
     console.log(userIds);
     if (userIds) {

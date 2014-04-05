@@ -20,7 +20,7 @@
                   <li><a href="#">Contacto</a></li>
                   <li><a href="#" class="Registro">Registro</a></li>-->
                   {{#if currentUser}}
-                  <li class="name"><a class="name" href="#profile">{{>userData}}</a></li>
+                  <li class="name"><a class="name" href="#profile">Salir</a></li>
                   {{/if}}
                 </ul>
               </nav>
@@ -165,6 +165,11 @@
 <template name="person">
   <div class="person">
     {{ username }}
+    {{profile.firstName}}
+    {{profile.lastName}}
+    {{#each emails}}
+      {{address}}
+    {{/each}}
 </template>
 <template name="userData">
 {{#each user}}
