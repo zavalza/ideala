@@ -67,7 +67,7 @@ if (Meteor.isClient) {
             //To do if login was not successfull
           }
           else{
-            Session.set("User", Meteor.users.find({_id:Meteor.userId()}).fetch());
+            //Session.set("Name", Meteor.users.find({_id:Meteor.userId()})).fetch();
             var new_words= Session.get("tagsOfIdea").replace(',',' ');
             var userRole= Session.get("userRole");
             if(new_words && userRole)
@@ -141,9 +141,6 @@ if (Meteor.isClient) {
     }
   });
 
-  Template.navigation.currentUser = function(){
-    return Session.get("User");
-  }
 
   Template.welcome.showLogin = function() {
     return Session.get("showLogin");
@@ -167,7 +164,7 @@ if (Meteor.isClient) {
 
    Template.people.helpers({
   people_to_contact: function() {
-    return Meteor.users.find({});
+    return Ideas.find({});
   }
   });
 
@@ -184,15 +181,31 @@ if (Meteor.isServer) {
   Meteor.publish('people_to_contact', function(role, searchText) {
          var doc = {};
     //array of ids, rows are ideasIds and columns are usersIds
-    var userIds = Meteor.call("searchIdeas",searchText);
-    console.log(userIds);
-    if (userIds) {
+    var Ids = Meteor.call("searchIdeas",searchText);
+    var ideasIds = new Array();
+    var usersIds = new Array();
+    for (var idea in Ids){
+        ideasIds.push(idea)
+        users=Ids[idea]
+        for(var i = 0; i < users.length; i++)
+        {
+          usersIds.push(users[i])
+        }
+    }
+    console.log(Ids);
+    console.log(ideasIds)
+    console.log(usersIds)
+    if (ideasIds) {
         doc._id = {
-            $in: userIds
+            $in: ideasIds
         };
 
-      var matchingPeople = Meteor.users.find(doc)
-        console.log(matchingPeople)
+        // doc.peopleInvolved.users={
+        //     $in: usersIds
+        // };
+
+      var matchingPeople = Ideas.find(doc)
+        //console.log(matchingPeople)
       //   doc.roles = {
       //       $nin: role
       //   };
@@ -292,15 +305,16 @@ if (Meteor.isServer) {
           console.log('Searching Ideas...');
           var searchResults = Meteor.call("_searchIdeas", searchText);
           console.log('Ideas back');
-          var ids = [];
+          var idsDictionary = new Object();
           for (var i = 0; i < searchResults.length; i++) {
+              idsDictionary[searchResults[i].obj._id]=[]
               for( var j = 0; j < searchResults[i].obj.peopleInvolved.users.length; j++)
               {
-                ids.push(searchResults[i].obj.peopleInvolved.users[j]);
+                idsDictionary[searchResults[i].obj._id].push(searchResults[i].obj.peopleInvolved.users[j]);
               }
           }
-          console.log(ids);
-          return ids;
+          console.log(idsDictionary);
+          return idsDictionary;
       }
       }
   });
