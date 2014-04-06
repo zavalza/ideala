@@ -151,8 +151,12 @@
   <h2>Conéctate</h2>
     {{#each matching_idea}}
         {{> idea}}
-        {{#each people_to_contact}}
-          {{> person}}
+        {{#each peopleInvolved.users}}
+          {{profile.firstName}}
+          {{profile.lastName}}
+        {{/each}}
+        {{#each peopleInvolved.roles}}
+          {{this}}
         {{/each}}
     {{else}}
       <h3> No hubo resultados </h3>
@@ -167,10 +171,6 @@
 <template name="person">
   <div class="person">
     {{profile.firstName}}
-    {{profile.lastName}}
-    {{#each emails}}
-      {{address}}
-    {{/each}}
 </template>
 <template name="userData">
 {{#each user}}
