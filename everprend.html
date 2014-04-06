@@ -147,30 +147,38 @@
 </template>
 
 <template name="people">
+  <section class="container">
   <div class="people">
-  <h2>Conéctate</h2>
     {{#each matching_idea}}
-        {{> idea}}
-        {{#each peopleInvolved.users}}
-          {{profile.firstName}}
-          {{profile.lastName}}
-        {{/each}}
-        {{#each peopleInvolved.roles}}
-          {{this}}
-        {{/each}}
+    <div class="cuadroIdea">
+        <p id="descriptionIdea">{{> idea}}</p>
+        {{> persons}}
+    </div>
     {{else}}
       <h3> No hubo resultados </h3>
     {{/each}}
  </div>
+ </section>
 </template>
 <template name="idea">
   <div class="idea">
     {{ nameOfIdea}}
     {{ idea}}
 </template>
-<template name="person">
-  <div class="person">
-    {{profile.firstName}}
+<template name="persons">
+  <div class="persons">
+    {{#each peopleInvolved.users}}
+        {{profile.firstName}}
+        {{profile.lastName}}
+        <div id="correoUser">
+        {{#each emails}}
+          {{address}}
+        {{/each}}
+        </div>
+    {{/each}}
+    {{#each peopleInvolved.roles}}
+        {{this}}
+    {{/each}}
 </template>
 <template name="userData">
 {{#each user}}
