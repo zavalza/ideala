@@ -168,8 +168,10 @@
 <template name="persons">
   <div class="persons">
     {{#each peopleInvolved.users}}
+        <!-- <input type="hidden" id="idOfUser" value="HAoTjmwaLtNuTMK4f"> -->
         {{profile.firstName}}
         {{profile.lastName}}
+        <form><button type="submit" class="person">Ver perfil </button></form>
         <div id="correoUser">
         {{#each emails}}
           {{address}}

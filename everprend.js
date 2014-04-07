@@ -21,6 +21,14 @@ if (Meteor.isClient) {
       Session.set("showNewUser", false);
       return false
     },
+
+    'click .person': function (evt, tmpl) {
+      var idOfUser = tmpl.find('#_id').value;
+      Meteor.subscribe("userProfile", idOfUser);
+      Session.set("showProfile", true);
+      return false
+    },
+
     'click .newUser': function (evt, tmpl) {
       Session.set("showLogin", false);
       Session.set("showNewUser", true);
@@ -205,6 +213,18 @@ if (Meteor.isServer) {
 
   });
 
+  Meteor.publish("userProfile", function (idOfUser) {
+  console.log("publishing profile of");
+  if (idOfUser) {
+    console.log(idOfUser);
+    //console.log("inside if");
+    return Meteor.users.find({_id: idOfUser});
+  } else {
+    this.ready();
+  }
+  });
+
+
   Meteor.publish("userData", function () {
   console.log("publishing user data of");
   if (this.userId) {
@@ -284,6 +304,7 @@ if (Meteor.isServer) {
 
       // Helper that extracts the users ids from the search results
       searchIdeas: function (searchText) {
+        console.log(searchText)
       if (searchText && searchText !== '') {
           console.log('Searching Ideas...');
           var searchResults = Meteor.call("_searchIdeas", searchText);
