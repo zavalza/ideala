@@ -206,12 +206,12 @@ if (Meteor.isClient) {
   Template.profile.helpers({
   user_profile: function() {
     return Meteor.users.find({});
-  }
+  },
 
   ideaName: function (ideaId) {
-  var Idea = Ideas.findOne({_id: ideaId});
-  return Idea.nameOfIdea;
-  },
+   
+  return Ideas.find({_id: ideaId},{fields: { 'nameOfIdea': 1}});
+  }
 
   });
 

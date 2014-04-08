@@ -192,7 +192,9 @@
         {{profile.firstName}}
         {{profile.lastName}}
         {{#each profile.ideas}}
-          {{ideaName ._id}}
+          {{#each ideaName this}}
+              {{nameOfIdea}}
+          {{/each}}
         {{/each}}
     {{/each}}
   </div>
