@@ -17,8 +17,8 @@
               <nav>
                 <ul>
                   <!--<li><a href="#">Acerca de</a></li>
-                  <li><a href="#">Contacto</a></li>
-                  <li><a href="#" class="Registro">Registro</a></li>-->
+                  <li><a href="#">Contacto</a></li>-->
+                  <li><a href="#" class="login">Ingresar</a></li>
                   {{#if currentUser}}
                   <li class="name"><a class="name" href="#profile">{{>userData}}</a></li>
                   {{/if}}
@@ -30,7 +30,11 @@
 
 <template name="main">
   {{#if currentUser}}
-  {{>people}}
+      {{#if showProfile}}
+          {{>profile}}
+      {{else}}
+          {{>people}}
+      {{/if}}
   {{else}}
   {{>welcome}}
   {{/if}}
@@ -71,7 +75,7 @@
           <form method="post" action="index.html">
                 <p><textarea type="text" id="idea" placeholder="Cuéntanos tu idea"></textarea></p>
                 <p><input type="text" class="form-control" id="nameOfIdea" placeholder="Ponle un nombre"></p>
-                <p><input type="text" name="typeOfIdea" id="tagsOfIdea" placeholder="Palabras clave de tu idea"><p>
+                <p><input type="text" name="typeOfIdea" id="tagsOfIdea" placeholder="Palabras clave de tu idea"></p>
                 <p>¿Desde cuando trabajas en ella?</p>
                 <input type="date" name="fecha">
                 <p>¿Cual es tu rol?</p>
@@ -83,8 +87,8 @@
                 <option value="marketing">Difundirlo/Promocionarlo</option>
                 <option value="money"> Financearlo</option>
                </select>
-                <p class="submit"><input id="submitCC"  type="submit"  class="signup" name="commit" value="Registrar"></p>
-                
+                <p class="submit"><input id="submitCC"  type="submit"  class="signup" name="commit" value="Registrar">
+                </p>    
           </form>
     </div>
   </section>
@@ -126,8 +130,8 @@
         <p><input type="text" class="form-control" id="username" placeholder="Usuario"></p>
         <p><input type="text" class="form-control" id="email" placeholder="Correo Electrónico"></p>
         <p><input type="password" class="form-control" id="password" placeholder="Contraseña"></p>
-        <p class="submit"><input id="submitBoton" class="createUser"type="submit" name="commit" value="Registrarse"></p>
-        <form>
+        <p class="submit"><input id="submitBoton" class="createUser" type="submit" name="commit" value="Registrarse"></p>
+        </form>
     </div>
   </section>
 </template>
@@ -164,14 +168,16 @@
   <div class="idea">
     {{ nameOfIdea}}
     {{ idea}}
+  </div>
 </template>
 <template name="persons">
   <div class="persons">
     {{#each peopleInvolved.users}}
-        <!-- <input type="hidden" id="idOfUser" value="HAoTjmwaLtNuTMK4f"> -->
+        <form>
         {{profile.firstName}}
         {{profile.lastName}}
-        <form><button type="submit" class="person">Ver perfil </button></form>
+        <button type="submit" class="person">Ver perfil </button>
+        </form>
         <div id="correoUser">
         {{#each emails}}
           {{address}}
@@ -181,6 +187,15 @@
     {{#each peopleInvolved.roles}}
         {{this}}
     {{/each}}
+  </div>
+</template>
+<template name="profile">
+  <div class="profile">
+    {{#each user}}
+        {{profile.firstName}}
+        {{profile.lastName}}
+    {{/each}}
+  </div>
 </template>
 <template name="userData">
 {{#each user}}

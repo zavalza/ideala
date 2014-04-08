@@ -5,6 +5,5 @@
 
 standard-app-packages
 insecure
-preserve-inputs
 accounts-ui
 accounts-password

@@ -11,6 +11,12 @@ if (Meteor.isClient) {
     'click .name': function (evt, tmpl) {
       Meteor.logout()
       return false
+    },
+
+    'click .login':function(evt, tmpl){
+      Session.set("showRegisterForm", false);
+      Session.set("showLogin", true);
+      return false
     }
   });
 
@@ -23,8 +29,10 @@ if (Meteor.isClient) {
     },
 
     'click .person': function (evt, tmpl) {
-      var idOfUser = tmpl.find('#_id').value;
-      Meteor.subscribe("userProfile", idOfUser);
+      //var idOfUser = tmpl.find('#_id').value;
+      //'Yymz7cQYErsHc4RDv'
+      var id = evt.currentTarget._id;
+      Meteor.subscribe("userProfile", id);
       Session.set("showProfile", true);
       return false
     },
@@ -89,12 +97,17 @@ if (Meteor.isClient) {
             {
               Meteor.subscribe('people_to_contact', userRole, old_words +" "+ new_words) //Probablemente los enviemos separadas, para darle peso a cada palabra
               Meteor.call("insertIdea", Meteor.userId(), doc);
+            }
+            else
+            {
+              Meteor.subscribe('people_to_contact', "given", old_words);
             } 
+            Meteor.subscribe("userData");
+            Session.set("showProfile", false);
           }
         });
-      Meteor.subscribe("userData");
       
-      Session.set("showPeople", true);
+      //Session.set("showPeople", true);
       return false;
     }
   });
@@ -162,6 +175,10 @@ if (Meteor.isClient) {
     return Session.get("showPeople");
   };
 
+  Template.main.showProfile = function() {
+    return Session.get("showProfile");
+  };
+
  Template.main.showLogin = function() {
   return Session.get("showLogin");
   };
@@ -183,6 +200,12 @@ if (Meteor.isClient) {
   Template.userData.helpers({
   user: function() {
     return Meteor.users.find({_id:Meteor.userId()});
+  }
+  });
+
+  Template.profile.helpers({
+  user: function() {
+    return Meteor.users.find({});
   }
   });
 }
