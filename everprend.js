@@ -31,7 +31,7 @@ if (Meteor.isClient) {
     'click .person': function (evt, tmpl) {
       //var idOfUser = tmpl.find('#_id').value;
       //'Yymz7cQYErsHc4RDv'
-      var id = evt.currentTarget._id;
+      var id = this._id;
       Meteor.subscribe("userProfile", id);
       Session.set("showProfile", true);
       return false
@@ -204,7 +204,7 @@ if (Meteor.isClient) {
   });
 
   Template.profile.helpers({
-  user: function() {
+  user_profile: function() {
     return Meteor.users.find({});
   }
   });

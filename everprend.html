@@ -171,27 +171,24 @@
   </div>
 </template>
 <template name="persons">
-  <div class="persons">
     {{#each peopleInvolved.users}}
-        <form>
+      <span class="person" title="Ver perfil">
         {{profile.firstName}}
         {{profile.lastName}}
-        <button type="submit" class="person">Ver perfil </button>
-        </form>
         <div id="correoUser">
         {{#each emails}}
           {{address}}
         {{/each}}
         </div>
+      </span>
     {{/each}}
     {{#each peopleInvolved.roles}}
         {{this}}
     {{/each}}
-  </div>
 </template>
 <template name="profile">
   <div class="profile">
-    {{#each user}}
+    {{#each user_profile}}
         {{profile.firstName}}
         {{profile.lastName}}
     {{/each}}
