@@ -207,7 +207,18 @@ if (Meteor.isClient) {
   user_profile: function() {
     return Meteor.users.find({});
   }
+
+  ideaName: function (ideaId) {
+  var Idea = Ideas.findOne({_id: ideaId});
+  return Idea.nameOfIdea;
+  },
+
   });
+
+  // Template.profile.rendered = function(){
+  //   var ideas = this.profile.ideas;
+
+  // };
 }
 
 if (Meteor.isServer) {

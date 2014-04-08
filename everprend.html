@@ -191,6 +191,9 @@
     {{#each user_profile}}
         {{profile.firstName}}
         {{profile.lastName}}
+        {{#each profile.ideas}}
+          {{ideaName ._id}}
+        {{/each}}
     {{/each}}
   </div>
 </template>
