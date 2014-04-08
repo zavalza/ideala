@@ -151,36 +151,31 @@
 </template>
 
 <template name="people">
-  <section class="container">
   <div class="people">
     {{#each matching_idea}}
+    <section class="container">
     <div class="cuadroIdea">
-        <p id="descriptionIdea">{{> idea}}</p>
-        {{> persons}}
+        {{>idea}}
+        {{>persons}}
     </div>
+     </section>
     {{else}}
       <h3> No hubo resultados </h3>
     {{/each}}
  </div>
- </section>
 </template>
 <template name="idea">
-  <div class="idea">
-    {{ nameOfIdea}}
-    {{ idea}}
-  </div>
+    <h1>{{nameOfIdea}}</h1>
+    <p id="descriptionIdea">{{idea}}</p>
 </template>
 <template name="persons">
     {{#each peopleInvolved.users}}
       {{#each user this}}
-      <span class="person" title="Ver perfil">
-        {{profile.firstName}}
-        {{profile.lastName}}
-        <div id="correoUser">
+        <span class="person" title="Ver perfil">
+        <p>{{profile.firstName}} {{profile.lastName}} </p>
         {{#each emails}}
-          {{address}}
+            <div id="correoUser">{{address}}</div>
         {{/each}}
-        </div>
       </span>
       {{/each}}
     {{/each}}
@@ -189,18 +184,24 @@
     {{/each}}
 </template>
 <template name="profile">
-  <div class="profile">
     {{#each user}}
-        {{profile.firstName}}
-        {{profile.lastName}}
+    <section class="container">
+      <div class="perfilUsuario">
+        <h1>{{profile.firstName}} {{profile.lastName}}</h1>
+        <p id="titulos">Portafolio</p>
+        <div id="pProyectos">
         {{#each profile.ideas}}
           {{#each idea_data this}}
-              {{nameOfIdea}}
+              <div id="sectionProyectos">
+              <p>{{nameOfIdea}}</p>
               {{idea}}
+              </div>
           {{/each}}
         {{/each}}
+        </div>
+      </div>
+    </section>
     {{/each}}
-  </div>
 </template>
 <template name="userData">
 {{#each user}}

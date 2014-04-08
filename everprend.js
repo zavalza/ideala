@@ -195,7 +195,7 @@ if (Meteor.isClient) {
 
   Template.persons.helpers({
     user: function(userId) {
-    //return Meteor.users.find({});
+    Meteor.subscribe("userProfile", userId);
     return  Meteor.users.find({_id: userId});
     }
   });
@@ -208,7 +208,7 @@ if (Meteor.isClient) {
 
   Template.profile.helpers({
   user: function() {
-    return Meteor.users.find({});
+    return Meteor.users.find({_id:{$ne:Meteor.userId()}});
   },
 
   idea_data: function (ideaId) {
