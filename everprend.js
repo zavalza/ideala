@@ -91,7 +91,7 @@ if (Meteor.isClient) {
                 Meteor.call("updateUserProfile", Meteor.userId(), userRole, new_words);
             }
             var doc = Session.get('ideaData');
-            doc.peopleInvolved.users.push(Meteor.user());
+            doc.peopleInvolved.users.push(Meteor.userId());
             var old_words = Meteor.user().profile.words;
             if(doc)
             {
@@ -146,7 +146,7 @@ if (Meteor.isClient) {
                                                 Meteor.call("updateUserProfile", Meteor.userId(), userRole, new_words);
                                             }
                                             var doc = Session.get('ideaData');
-                                            doc.peopleInvolved.users.push(Meteor.user());
+                                            doc.peopleInvolved.users.push(Meteor.userId());
                                             if(doc)
                                             {
                                               Meteor.subscribe('people_to_contact', userRole, new_words)
@@ -188,13 +188,16 @@ if (Meteor.isClient) {
   };
 
    Template.people.helpers({
-  people_to_contact: function() {
-    //return Meteor.users.find({});
-    return  Ideas.findOne({}, {fields: { 'peopleInvolved.users': 1}});
-  },
-  matching_idea: function(){
+    matching_idea: function(){
     return Ideas.find({});
-  }
+    }
+  });
+
+  Template.persons.helpers({
+    user: function(userId) {
+    //return Meteor.users.find({});
+    return  Meteor.users.find({_id: userId});
+    }
   });
 
   Template.userData.helpers({
@@ -204,21 +207,16 @@ if (Meteor.isClient) {
   });
 
   Template.profile.helpers({
-  user_profile: function() {
+  user: function() {
     return Meteor.users.find({});
   },
 
-  ideaName: function (ideaId) {
+  idea_data: function (ideaId) {
    
-  return Ideas.find({_id: ideaId},{fields: { 'nameOfIdea': 1}});
+  return Ideas.find({_id: ideaId});
   }
 
   });
-
-  // Template.profile.rendered = function(){
-  //   var ideas = this.profile.ideas;
-
-  // };
 }
 
 if (Meteor.isServer) {

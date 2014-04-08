@@ -172,6 +172,7 @@
 </template>
 <template name="persons">
     {{#each peopleInvolved.users}}
+      {{#each user this}}
       <span class="person" title="Ver perfil">
         {{profile.firstName}}
         {{profile.lastName}}
@@ -181,6 +182,7 @@
         {{/each}}
         </div>
       </span>
+      {{/each}}
     {{/each}}
     {{#each peopleInvolved.roles}}
         {{this}}
@@ -188,12 +190,13 @@
 </template>
 <template name="profile">
   <div class="profile">
-    {{#each user_profile}}
+    {{#each user}}
         {{profile.firstName}}
         {{profile.lastName}}
         {{#each profile.ideas}}
-          {{#each ideaName this}}
+          {{#each idea_data this}}
               {{nameOfIdea}}
+              {{idea}}
           {{/each}}
         {{/each}}
     {{/each}}
