@@ -18,7 +18,7 @@
                 <ul>
                   <!--<li><a href="#">Acerca de</a></li>
                   <li><a href="#">Contacto</a></li>-->
-                  <li><a href="#" class="login">Ingresar</a></li>
+                  <li><a href="#" class="showLogin" id="ingresar">Ingresar</a></li>
                   {{#if currentUser}}
                   <li class="name"><a class="name" href="#profile">{{>userData}}</a></li>
                   {{/if}}
@@ -154,13 +154,17 @@
   <div class="people">
     {{#each matching_idea}}
     <section class="container">
-    <div class="cuadroIdea">
+    <div class="perfilIdeas">
         {{>idea}}
         {{>persons}}
     </div>
      </section>
     {{else}}
+    <section class="container">
+      <div class="cuadroIdea">
       <h3> No hubo resultados </h3>
+    </div>
+    </section>
     {{/each}}
  </div>
 </template>
@@ -193,8 +197,7 @@
         {{#each profile.ideas}}
           {{#each idea_data this}}
               <div id="sectionProyectos">
-              <p>{{nameOfIdea}}</p>
-              {{idea}}
+              <p>{{nameOfIdea}} {{idea}} </p>
               </div>
           {{/each}}
         {{/each}}

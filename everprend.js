@@ -13,7 +13,7 @@ if (Meteor.isClient) {
       return false
     },
 
-    'click .login':function(evt, tmpl){
+    'click .showLogin':function(evt, tmpl){
       Session.set("showRegisterForm", false);
       Session.set("showLogin", true);
       return false

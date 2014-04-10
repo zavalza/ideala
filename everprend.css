@@ -476,8 +476,8 @@ input#submitBoton:active
 /* Despliegue de Ideas Css*/
 .cuadroIdea{
   position: relative;
-  margin: 0 auto;
-  padding: 20px 20px 20px;
+  margin: 50px auto;
+  padding: 20px 20px 20px 20px;
   width: 600px;
   background: white;
   border-radius: 3px;
@@ -510,7 +510,7 @@ div#correoUser
 /*Perfil ideas*/
 .perfilIdeas{
   position: relative;
-  margin: 0 auto;
+  margin: 30px auto;
   padding: 20px 20px 20px;
   width: 600px;
   background: white;
