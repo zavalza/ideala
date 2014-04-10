@@ -18,9 +18,11 @@
                 <ul>
                   <!--<li><a href="#">Acerca de</a></li>
                   <li><a href="#">Contacto</a></li>-->
-                  <li><a href="#" class="showLogin" id="ingresar">Ingresar</a></li>
                   {{#if currentUser}}
-                  <li class="name"><a class="name" href="#profile">{{>userData}}</a></li>
+                    <li class="name"><a class="name" href="#profile">{{>userData}}</a></li>
+                    <li><a href="#" class="tryLogout" id="salir">Salir</a></li>
+                  {{else}}
+                    <li><a href="#" class="showLogin" id="ingresar">Ingresar</a></li>
                   {{/if}}
                 </ul>
               </nav>

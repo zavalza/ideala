@@ -10,8 +10,18 @@ if (Meteor.isClient) {
       Session.set("showPeople", false)
       return false
     },
-    'click .name': function (evt, tmpl) {
-      Meteor.logout()
+    'click .tryLogout': function (evt, tmpl) {
+      Meteor.logout(function(err){
+          if (err)
+          {
+            //To do if logout was not successfull
+          }
+          else{
+              Session.set("tagsOfIdea", " ")
+              Session.set("userRole", " ")
+              Session.set("ideaData", " ")
+            }
+          });
       return false
     },
 
@@ -89,7 +99,7 @@ if (Meteor.isClient) {
             //Session.set("Name", Meteor.users.find({_id:Meteor.userId()})).fetch();
             var new_words= Session.get("tagsOfIdea");
             var userRole= Session.get("userRole");
-            if(new_words && userRole)
+            if((new_words != " ") && (userRole != " "))
             {
                 var words = new_words.replace(',',' ');
                 Meteor.call("updateUserProfile", Meteor.userId(), userRole, words);
@@ -97,7 +107,7 @@ if (Meteor.isClient) {
             var doc = Session.get('ideaData');
             doc.peopleInvolved.users.push(Meteor.userId());
             var old_words = Meteor.user().profile.words;
-            if(doc)
+            if(doc != " ")
             {
               Meteor.subscribe('people_to_contact', userRole, old_words +","+ new_words) //Probablemente los enviemos separadas, para darle peso a cada palabra
               Meteor.call("insertIdea", Meteor.userId(), doc);
@@ -194,7 +204,7 @@ if (Meteor.isClient) {
 
    Template.people.helpers({
     matching_idea: function(){
-    return Ideas.find({});
+    return Ideas.find({'peopleInvolved.users':{$nin:[Meteor.userId()]}});
     }
   });
 
@@ -238,7 +248,7 @@ if (Meteor.isServer) {
         doc._id = {
             $in: ideasIds
         };
-      var matchingIdeas = Ideas.find(doc,{sort:{lastScore:1}});
+      var matchingIdeas = Ideas.find(doc,{sort:{lastScore:-1}});
 
 
       return matchingIdeas;
@@ -357,7 +367,7 @@ if (Meteor.isServer) {
               var id = searchResults[i].obj._id;
               var score = searchResults[i].score;
               console.log(score);
-              Ideas.update({_id: id}, {lastScore: score});
+              Ideas.update({_id: id}, {$set: {'lastScore':score}});
               ids.push(id);
           }
           console.log(ids);
