@@ -1,3 +1,5 @@
+//Separar tus tags por commas - regex 
+
 Ideas = new Meteor.Collection("ideas")
 
 if (Meteor.isClient) {
@@ -55,6 +57,7 @@ if (Meteor.isClient) {
                 idea: idea, 
                 nameOfIdea: nameOfIdea,
                 tagsOfIdea: tagsOfIdea,
+                lastScore: 0,
                 peopleInvolved:{
                               users: [],
                               roles:[role]
@@ -84,18 +87,19 @@ if (Meteor.isClient) {
           }
           else{
             //Session.set("Name", Meteor.users.find({_id:Meteor.userId()})).fetch();
-            var new_words= Session.get("tagsOfIdea").replace(',',' ');
+            var new_words= Session.get("tagsOfIdea");
             var userRole= Session.get("userRole");
             if(new_words && userRole)
             {
-                Meteor.call("updateUserProfile", Meteor.userId(), userRole, new_words);
+                var words = new_words.replace(',',' ');
+                Meteor.call("updateUserProfile", Meteor.userId(), userRole, words);
             }
             var doc = Session.get('ideaData');
             doc.peopleInvolved.users.push(Meteor.userId());
             var old_words = Meteor.user().profile.words;
             if(doc)
             {
-              Meteor.subscribe('people_to_contact', userRole, old_words +" "+ new_words) //Probablemente los enviemos separadas, para darle peso a cada palabra
+              Meteor.subscribe('people_to_contact', userRole, old_words +","+ new_words) //Probablemente los enviemos separadas, para darle peso a cada palabra
               Meteor.call("insertIdea", Meteor.userId(), doc);
             }
             else
@@ -139,11 +143,12 @@ if (Meteor.isClient) {
                                           } else {
                                             // Success. Account has been created and the user
                                             // has logged in successfully.
-                                            var new_words= Session.get("tagsOfIdea").replace(',',' ');
+                                            var new_words= Session.get("tagsOfIdea")
                                             var userRole= Session.get("userRole");
                                             if(new_words && userRole)
                                             {
-                                                Meteor.call("updateUserProfile", Meteor.userId(), userRole, new_words);
+                                                var words = new_words.replace(',',' ');
+                                                Meteor.call("updateUserProfile", Meteor.userId(), userRole, words);
                                             }
                                             var doc = Session.get('ideaData');
                                             doc.peopleInvolved.users.push(Meteor.userId());
@@ -228,11 +233,12 @@ if (Meteor.isServer) {
     var ideasIds = Meteor.call("searchIdeas",searchText);
    
     console.log(ideasIds)
+
     if (ideasIds) {
         doc._id = {
             $in: ideasIds
         };
-      var matchingIdeas = Ideas.find(doc)
+      var matchingIdeas = Ideas.find(doc,{sort:{lastScore:1}});
 
 
       return matchingIdeas;
@@ -275,7 +281,7 @@ if (Meteor.isServer) {
 
     // Remove old indexes as you can only have one text index and if you add 
     // more fields to your index then you will need to recreate it.
-    //Ideas._dropIndex(search_index_name);
+    Ideas._dropIndex(search_index_name);
 
     //text
     Ideas._ensureIndex({
@@ -283,6 +289,8 @@ if (Meteor.isServer) {
         tagsOfIdea: 'text'
     }, {
         name: 'peopleFinder'
+    },{
+      weight: {idea: 1, tagsOfIdea: 3}
     });
   });
 
@@ -311,12 +319,15 @@ if (Meteor.isServer) {
       },
 
       _searchIdeas: function (searchText) {
+      console.log(typeof(searchText));
+      console.log(searchText);
+      
       var Future = Npm.require('fibers/future');
       var future = new Future();
       MongoInternals.defaultRemoteCollectionDriver().mongo.db.executeDbCommand({
           text:'ideas', //Collection
           search: searchText, //String to search, sustitute with words
-          //limit:3 
+          //limit:3
           // project: { //No funciona en nuestra base de datos
           // id: 1 // Only take the ids
           // }
@@ -343,7 +354,11 @@ if (Meteor.isServer) {
           console.log('Ideas back');
           var ids=[]
           for (var i = 0; i < searchResults.length; i++) {
-              ids.push(searchResults[i].obj._id);
+              var id = searchResults[i].obj._id;
+              var score = searchResults[i].score;
+              console.log(score);
+              Ideas.update({_id: id}, {lastScore: score});
+              ids.push(id);
           }
           console.log(ids);
           return ids;
