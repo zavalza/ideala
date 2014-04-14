@@ -1,5 +1,5 @@
 <head>
-   <title>Everprend</title>
+   <title>Ideala</title>
    <link href='http://fonts.googleapis.com/css?family=Muli' rel='stylesheet' type='text/css'>
 </head>
 
@@ -13,7 +13,7 @@
 <template name="navigation">
   <header>
           <div class="container">
-            <h1><a href="">Everprend</a></h1>
+            <h1><a href="">Ideala</a></h1>
               <nav>
                 <ul>
                   <!--<li><a href="#">Acerca de</a></li>
@@ -35,10 +35,14 @@
       {{#if showProfile}}
           {{>profile}}
       {{else}}
-          {{>people}}
+          {{>ideas}}
       {{/if}}
   {{else}}
-  {{>welcome}}
+    {{#if showSimilarIdeas}}
+      {{>ideas}}
+    {{else}}
+      {{>welcome}}
+    {{/if}}
   {{/if}}
 </template>
 
@@ -51,22 +55,44 @@
           {{#if showNewUser}}
               {{>newUserForm}}
           {{else}}
-              {{#if showRegisterForm}}
-                {{>registerForm}}
-              {{else}}
-                {{>welcomeMessage}}
-              {{/if}}
+              {{>welcomeMessage}}
           {{/if}}
       {{/if}}
   </div>
 </template>
 
 <template name="welcomeMessage">
-    <h1>Bienvenido a Everprend</h1>
-    <p>Una nueva plataforma para conectar emprendedores y sus ideas</p>
+    <h1>Ideala</h1>
+    <p>Guarda tu idea, observa cómo crece</p>
     <br>
-    <br>
-    <p class="submit"><input id="submitBoton" class="entrar" type="submit" name="commit" value="Registrar una idea"></p>
+    {{>newIdea}}
+</template>
+
+<template name="newIdea">
+  <form method="post" action="index.html">
+        <p><textarea type="text" id="idea" placeholder="¿Cuál es tu idea?"></textarea></p>
+        <p><input type="text" name="typeOfIdea" id="tagsOfIdea" placeholder="Palabras clave de tu idea"></p>
+        <p class="submit"><input type="submit"  class="searchIdea" value="Empezar"></p>    
+  </form>
+</template>
+
+<template name="ideas">
+  <h2>Ideas similares</h2>
+  <p class="submit"><input type="submit"  class="saveIdea" value="Mi idea es diferente"></p>
+  {{#each matching_idea}}
+  <section class="container">
+  <div class="perfilIdeas">
+      {{>idea}}
+  </div>
+  </section>
+  {{else}}
+  <!--Aqui se debe de añadir la idea, probablemente en la funcion del js"-->
+  <section class="container">
+    <div class="cuadroIdea">
+    <h3>No encontramos ideas similares, tu idea ha sido guardada </h3>
+  </div>
+  </section>
+  {{/each}}
 </template>
 
   <!-- Seccion:"RegisterForm"-->
@@ -138,19 +164,6 @@
   </section>
 </template>
 
-<!-- Seccion:"ResultadodeIdeasSimilares"-->
-<template name="busquedaIdeas">
-  <section class="container">
-          <div class="cuadroIdea">
-              <h1>Everprend</h1> 
-              <p>Descripción:</p>
-              <p id="descriptionIdea">Una plataforma para conectar ideas y emprendedores alrededor del mundo</p>
-            <p>Usuario:</p>
-            <p>Paul Zavalza</p>
-            <div id="correoUser"> paulzavalza@gmail.com</div>
-          </div>
-        </section>
-</template>
 
 <template name="people">
   <div class="people">
@@ -171,7 +184,6 @@
  </div>
 </template>
 <template name="idea">
-    <h1>{{nameOfIdea}}</h1>
     <p id="descriptionIdea">{{idea}}</p>
 </template>
 <template name="persons">
@@ -179,10 +191,7 @@
       {{#each user this}}
         <span class="person" title="Ver perfil">
         <p>{{profile.firstName}} {{profile.lastName}} </p>
-        {{#each emails}}
-            <div id="correoUser">{{address}}</div>
-        {{/each}}
-      </span>
+        </span>
       {{/each}}
     {{/each}}
     {{#each peopleInvolved.roles}}

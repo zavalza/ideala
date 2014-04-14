@@ -40,6 +40,28 @@ if (Meteor.isClient) {
       return false
     },
 
+    'click .saveIdea': function (evt, tmpl) {
+      evt.preventDefault();
+      var idea = document.getElementById("idea").value;
+      //Separacion de tags
+      var tagsOfIdea = document.getElementById("tagsOfIdea").value;
+      var doc = {
+                idea: idea, 
+                nameOfIdea: " ",
+                tagsOfIdea: tagsOfIdea,
+                lastScore: 0,
+                peopleInvolved:{
+                              users: [],
+                              roles:[]
+                            },
+                referrer: document.referrer, timestamp: new Date()
+                };
+      Session.set("ideaData", doc);
+      Session.set("tagsOfIdea",tagsOfIdea);
+      Meteor.subscribe('similar_ideas', tagsOfIdea, Session.set("showSimilarIdeas", true));
+      return false
+    },
+
     'click .person': function (evt, tmpl) {
       //var idOfUser = tmpl.find('#_id').value;
       //'Yymz7cQYErsHc4RDv'
@@ -109,12 +131,12 @@ if (Meteor.isClient) {
             var old_words = Meteor.user().profile.words;
             if(doc != " ")
             {
-              Meteor.subscribe('people_to_contact', userRole, old_words +","+ new_words) //Probablemente los enviemos separadas, para darle peso a cada palabra
+              Meteor.subscribe('similar_ideas', old_words +","+ new_words) //Probablemente los enviemos separadas, para darle peso a cada palabra
               Meteor.call("insertIdea", Meteor.userId(), doc);
             }
             else
             {
-              Meteor.subscribe('people_to_contact', "given", old_words);
+              Meteor.subscribe('similar_ideas', old_words);
             } 
             Meteor.subscribe("userData");
             Session.set("showProfile", false);
@@ -164,7 +186,7 @@ if (Meteor.isClient) {
                                             doc.peopleInvolved.users.push(Meteor.userId());
                                             if(doc)
                                             {
-                                              Meteor.subscribe('people_to_contact', userRole, new_words)
+                                              Meteor.subscribe('similar_ideas', new_words)
                                               Meteor.call("insertIdea", Meteor.userId(), doc);
                                             } 
                                           }
@@ -190,6 +212,10 @@ if (Meteor.isClient) {
     return Session.get("showPeople");
   };
 
+  Template.main.showSimilarIdeas = function() {
+    return Session.get("showSimilarIdeas");
+  };
+
   Template.main.showProfile = function() {
     return Session.get("showProfile");
   };
@@ -202,7 +228,7 @@ if (Meteor.isClient) {
   return Session.get("showNewUser");
   };
 
-   Template.people.helpers({
+   Template.ideas.helpers({
     matching_idea: function(){
     return Ideas.find({'peopleInvolved.users':{$nin:[Meteor.userId()]}});
     }
@@ -237,7 +263,7 @@ if (Meteor.isClient) {
 if (Meteor.isServer) {
 
   
-  Meteor.publish('people_to_contact', function(role, searchText) {
+  Meteor.publish('similar_ideas', function(searchText) {
          var doc = {};
 
     var ideasIds = Meteor.call("searchIdeas",searchText);
@@ -287,7 +313,7 @@ if (Meteor.isServer) {
   Meteor.startup(function () {
     // code to run on server at startup
     //Comment this line the first time, so Meteor can find the index_name afterwards
-    search_index_name = 'peopleFinder'
+    search_index_name = 'ideasFinder'
 
     // Remove old indexes as you can only have one text index and if you add 
     // more fields to your index then you will need to recreate it.
@@ -298,7 +324,7 @@ if (Meteor.isServer) {
         idea: 'text',
         tagsOfIdea: 'text'
     }, {
-        name: 'peopleFinder'
+        name: 'ideasFinder'
     },{
       weight: {idea: 1, tagsOfIdea: 3}
     });
@@ -336,7 +362,7 @@ if (Meteor.isServer) {
       var future = new Future();
       MongoInternals.defaultRemoteCollectionDriver().mongo.db.executeDbCommand({
           text:'ideas', //Collection
-          search: searchText, //String to search, sustitute with words
+          search: searchText, //String to search
           //limit:3
           // project: { //No funciona en nuestra base de datos
           // id: 1 // Only take the ids
