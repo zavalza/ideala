@@ -72,10 +72,10 @@ if (Meteor.isClient) {
             Session.set("tagsOfIdea", " ")
         }
         var doc = Session.get('ideaData');
-        doc.peopleInvolved.users.push(Meteor.userId());
         var old_words = Meteor.user().profile.words;
         if(doc != " ")
         {
+          doc.peopleInvolved.users.push(Meteor.userId());
           Meteor.subscribe('similar_ideas', old_words +","+ new_words)
           Meteor.call("insertIdea", Meteor.userId(), doc);
           Session.set("ideaData", " ")
@@ -158,10 +158,15 @@ if (Meteor.isClient) {
                 Session.set("tagsOfIdea", " ")
             }
             var doc = Session.get('ideaData');
-            doc.peopleInvolved.users.push(Meteor.userId());
-            var old_words = Meteor.user().profile.words;
+            var old_wordsArray = Meteor.user().profile.words;
+            var old_words = " ";
+            for(var i = 0; i < old_wordsArray.length; i++)
+            {
+              var old_words = old_words + " "+ old_wordsArray[i];
+            }
             if(doc != " ")
             {
+              doc.peopleInvolved.users.push(Meteor.userId());
               Meteor.subscribe('similar_ideas', old_words +","+ new_words)
               Meteor.call("insertIdea", Meteor.userId(), doc);
               Session.set("ideaData", " ")
@@ -213,10 +218,16 @@ if (Meteor.isClient) {
                                                 Session.set("tagsOfIdea", " ")
                                             }
                                             var doc = Session.get('ideaData');
-                                            doc.peopleInvolved.users.push(Meteor.userId());
-                                            var old_words = Meteor.user().profile.words;
+                                            var old_wordsArray = Meteor.user().profile.words;
+                                            var old_words = " ";
+                                            for(var i = 0; i < old_wordsArray.length; i++)
+                                            {
+                                              var old_words = old_words + " "+ old_wordsArray[i];
+                                            }
+                                              
                                             if(doc != " ")
                                             {
+                                              doc.peopleInvolved.users.push(Meteor.userId());
                                               Meteor.subscribe('similar_ideas', old_words +","+ new_words)
                                               Meteor.call("insertIdea", Meteor.userId(), doc);
                                               Session.set("ideaData", " ")
