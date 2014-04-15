@@ -18,7 +18,6 @@ if (Meteor.isClient) {
           }
           else{
               Session.set("tagsOfIdea", " ")
-              Session.set("userRole", " ")
               Session.set("ideaData", " ")
             }
           });
@@ -40,7 +39,7 @@ if (Meteor.isClient) {
       return false
     },
 
-    'click .saveIdea': function (evt, tmpl) {
+    'click .searchIdea': function (evt, tmpl) {
       evt.preventDefault();
       var idea = document.getElementById("idea").value;
       //Separacion de tags
@@ -59,6 +58,39 @@ if (Meteor.isClient) {
       Session.set("ideaData", doc);
       Session.set("tagsOfIdea",tagsOfIdea);
       Meteor.subscribe('similar_ideas', tagsOfIdea, Session.set("showSimilarIdeas", true));
+      return false
+    },
+
+    'click .saveIdea': function (evt, tmpl) {
+    if (Meteor.userId())
+    {
+       var new_words= Session.get("tagsOfIdea");
+        if((new_words != " "))
+        {
+            var words = new_words.replace(',',' ');
+            Meteor.call("updateUserProfile", Meteor.userId(), words);
+            Session.set("tagsOfIdea", " ")
+        }
+        var doc = Session.get('ideaData');
+        doc.peopleInvolved.users.push(Meteor.userId());
+        var old_words = Meteor.user().profile.words;
+        if(doc != " ")
+        {
+          Meteor.subscribe('similar_ideas', old_words +","+ new_words)
+          Meteor.call("insertIdea", Meteor.userId(), doc);
+          Session.set("ideaData", " ")
+        }
+        else
+        {
+          Meteor.subscribe('similar_ideas', old_words);
+        } 
+        Meteor.subscribe("userData");
+    }
+    else
+    {
+      Session.set("showSimilarIdeas", false);
+      Session.set("showLogin", true);
+    }
       return false
     },
 
@@ -118,32 +150,30 @@ if (Meteor.isClient) {
             //To do if login was not successfull
           }
           else{
-            //Session.set("Name", Meteor.users.find({_id:Meteor.userId()})).fetch();
             var new_words= Session.get("tagsOfIdea");
-            var userRole= Session.get("userRole");
-            if((new_words != " ") && (userRole != " "))
+            if((new_words != " "))
             {
                 var words = new_words.replace(',',' ');
-                Meteor.call("updateUserProfile", Meteor.userId(), userRole, words);
+                Meteor.call("updateUserProfile", Meteor.userId(), words);
+                Session.set("tagsOfIdea", " ")
             }
             var doc = Session.get('ideaData');
             doc.peopleInvolved.users.push(Meteor.userId());
             var old_words = Meteor.user().profile.words;
             if(doc != " ")
             {
-              Meteor.subscribe('similar_ideas', old_words +","+ new_words) //Probablemente los enviemos separadas, para darle peso a cada palabra
+              Meteor.subscribe('similar_ideas', old_words +","+ new_words)
               Meteor.call("insertIdea", Meteor.userId(), doc);
+              Session.set("ideaData", " ")
             }
             else
             {
               Meteor.subscribe('similar_ideas', old_words);
             } 
             Meteor.subscribe("userData");
-            Session.set("showProfile", false);
           }
         });
-      
-      //Session.set("showPeople", true);
+      Session.set("showProfile", false);
       return false;
     }
   });
@@ -175,26 +205,32 @@ if (Meteor.isClient) {
                                           } else {
                                             // Success. Account has been created and the user
                                             // has logged in successfully.
-                                            var new_words= Session.get("tagsOfIdea")
-                                            var userRole= Session.get("userRole");
-                                            if(new_words && userRole)
+                                            var new_words= Session.get("tagsOfIdea");
+                                            if((new_words != " "))
                                             {
                                                 var words = new_words.replace(',',' ');
-                                                Meteor.call("updateUserProfile", Meteor.userId(), userRole, words);
+                                                Meteor.call("updateUserProfile", Meteor.userId(), words);
+                                                Session.set("tagsOfIdea", " ")
                                             }
                                             var doc = Session.get('ideaData');
                                             doc.peopleInvolved.users.push(Meteor.userId());
-                                            if(doc)
+                                            var old_words = Meteor.user().profile.words;
+                                            if(doc != " ")
                                             {
-                                              Meteor.subscribe('similar_ideas', new_words)
+                                              Meteor.subscribe('similar_ideas', old_words +","+ new_words)
                                               Meteor.call("insertIdea", Meteor.userId(), doc);
+                                              Session.set("ideaData", " ")
+                                            }
+                                            else
+                                            {
+                                              Meteor.subscribe('similar_ideas', old_words);
                                             } 
-                                          }
+                                            Meteor.subscribe("userData");
+                                                                          }
 
                           });
       Session.set("showNewUser", false);
       Session.set("showLogin", false);
-      Session.set("showPeople", true);
       return false;
     }
   });
@@ -228,8 +264,14 @@ if (Meteor.isClient) {
   return Session.get("showNewUser");
   };
 
-   Template.ideas.helpers({
+   Template.similar_ideas.helpers({
     matching_idea: function(){
+    return Ideas.find({'peopleInvolved.users':{$nin:[Meteor.userId()]}});
+    }
+  });
+
+  Template.ideas.helpers({
+    open_idea: function(){
     return Ideas.find({'peopleInvolved.users':{$nin:[Meteor.userId()]}});
     }
   });
@@ -339,9 +381,8 @@ if (Meteor.isServer) {
           {$push: {'profile.ideas':ideaId}});
       },
 
-      updateUserProfile:function(userId, role, words){
+      updateUserProfile:function(userId, words){
         console.log(userId);
-        console.log(role);
         console.log(words);
         var wordsArray = words.split(/\s+/);
         for(var i=0; i < wordsArray.length; i++)
@@ -349,9 +390,6 @@ if (Meteor.isServer) {
           Meteor.users.update({_id: userId},
           {$push: {'profile.words':wordsArray[i]}} );
         }
-        Meteor.users.update({_id: userId},
-          {$push: {'profile.roles':role}});
-        
       },
 
       _searchIdeas: function (searchText) {

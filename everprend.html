@@ -39,7 +39,7 @@
       {{/if}}
   {{else}}
     {{#if showSimilarIdeas}}
-      {{>ideas}}
+      {{>similar_ideas}}
     {{else}}
       {{>welcome}}
     {{/if}}
@@ -63,7 +63,7 @@
 
 <template name="welcomeMessage">
     <h1>Ideala</h1>
-    <p>Guarda tu idea, observa cómo crece</p>
+    <p>Guarda una idea, observa cómo crece</p>
     <br>
     {{>newIdea}}
 </template>
@@ -76,7 +76,7 @@
   </form>
 </template>
 
-<template name="ideas">
+<template name="similar_ideas">
   <h2>Ideas similares</h2>
   <p class="submit"><input type="submit"  class="saveIdea" value="Mi idea es diferente"></p>
   {{#each matching_idea}}
@@ -85,13 +85,18 @@
       {{>idea}}
   </div>
   </section>
-  {{else}}
-  <!--Aqui se debe de añadir la idea, probablemente en la funcion del js"-->
+  {{/each}}
+</template>
+
+<template name="ideas">
+  {{#each open_idea}}
   <section class="container">
-    <div class="cuadroIdea">
-    <h3>No encontramos ideas similares, tu idea ha sido guardada </h3>
+  <div class="perfilIdeas">
+      {{>idea}}
   </div>
   </section>
+  {{else}}
+  <h3>NO hay ideas</h3>
   {{/each}}
 </template>
 
@@ -164,25 +169,6 @@
   </section>
 </template>
 
-
-<template name="people">
-  <div class="people">
-    {{#each matching_idea}}
-    <section class="container">
-    <div class="perfilIdeas">
-        {{>idea}}
-        {{>persons}}
-    </div>
-     </section>
-    {{else}}
-    <section class="container">
-      <div class="cuadroIdea">
-      <h3> No hubo resultados </h3>
-    </div>
-    </section>
-    {{/each}}
- </div>
-</template>
 <template name="idea">
     <p id="descriptionIdea">{{idea}}</p>
 </template>
@@ -193,9 +179,6 @@
         <p>{{profile.firstName}} {{profile.lastName}} </p>
         </span>
       {{/each}}
-    {{/each}}
-    {{#each peopleInvolved.roles}}
-        {{this}}
     {{/each}}
 </template>
 <template name="profile">
