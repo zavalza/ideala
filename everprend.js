@@ -1,11 +1,13 @@
 //Separar tus tags por commas - regex 
 
 Ideas = new Meteor.Collection("ideas")
+RelatedIdeas = new Meteor.Collection("relatedIdeas")
 
 if (Meteor.isClient) {
     
     Meteor.startup(function () {
         Session.set("showWelcome", true);
+        Session.set("currentIdea", 0);
     });
 
   Template.navigation.events({
@@ -81,13 +83,28 @@ if (Meteor.isClient) {
             Session.set("tagsOfIdea", " ")
         }
         var doc = Session.get('ideaData');
-        var old_words = Meteor.user().profile.words;
+        var old_wordsArray = Meteor.user().profile.words;
+        var old_words = " ";
+        for(var i = 0; i < old_wordsArray.length; i++)
+        {
+          var old_words = old_words + " "+ old_wordsArray[i];
+        }
         if(doc != " ")
         {
-          doc.peopleInvolved.users.push(Meteor.userId());
-          Meteor.subscribe('similar_ideas', old_words +","+ new_words)
-          Meteor.call("insertIdea", Meteor.userId(), doc);
-          Session.set("ideaData", " ")
+          var currentIdea = Session.get("currentIdea")
+          if( currentIdea != 0) //This idea tries to improve another
+          {
+            doc.peopleInvolved.users.push(Meteor.userId());
+            Meteor.call("addRelatedIdea", Meteor.userId(), doc, currentIdea);
+            Session.set("currentIdea", 0);
+          }
+          else
+          {
+            doc.peopleInvolved.users.push(Meteor.userId());
+            Meteor.subscribe('similar_ideas', old_words +","+ new_words)
+            Meteor.call("insertIdea", Meteor.userId(), doc);
+            Session.set("ideaData", " ")
+          }
         }
         else
         {
@@ -98,7 +115,8 @@ if (Meteor.isClient) {
     else
     {
       Session.set("showSimilarIdeas", false);
-      Session.set("showWelcome", false);
+      Session.set("showIdeaData", false);
+      Session.set("showWelcome", true);
       Session.set("showLogin", true);
     }
       return false
@@ -113,10 +131,12 @@ if (Meteor.isClient) {
 
     'click .seeIdea': function (evt, tmpl) {
     var id = this._id;
-    Meteor.subscribe("ideaProfile", id);
+    Session.set("currentIdea", id)
+    Meteor.subscribe("ideaProfile", id, function(){
     Session.set("showSimilarIdeas", false);
     Session.set("showWelcome", false);
     Session.set("showIdeaData", true);
+    });
     return false
     },
 
@@ -145,7 +165,7 @@ if (Meteor.isClient) {
                             },
                 relatedIdeas:{
                   ideas: [],
-                },  
+                },    
                 referrer: document.referrer, timestamp: new Date()
                 };
       Session.set("ideaData", doc);
@@ -186,10 +206,20 @@ if (Meteor.isClient) {
             }
             if(doc != " ")
             {
-              doc.peopleInvolved.users.push(Meteor.userId());
-              Meteor.subscribe('similar_ideas', old_words +","+ new_words)
-              Meteor.call("insertIdea", Meteor.userId(), doc);
-              Session.set("ideaData", " ")
+              var currentIdea = Session.get("currentIdea")
+              if( currentIdea != 0) //This idea tries to improve another
+              {
+                doc.peopleInvolved.users.push(Meteor.userId());
+                Meteor.call("addRelatedIdea", Meteor.userId(), doc, currentIdea);
+                Session.set("currentIdea", 0);
+              }
+              else
+              {
+                doc.peopleInvolved.users.push(Meteor.userId());
+                Meteor.subscribe('similar_ideas', old_words +","+ new_words)
+                Meteor.call("insertIdea", Meteor.userId(), doc);
+                Session.set("ideaData", " ")
+              }
             }
             else
             {
@@ -223,11 +253,15 @@ if (Meteor.isClient) {
                                     roles:[],
                                     words:[],
                                     ideas:[],
+                                    relatedIdeas:[],
                                   }
                           }, function(err){
-                                          if (err) {
+                                          if (err)
+                                          {
                                             // Inform the user that account creation failed
-                                          } else {
+                                          }
+                                          else 
+                                          {
                                             // Success. Account has been created and the user
                                             // has logged in successfully.
                                             var new_words= Session.get("tagsOfIdea");
@@ -244,21 +278,29 @@ if (Meteor.isClient) {
                                             {
                                               var old_words = old_words + " "+ old_wordsArray[i];
                                             }
-                                              
                                             if(doc != " ")
                                             {
-                                              doc.peopleInvolved.users.push(Meteor.userId());
-                                              Meteor.subscribe('similar_ideas', old_words +","+ new_words)
-                                              Meteor.call("insertIdea", Meteor.userId(), doc);
-                                              Session.set("ideaData", " ")
+                                              var currentIdea = Session.get("currentIdea")
+                                              if( currentIdea != 0) //This idea tries to improve another
+                                              {
+                                                doc.peopleInvolved.users.push(Meteor.userId());
+                                                Meteor.call("addRelatedIdea", Meteor.userId(), doc, currentIdea);
+                                                Session.set("currentIdea", 0);
+                                              }
+                                              else
+                                              {
+                                                doc.peopleInvolved.users.push(Meteor.userId());
+                                                Meteor.subscribe('similar_ideas', old_words +","+ new_words)
+                                                Meteor.call("insertIdea", Meteor.userId(), doc);
+                                                Session.set("ideaData", " ")
+                                              }
                                             }
                                             else
                                             {
                                               Meteor.subscribe('similar_ideas', old_words);
                                             } 
                                             Meteor.subscribe("userData");
-                                                                          }
-
+                                          }
                           });
       Session.set("showNewUser", false);
       Session.set("showLogin", false);
@@ -307,8 +349,8 @@ if (Meteor.isClient) {
   return Session.get("ideaData");
   };
 
-  Template.newIdea.tagsOfIdea = function() {
-  return Session.get("tagsOfIdea");
+  Template.newRelatedIdea.ideaData = function() {
+  return Session.get("ideaData");
   };
 
    Template.similar_ideas.helpers({
@@ -350,12 +392,12 @@ if (Meteor.isClient) {
 
   Template.ideaData.helpers({
   idea_to_show: function() {
-    return Ideas.find();
+    return Ideas.find({_id: Session.get("currentIdea")});
   },
 
-  idea_data: function (ideaId) {
+  idea_data: function (relatedId) {
    
-  return Ideas.find({_id: ideaId});
+  return RelatedIdeas.find({_id: relatedId});
   }
 
   });
@@ -448,6 +490,18 @@ if (Meteor.isServer) {
           var ideaId = Ideas.insert(doc);
           Meteor.users.update({_id: userId},
           {$push: {'profile.ideas':ideaId}});
+      },
+
+      addRelatedIdea: function(userId, doc, currentIdea) {
+          console.log('Adding RelatedIdea with doc');
+          console.log(doc);
+          console.log("currentIdea: ");
+          console.log(currentIdea);
+          var relatedId = RelatedIdeas.insert(doc);
+          Ideas.update({_id: currentIdea},
+          {$push: {'relatedIdeas.ideas':relatedId}});
+          Meteor.users.update({_id: userId},
+          {$push: {'profile.relatedIdeas':relatedId}});
       },
 
       updateUserProfile:function(userId, words){

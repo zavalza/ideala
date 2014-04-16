@@ -222,7 +222,7 @@
               <p>{{idea}}</p>
           {{/each}}
         {{/each}}
-        {{>newIdea}}
+        {{>newRelatedIdea}}
     </section>
     {{/each}}
 </template>
@@ -230,4 +230,13 @@
 {{#each user}}
 {{profile.firstName}}
 {{/each}}
+</template>
+<template name="newRelatedIdea">
+  <form method="post" action="index.html">
+        <label>¿Cuál es tu idea?</label>
+        <p><textarea type="text" id="idea">{{ideaData.idea}}</textarea></p>
+        <label>Palabras clave de tu idea separadas por coma</label>
+        <p><input type="text" name="typeOfIdea" id="tagsOfIdea" value={{ideaData.tagsOfIdea}}></p>
+        <p class="submit"><input type="submit"  class="saveIdea" value="Añadir Idea"></p>    
+  </form>
 </template>
