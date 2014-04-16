@@ -3,7 +3,10 @@
 Ideas = new Meteor.Collection("ideas")
 
 if (Meteor.isClient) {
-
+    
+    Meteor.startup(function () {
+        Session.set("showWelcome", true);
+    });
 
   Template.navigation.events({
     'click .home': function (evt, tmpl) {
@@ -19,6 +22,7 @@ if (Meteor.isClient) {
           else{
               Session.set("tagsOfIdea", " ")
               Session.set("ideaData", " ")
+              Session.set("showSimilarIdeas", false)
             }
           });
       return false
@@ -53,11 +57,16 @@ if (Meteor.isClient) {
                               users: [],
                               roles:[]
                             },
+                relatedIdeas:{
+                  ideas: [],
+                },  
                 referrer: document.referrer, timestamp: new Date()
                 };
       Session.set("ideaData", doc);
       Session.set("tagsOfIdea",tagsOfIdea);
-      Meteor.subscribe('similar_ideas', tagsOfIdea, Session.set("showSimilarIdeas", true));
+      Meteor.subscribe('similar_ideas', tagsOfIdea, function(){
+          Session.set("showWelcome", false);
+          Session.set("showSimilarIdeas", true)});
       return false
     },
 
@@ -89,18 +98,26 @@ if (Meteor.isClient) {
     else
     {
       Session.set("showSimilarIdeas", false);
+      Session.set("showWelcome", false);
       Session.set("showLogin", true);
     }
       return false
     },
 
     'click .person': function (evt, tmpl) {
-      //var idOfUser = tmpl.find('#_id').value;
-      //'Yymz7cQYErsHc4RDv'
       var id = this._id;
       Meteor.subscribe("userProfile", id);
       Session.set("showProfile", true);
       return false
+    },
+
+    'click .seeIdea': function (evt, tmpl) {
+    var id = this._id;
+    Meteor.subscribe("ideaProfile", id);
+    Session.set("showSimilarIdeas", false);
+    Session.set("showWelcome", false);
+    Session.set("showIdeaData", true);
+    return false
     },
 
     'click .newUser': function (evt, tmpl) {
@@ -126,6 +143,9 @@ if (Meteor.isClient) {
                               users: [],
                               roles:[role]
                             },
+                relatedIdeas:{
+                  ideas: [],
+                },  
                 referrer: document.referrer, timestamp: new Date()
                 };
       Session.set("ideaData", doc);
@@ -255,6 +275,10 @@ if (Meteor.isClient) {
     return Session.get("showRegisterForm");
   };
 
+  Template.main.showWelcome = function() {
+  return Session.get("showWelcome");
+  };
+
   Template.main.showPeople = function() {
     return Session.get("showPeople");
   };
@@ -267,12 +291,24 @@ if (Meteor.isClient) {
     return Session.get("showProfile");
   };
 
+  Template.main.showIdeaData = function() {
+  return Session.get("showIdeaData");
+  };
+
  Template.main.showLogin = function() {
   return Session.get("showLogin");
   };
 
   Template.welcome.showNewUser = function() {
   return Session.get("showNewUser");
+  };
+
+  Template.newIdea.ideaData = function() {
+  return Session.get("ideaData");
+  };
+
+  Template.newIdea.tagsOfIdea = function() {
+  return Session.get("tagsOfIdea");
   };
 
    Template.similar_ideas.helpers({
@@ -311,6 +347,18 @@ if (Meteor.isClient) {
   }
 
   });
+
+  Template.ideaData.helpers({
+  idea_to_show: function() {
+    return Ideas.find();
+  },
+
+  idea_data: function (ideaId) {
+   
+  return Ideas.find({_id: ideaId});
+  }
+
+  });
 }
 
 if (Meteor.isServer) {
@@ -341,11 +389,21 @@ if (Meteor.isServer) {
   });
 
   Meteor.publish("userProfile", function (idOfUser) {
-  console.log("publishing profile of");
+  console.log("publishing profile of user with id:");
   if (idOfUser) {
     console.log(idOfUser);
     //console.log("inside if");
     return Meteor.users.find({_id: idOfUser});
+  } else {
+    this.ready();
+  }
+  });
+
+  Meteor.publish("ideaProfile", function (idOfIdea) {
+  console.log("publishing profile of idea with id:");
+  if (idOfIdea) {
+    console.log(idOfIdea);
+    return Ideas.find({_id: idOfIdea});
   } else {
     this.ready();
   }

@@ -34,13 +34,20 @@
   {{#if currentUser}}
       {{#if showProfile}}
           {{>profile}}
+      {{/if}}
+      {{#if showIdeaData}}
+          {{>ideaData}}
       {{else}}
           {{>ideas}}
       {{/if}}
   {{else}}
     {{#if showSimilarIdeas}}
       {{>similar_ideas}}
-    {{else}}
+    {{/if}}
+    {{#if showIdeaData}}
+      {{>ideaData}}
+    {{/if}}
+    {{#if showWelcome}}
       {{>welcome}}
     {{/if}}
   {{/if}}
@@ -70,9 +77,11 @@
 
 <template name="newIdea">
   <form method="post" action="index.html">
-        <p><textarea type="text" id="idea" placeholder="¿Cuál es tu idea?"></textarea></p>
-        <p><input type="text" name="typeOfIdea" id="tagsOfIdea" placeholder="Palabras clave de tu idea"></p>
-        <p class="submit"><input type="submit"  class="searchIdea" value="Empezar"></p>    
+        <label>¿Cuál es tu idea?</label>
+        <p><textarea type="text" id="idea">{{ideaData.idea}}</textarea></p>
+        <label>Palabras clave de tu idea separadas por coma</label>
+        <p><input type="text" name="typeOfIdea" id="tagsOfIdea" value={{ideaData.tagsOfIdea}}></p>
+        <p class="submit"><input type="submit"  class="searchIdea" value="Añadir Idea"></p>    
   </form>
 </template>
 
@@ -170,7 +179,9 @@
 </template>
 
 <template name="idea">
-    <p id="descriptionIdea">{{idea}}</p>
+     <span class="seeIdea" title="Ver Idea">
+      <p id="descriptionIdea">{{idea}}</p>
+      </span>
 </template>
 <template name="persons">
     {{#each peopleInvolved.users}}
@@ -197,6 +208,21 @@
         {{/each}}
         </div>
       </div>
+    </section>
+    {{/each}}
+</template>
+<template name="ideaData">
+    {{#each idea_to_show}}
+    <section class="container">
+        <p>{{idea}}</p>
+        <p>{{tagsOfIdea}}</p>
+        <h2>Ideas de mejora</h2>
+        {{#each relatedIdeas.ideas}}
+          {{#each idea_data this}}
+              <p>{{idea}}</p>
+          {{/each}}
+        {{/each}}
+        {{>newIdea}}
     </section>
     {{/each}}
 </template>
