@@ -15,6 +15,15 @@ if (Meteor.isClient) {
       Session.set("showPeople", false)
       return false
     },
+
+    'click .person': function (evt, tmpl) {
+      var id = Meteor.userId();
+      Meteor.subscribe("userProfile", id);
+      Session.set("showIdeaData", false);
+      Session.set("showProfile", true);
+      return false
+    },
+
     'click .tryLogout': function (evt, tmpl) {
       Meteor.logout(function(err){
           if (err)
@@ -313,6 +322,11 @@ if (Meteor.isClient) {
     return Session.get("showLogin");
   };
 
+
+  Template.welcome.showProfile = function() {
+    return Session.get("showProfile");
+  };
+
   Template.welcome.showRegisterForm = function() {
     return Session.get("showRegisterForm");
   };
@@ -380,11 +394,12 @@ if (Meteor.isClient) {
 
   Template.profile.helpers({
   user: function() {
-    return Meteor.users.find({_id:{$ne:Meteor.userId()}});
+    //return Meteor.users.find({_id:{$ne:Meteor.userId()}});
+    return Meteor.users.find();
   },
 
   idea_data: function (ideaId) {
-   
+   Meteor.subscribe("ideaProfile", ideaId);
   return Ideas.find({_id: ideaId});
   }
 

@@ -19,7 +19,7 @@
                   <!--<li><a href="#">Acerca de</a></li>
                   <li><a href="#">Contacto</a></li>-->
                   {{#if currentUser}}
-                    <li class="name"><a class="name" href="#profile">{{>userData}}</a></li>
+                    <li class="name"><a href="#profile" class="person">{{>userData}}</a></li>
                     <li><a href="#" class="tryLogout" id="salir">Salir</a></li>
                   {{else}}
                     <li><a href="#" class="showLogin" id="ingresar">Ingresar</a></li>
@@ -38,7 +38,9 @@
       {{#if showIdeaData}}
           {{>ideaData}}
       {{else}}
+          {{#unless showProfile}}
           {{>ideas}}
+          {{/unless}}
       {{/if}}
   {{else}}
     {{#if showSimilarIdeas}}
@@ -197,12 +199,12 @@
     <section class="container">
       <div class="perfilUsuario">
         <h1>{{profile.firstName}} {{profile.lastName}}</h1>
-        <p id="titulos">Portafolio</p>
+        <p id="titulos">Ideas</p>
         <div id="pProyectos">
         {{#each profile.ideas}}
           {{#each idea_data this}}
               <div id="sectionProyectos">
-              <p>{{nameOfIdea}} {{idea}} </p>
+              <p>{{idea}} </p>
               </div>
           {{/each}}
         {{/each}}
@@ -228,7 +230,7 @@
 </template>
 <template name="userData">
 {{#each user}}
-{{profile.firstName}}
+  {{profile.firstName}}
 {{/each}}
 </template>
 <template name="newRelatedIdea">
