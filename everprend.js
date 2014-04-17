@@ -396,7 +396,7 @@ if (Meteor.isClient) {
   },
 
   idea_data: function (relatedId) {
-   
+   Meteor.subscribe("relatedIdeas", relatedId);
   return RelatedIdeas.find({_id: relatedId});
   }
 
@@ -450,6 +450,17 @@ if (Meteor.isServer) {
     this.ready();
   }
   });
+
+  Meteor.publish("relatedIdeas", function (id) {
+  console.log("publishing related idea with id:");
+  if (id) {
+    console.log(id);
+    return RelatedIdeas.find({_id: id});
+  } else {
+    this.ready();
+  }
+  });
+
 
 
   Meteor.publish("userData", function () {
