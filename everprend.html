@@ -13,16 +13,17 @@
 <template name="navigation">
   <header>
           <div class="container">
-            <h1><a href="">Ideala</a></h1>
+            <h1><a class="home" href="#home">Ideala</a></h1>
               <nav>
                 <ul>
-                  <!--<li><a href="#">Acerca de</a></li>
-                  <li><a href="#">Contacto</a></li>-->
+                  <li><a class="allIdeas" href="#ideas">Ideas</a></li>
+                  <li><a class="allUsers" href="#persons">Personas</a></li>
                   {{#if currentUser}}
-                    <li class="name"><a href="#profile" class="person">{{>userData}}</a></li>
-                    <li><a href="#" class="tryLogout" id="salir">Salir</a></li>
+                    <li class="name"><a href="#profile" class="person">{{>theUser}}</a></li>
+                    <li><a class="newIdea" href="#new_idea">Nueva Idea</a></li>
+                    <li><a href="#logout" class="tryLogout" id="salir">Salir</a></li>
                   {{else}}
-                    <li><a href="#" class="showLogin" id="ingresar">Ingresar</a></li>
+                    <li><a href="#login" class="showLogin" id="ingresar">Ingresar</a></li>
                   {{/if}}
                 </ul>
               </nav>
@@ -31,24 +32,26 @@
 </template>
 
 <template name="main">
+  {{#if showNewIdea}}
+    {{>newIdea}}
+  {{/if}}
+  {{#if showAllIdeas}}
+      {{>ideas}}
+  {{/if}}
+  {{#if showAllUsers}}
+      {{>people}}
+  {{/if}}
+  {{#if showIdeaData}}
+     {{>ideaData}}
+  {{/if}}
+  {{#if showSimilarIdeas}}
+      {{>similar_ideas}}
+  {{/if}}
   {{#if currentUser}}
       {{#if showProfile}}
           {{>profile}}
       {{/if}}
-      {{#if showIdeaData}}
-          {{>ideaData}}
-      {{else}}
-          {{#unless showProfile}}
-          {{>ideas}}
-          {{/unless}}
-      {{/if}}
   {{else}}
-    {{#if showSimilarIdeas}}
-      {{>similar_ideas}}
-    {{/if}}
-    {{#if showIdeaData}}
-      {{>ideaData}}
-    {{/if}}
     {{#if showWelcome}}
       {{>welcome}}
     {{/if}}
@@ -88,14 +91,20 @@
 </template>
 
 <template name="similar_ideas">
+  <section class="container">
+  <div class="perfilIdeas">
   <h2>Ideas similares</h2>
   <p class="submit"><input type="submit"  class="saveIdea" value="Mi idea es diferente"></p>
+  </div>
+  </section>
   {{#each matching_idea}}
   <section class="container">
   <div class="perfilIdeas">
       {{>idea}}
   </div>
   </section>
+  {{else}}
+  <h3>No se encontraron ideas similares</h3>
   {{/each}}
 </template>
 
@@ -106,9 +115,22 @@
       {{>idea}}
   </div>
   </section>
-  {{else}}
-  <h3>NO hay ideas</h3>
   {{/each}}
+</template>
+
+<template name="people">
+  <section class="container">
+  {{#each user}}
+    <div class="perfilIdeas">
+    <span class="person" title="Ver perfil">
+      {{profile.points}} {{profile.firstName}} {{profile.lastName}}
+      {{#each profile.roles}}
+        {{this}}
+      {{/each}}
+    </span><br>
+    </div>
+  {{/each}}
+  </section>
 </template>
 
   <!-- Seccion:"RegisterForm"-->
@@ -167,13 +189,22 @@
 <template name="newUserForm">
   <section>
     <div class="userR">
-      <h1>Datos de contacto</h1>
+      <h1>Nuevo usuario</h1>
       <form name="newUserForm">
         <p><input type="text" class="form-control" id="firstName" placeholder="Nombre"></p>
         <p><input type="text" class="form-control" id="lastName" placeholder="Apellido"></p>
         <p><input type="text" class="form-control" id="username" placeholder="Usuario"></p>
         <p><input type="text" class="form-control" id="email" placeholder="Correo Electrónico"></p>
         <p><input type="password" class="form-control" id="password" placeholder="Contraseña"></p>
+        <p><label>¿Qué roles te gusta realizar en un proyecto?</label><br>
+        <input type="checkbox" name="role" value="administración">Administrarlo<br>
+        <input type="checkbox" name="role" value="desarrollo">Desarrollarlo (Parte técnica)<br>
+        <input type="checkbox" name="role" value="diseño">Diseñarlo<br>
+        <input type="checkbox" name="role" value="ventas">Venderlo<br>
+        <input type="checkbox" name="role" value="marketing">Difundirlo/promocionarlo<br>
+        <input type="checkbox" name="role" value="inversionista">Financearlo<br>
+        </p>
+        <input type="checkbox" name="role" value="mentoría">Mentoría<br>
         <p class="submit"><input id="submitBoton" class="createUser" type="submit" name="commit" value="Registrarse"></p>
         </form>
     </div>
@@ -198,13 +229,25 @@
     {{#each user}}
     <section class="container">
       <div class="perfilUsuario">
-        <h1>{{profile.firstName}} {{profile.lastName}}</h1>
+        <h1>{{profile.firstName}} {{profile.lastName}} {{profile.points}}</h1>
         <p id="titulos">Ideas</p>
         <div id="pProyectos">
         {{#each profile.ideas}}
           {{#each idea_data this}}
               <div id="sectionProyectos">
-              <p>{{idea}} </p>
+              <span class="seeIdea" title="Ver Idea"><p>{{idea}} </p></span>
+              </div>
+          {{/each}}
+        {{/each}}
+      </div>
+        <p id="titulos">Ideas de Mejora</p>
+        <div id="pProyectos">
+        {{#each profile.relatedIdeas}}
+          {{#each related_data this}}
+              <div id="sectionProyectos">
+              <span class="seeIdea" title="Ver Idea"><p>{{idea}} </p>
+              <p>{{points}}</p>
+              </span>
               </div>
           {{/each}}
         {{/each}}
@@ -218,17 +261,21 @@
     <section class="container">
         <p>{{idea}}</p>
         <p>{{tagsOfIdea}}</p>
+        {{>persons}}
+         <p class="submit"><input type="submit"  class="copyIdea" value="Guardar esta idea"></p> 
         <h2>Ideas de mejora</h2>
         {{#each relatedIdeas.ideas}}
           {{#each idea_data this}}
               <p>{{idea}}</p>
+              <img src="up.png" height="42" width="42" class="increase"><p>{{points}}</p><img src="down.png" height="42" width="42" class="decrease">
+              {{>persons}}
           {{/each}}
         {{/each}}
         {{>newRelatedIdea}}
-    </section>
+    </section>7
     {{/each}}
 </template>
-<template name="userData">
+<template name="theUser">
 {{#each user}}
   {{profile.firstName}}
 {{/each}}
