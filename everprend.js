@@ -1,16 +1,35 @@
-//Separar tus tags por commas - regex 
-
+//DB Connnection
 Ideas = new Meteor.Collection("ideas")
 RelatedIdeas = new Meteor.Collection("relatedIdeas")
 Projects = new Meteor.Collection("projects")
 
-if (Meteor.isClient) {
-    
-    Meteor.startup(function () {
-        Session.set("showWelcome", true);
-        Session.set("currentIdea", 0);
-        Session.set("userToShow", 0);
+//Routing (HTML pages)
+Router.map(function() {
+  this.route('home', {path: '/'})
+  this.route('ideas', {path:'/ideas'});
+  this.route('loginForm', {path:'/login'});
+  this.route('people',{path:'/people'});
+  this.route('profile',
+    {path: '/profile/:_id',
+    waitOn: function()
+    { 
+      Session.set("userToShow", this.params._id);
+      return Meteor.subscribe('userProfile', this.params._id);
+    }
     });
+});
+
+if (Meteor.isClient) { //Client Side
+
+  iSuscription = Meteor.subscribe("similar_ideas", " ");
+
+  Meteor.startup(function () {
+      Session.set("showWelcome", true);
+      Session.set("currentIdea", 0);
+      Session.set("userToShow", 0);
+  });
+
+    
 
   Template.navigation.events({
     'click .home': function (evt, tmpl) {
@@ -49,43 +68,18 @@ if (Meteor.isClient) {
       return false
     },
 
-    'click .allIdeas': function (evt, tmpl) {
-      Meteor.subscribe("allIdeas");
-      Session.set("showIdeaData", false);
-      Session.set("showProfile", false);
-      Session.set("showSimilarIdeas", false);
-      Session.set("showWelcome", false);
-      Session.set("showAllIdeas", true);
-      Session.set("showAllUsers", false);
-      Session.set("showNewIdea", false);
-
-      return false
+    'click .ideasLink': function (evt, tmpl) {
+      iSuscription = Meteor.subscribe("allIdeas");
+      Router.go('ideas');
     },
 
-    'click .allUsers': function (evt, tmpl) {
+    'click .peopleLink': function (evt, tmpl) {
       Meteor.subscribe("allUsers");
-      Session.set("showIdeaData", false);
-      Session.set("showProfile", false);
-      Session.set("showSimilarIdeas", false);
-      Session.set("showWelcome", false);
-      Session.set("showAllUsers", true);
-      Session.set("showAllIdeas", false);
-      Session.set("showNewIdea", false);
-      return false
+      Router.go('people');
     },
 
-    'click .person': function (evt, tmpl) {
-      var id = Meteor.userId();
-      Session.set("userToShow", id);
-      Meteor.subscribe("userProfile", id);
-      Session.set("showIdeaData", false);
-      Session.set("showSimilarIdeas", false);
-      Session.set("showWelcome", false);
-      Session.set("showAllUsers", false);
-      Session.set("showAllIdeas", false);
-      Session.set("showProfile", true);
-      Session.set("showNewIdea", false);
-      return false
+    'click .profileLink': function (evt, tmpl) {
+      Router.go('profile');
     },
 
     'click .tryLogout': function (evt, tmpl) {
@@ -97,24 +91,14 @@ if (Meteor.isClient) {
           else{
               Session.set("tagsOfIdea", " ");
               Session.set("ideaData", " ");
-              Session.set("showSimilarIdeas", false);
-              Session.set("showIdeaData", false);
-              Session.set("showProfile", false);
-              Session.set("showWelcome", true);
-              Session.set("showLogin", false);
-              Session.set("showNewIdea", false);
+              Router.go('home');
             }
           });
       return false
     },
 
-    'click .showLogin':function(evt, tmpl){
-      Session.set("showAllUsers",false);
-      Session.set("showAllIdeas",false);
-      Session.set("showRegisterForm", false);
-      Session.set("showWelcome", true);
-      Session.set("showLogin", true);
-      return false
+    'click .loginFormLink':function(evt, tmpl){
+     Router.go('loginForm');
     }
   });
 
@@ -157,17 +141,24 @@ if (Meteor.isClient) {
                 };
       Session.set("ideaData", doc);
       Session.set("tagsOfIdea",tagsOfIdea);
-      Meteor.subscribe('similar_ideas', tagsOfIdea, function(){
+      iSuscription = Meteor.subscribe('similar_ideas', tagsOfIdea, function(){
         Session.set("showWelcome", false);
         Session.set("showNewIdea", false);
         Session.set("showAllIdeas",false);
         Session.set("showSimilarIdeas", true);  
       });
-      
+      // if(IdeasSubscription.error) //No results back
+      // {
+      //   Session.set("showWelcome", false);
+      //   Session.set("showNewIdea", false);
+      //   Session.set("showAllIdeas",true);
+      //   alert("No hubo ideas similares, tu idea ha sido guardada")
+      // }
+
       return false
     },
 
-    'click .saveIdea': function (evt, tmpl) {
+    'click .saveRelated': function (evt, tmpl) {
 
     var idea = document.getElementById("idea").value;
     var new_words = document.getElementById("tagsOfIdea").value;
@@ -193,6 +184,7 @@ if (Meteor.isClient) {
                   ideas: [],
                 },  
                 referrer: document.referrer, timestamp: new Date()
+
                 };
 
     if (Meteor.userId())
@@ -247,6 +239,58 @@ if (Meteor.isClient) {
       return false
     },
 
+    'click .saveIdea': function (evt, tmpl) {
+
+    if (Meteor.userId())
+    {
+        var new_words = Session.get("tagsOfIdea");
+        var words = new_words.replace(',',' ');
+        Meteor.call("updateUserProfile", Meteor.userId(), words);
+        Session.set("tagsOfIdea", " ")
+        var old_wordsArray = Meteor.user().profile.words;
+        var old_words = " ";
+        for(var i = 0; i < old_wordsArray.length; i++)
+        {
+          var old_words = old_words + " "+ old_wordsArray[i];
+        }
+        var doc = Session.get("ideaData");
+        var currentIdea = Session.get("currentIdea")
+        if( currentIdea != 0) //This idea tries to improve another
+        {
+          doc.peopleInvolved.users.push(Meteor.userId());
+          Meteor.call("addRelatedIdea", Meteor.userId(), doc, currentIdea);
+          Meteor.subscribe('similar_ideas', old_words +","+ new_words);
+          Session.set("currentIdea", 0);
+          Session.set("ideaData", " ");
+        }
+        else
+        {
+          doc.peopleInvolved.users.push(Meteor.userId());
+          Meteor.call("insertIdea", Meteor.userId(), doc);
+          Meteor.subscribe('similar_ideas', old_words +","+ new_words);
+          Session.set("ideaData", " ");
+        }
+        
+        Meteor.subscribe("userData");
+        Session.set("showSimilarIdeas", false);
+        Session.set("showIdeaData", false);
+        Session.set("showProfile", false);
+        Session.set("showAllIdeas", true);
+    }
+    else
+    {
+      Session.set("showIdeaData", false);
+      Session.set("showProfile", false);
+      Session.set("showSimilarIdeas", false);
+      Session.set("showAllUsers",false)
+      Session.set("showAllIdeas", false);
+      Session.set("showNewIdea", false);
+      Session.set("showWelcome", true);
+      Session.set("showLogin", true);
+    }
+      return false
+    },
+
     'click .copyIdea': function (evt, tmpl) {
     if (Meteor.userId())
     {
@@ -269,7 +313,6 @@ if (Meteor.isClient) {
     },
 
     'click .person': function (evt, tmpl) {
-      var id = this._id;
       Session.set("userToShow", id);
       Meteor.subscribe("userProfile", id);
       Session.set("showSimilarIdeas", false);
@@ -373,6 +416,8 @@ if (Meteor.isClient) {
           if (err)
           {
             //To do if login was not successfull
+            alert("Usuario o contraseña incorrectos");
+            return false;
           }
           else{
             var new_words= Session.get("tagsOfIdea");
@@ -412,11 +457,7 @@ if (Meteor.isClient) {
             {
               Meteor.subscribe('similar_ideas', old_words);
             } 
-             Meteor.subscribe("userData");
-            Session.set("showSimilarIdeas", false);
-            Session.set("showIdeaData", false);
-            Session.set("showProfile", false);
-            Session.set("showAllIdeas", true);
+             Router.go("ideas");
           }
         });
       Session.set("showProfile", false);
@@ -458,7 +499,6 @@ if (Meteor.isClient) {
               roles.push(role_checkbox[i].value);
           }
       }
-        // Trim and validate the input
 
       Accounts.createUser({
                           username:username,
@@ -477,6 +517,8 @@ if (Meteor.isClient) {
                                           if (err)
                                           {
                                             // Inform the user that account creation failed
+                                            alert("Algo salió mal, por favor inténtalo de nuevo");
+                                            return false;
                                           }
                                           else 
                                           {
@@ -660,30 +702,30 @@ if (Meteor.isClient) {
 
   });
 }
+/*********************************************************************************/
+if (Meteor.isServer) { //Server Side
 
-if (Meteor.isServer) {
-
-  
+ 
   Meteor.publish('similar_ideas', function(searchText) {
+
          var doc = {};
 
     var ideasIds = Meteor.call("searchIdeas",searchText);
    
     console.log(ideasIds)
-
-    if (ideasIds) {
+    if(ideasIds.length > 0)
+   {
         doc._id = {
             $in: ideasIds
         };
 
       var matchingIdeas = Ideas.find(doc,{sort:{lastScore:-1}});
-
       return matchingIdeas;
     }
     else
     {
-      console.log("subscription retrieves error");
-      this.error();
+      console.log("subscription has no results back");
+      return Ideas.find({});
     }
 
   });
@@ -727,7 +769,6 @@ if (Meteor.isServer) {
   Meteor.publish("allUsers", function () {
   console.log("publishing all users");
   return Meteor.users.find({},{sort:{'profile.points':-1}});
- 
   });
 
   Meteor.publish("userData", function () {

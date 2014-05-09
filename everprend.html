@@ -13,17 +13,17 @@
 <template name="navigation">
   <header>
           <div class="container">
-            <h1><a class="home" href="#home">Ideala</a></h1>
+            <h1><a class="home" href="/home">Ideala</a></h1>
               <nav>
                 <ul>
-                  <li><a class="allIdeas" href="#ideas">Ideas</a></li>
-                  <li><a class="allUsers" href="#persons">Personas</a></li>
+                  <li><a href="{{pathFor 'ideas'}}">Ideas</a></li>
+                  <li><a  href="{{pathFor 'people'}}">Personas</a></li>
                   {{#if currentUser}}
-                    <li class="name"><a href="#profile" class="person">{{>theUser}}</a></li>
+                    <li>{{>theUser}}</li>
                     <li><a class="newIdea" href="#new_idea">Nueva Idea</a></li>
                     <li><a href="#logout" class="tryLogout" id="salir">Salir</a></li>
                   {{else}}
-                    <li><a href="#login" class="showLogin" id="ingresar">Ingresar</a></li>
+                    <li><a href="{{pathFor 'loginForm'}}" id="ingresar">Ingresar</a></li>
                   {{/if}}
                 </ul>
               </nav>
@@ -35,41 +35,26 @@
   {{#if showNewIdea}}
     {{>newIdea}}
   {{/if}}
-  {{#if showAllIdeas}}
-      {{>ideas}}
-  {{/if}}
-  {{#if showAllUsers}}
-      {{>people}}
-  {{/if}}
   {{#if showIdeaData}}
      {{>ideaData}}
   {{/if}}
   {{#if showSimilarIdeas}}
       {{>similar_ideas}}
   {{/if}}
-  {{#if currentUser}}
-      {{#if showProfile}}
-          {{>profile}}
-      {{/if}}
-  {{else}}
-    {{#if showWelcome}}
+  
+  {{#if showWelcome}}
       {{>welcome}}
-    {{/if}}
   {{/if}}
 </template>
 
   <!-- Seccion:"Welcome"-->
 <template name="welcome">
   <div class="wpage">
-      {{#if showLogin}}
-          {{>loginForm}}
-      {{else}}
-          {{#if showNewUser}}
-              {{>newUserForm}}
-          {{else}}
-              {{>welcomeMessage}}
-          {{/if}}
-      {{/if}}
+  {{#if showNewUser}}
+      {{>newUserForm}}
+  {{else}}
+      {{>welcomeMessage}}
+  {{/if}}
   </div>
 </template>
 
@@ -272,12 +257,14 @@
           {{/each}}
         {{/each}}
         {{>newRelatedIdea}}
-    </section>7
+    </section>
     {{/each}}
 </template>
 <template name="theUser">
 {{#each user}}
+  <a href="{{pathFor 'profile'}}">
   {{profile.firstName}}
+  </a>
 {{/each}}
 </template>
 <template name="newRelatedIdea">
@@ -286,6 +273,6 @@
         <p><textarea type="text" id="idea">{{ideaData.idea}}</textarea></p>
         <label>Palabras clave de tu idea separadas por coma</label>
         <p><input type="text" name="typeOfIdea" id="tagsOfIdea" value={{ideaData.tagsOfIdea}}></p>
-        <p class="submit"><input type="submit"  class="saveIdea" value="Añadir Idea"></p>    
+        <p class="submit"><input type="submit"  class="saveRelated" value="Añadir Idea"></p>    
   </form>
 </template>
