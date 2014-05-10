@@ -5,8 +5,17 @@ Projects = new Meteor.Collection("projects")
 
 //Routing (HTML pages)
 Router.map(function() {
-  this.route('home', {path: '/'})
+  this.route('welcome', {path: '/'});
   this.route('ideas', {path:'/ideas'});
+  this.route('ideaData',
+    {path:'ideas/:_id',
+    waitOn: function()
+    {
+      Session.set("currentIdea", this.params._id)
+      return Meteor.subscribe("ideaProfile", this.params._id);
+      
+    }
+    });
   this.route('loginForm', {path:'/login'});
   this.route('people',{path:'/people'});
   this.route('profile',
@@ -20,8 +29,9 @@ Router.map(function() {
 });
 
 if (Meteor.isClient) { //Client Side
-
-  iSuscription = Meteor.subscribe("similar_ideas", " ");
+  /*Subsription variables, useful to sync data*/
+  ideas = Meteor.subscribe("similar_ideas", " ");
+  users = Meteor.subscribe("allUsers");
 
   Meteor.startup(function () {
       Session.set("showWelcome", true);
@@ -32,15 +42,7 @@ if (Meteor.isClient) { //Client Side
     
 
   Template.navigation.events({
-    'click .home': function (evt, tmpl) {
-      Session.set("showIdeaData", false);
-      Session.set("showProfile", false);
-      Session.set("showSimilarIdeas", false);
-      Session.set("showWelcome", true);
-      Session.set("showAllUsers",false);
-      Session.set("showAllIdeas",false);
-      Session.set("showLogin", false);
-      Session.set("showNewIdea", false);
+    'click .welcomeLink': function (evt, tmpl) {
       if(Meteor.userId())
       {
         var old_wordsArray = Meteor.user().profile.words;
@@ -49,12 +51,10 @@ if (Meteor.isClient) { //Client Side
         {
           var old_words = old_words + " "+ old_wordsArray[i];
         }
-        Meteor.subscribe('similar_ideas', old_words);
-        Session.set("showAllIdeas", true);
+        ideas =  Meteor.subscribe('similar_ideas', old_words);
       }
-
-      return false
-    },
+        Router.go('welcome');
+      },
 
     'click .newIdea': function (evt, tmpl) {
       Session.set("showIdeaData", false);
@@ -69,12 +69,12 @@ if (Meteor.isClient) { //Client Side
     },
 
     'click .ideasLink': function (evt, tmpl) {
-      iSuscription = Meteor.subscribe("allIdeas");
+      ideas = Meteor.subscribe("allIdeas");
       Router.go('ideas');
     },
 
     'click .peopleLink': function (evt, tmpl) {
-      Meteor.subscribe("allUsers");
+      users = Meteor.subscribe("allUsers");
       Router.go('people');
     },
 
@@ -91,7 +91,7 @@ if (Meteor.isClient) { //Client Side
           else{
               Session.set("tagsOfIdea", " ");
               Session.set("ideaData", " ");
-              Router.go('home');
+              Router.go('loginForm');
             }
           });
       return false
@@ -141,7 +141,7 @@ if (Meteor.isClient) { //Client Side
                 };
       Session.set("ideaData", doc);
       Session.set("tagsOfIdea",tagsOfIdea);
-      iSuscription = Meteor.subscribe('similar_ideas', tagsOfIdea, function(){
+      ideas = Meteor.subscribe('similar_ideas', tagsOfIdea, function(){
         Session.set("showWelcome", false);
         Session.set("showNewIdea", false);
         Session.set("showAllIdeas",false);
@@ -441,7 +441,7 @@ if (Meteor.isClient) { //Client Side
               {
                 doc.peopleInvolved.users.push(Meteor.userId());
                 Meteor.call("addRelatedIdea", Meteor.userId(), doc, currentIdea);
-                Meteor.subscribe('similar_ideas', old_words +","+ new_words);
+                ideas = Meteor.subscribe('similar_ideas', old_words +","+ new_words);
                 Session.set("currentIdea", 0);
                 Session.set("ideaData", " ");
               }
@@ -449,19 +449,17 @@ if (Meteor.isClient) { //Client Side
               {
                 doc.peopleInvolved.users.push(Meteor.userId());
                 Meteor.call("insertIdea", Meteor.userId(), doc);
-                Meteor.subscribe('similar_ideas', old_words +","+ new_words);
+                ideas = Meteor.subscribe('similar_ideas', old_words +","+ new_words);
                 Session.set("ideaData", " ");
               }
             }
             else
             {
-              Meteor.subscribe('similar_ideas', old_words);
+              ideas = Meteor.subscribe('similar_ideas', old_words);
             } 
              Router.go("ideas");
           }
         });
-      Session.set("showProfile", false);
-      return false;
     }
   });
 

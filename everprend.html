@@ -13,7 +13,7 @@
 <template name="navigation">
   <header>
           <div class="container">
-            <h1><a class="home" href="/home">Ideala</a></h1>
+            <h1><a href="{{pathFor 'welcome'}}">Ideala</a></h1>
               <nav>
                 <ul>
                   <li><a href="{{pathFor 'ideas'}}">Ideas</a></li>
@@ -41,19 +41,19 @@
   {{#if showSimilarIdeas}}
       {{>similar_ideas}}
   {{/if}}
-  
-  {{#if showWelcome}}
-      {{>welcome}}
-  {{/if}}
 </template>
 
   <!-- Seccion:"Welcome"-->
 <template name="welcome">
   <div class="wpage">
-  {{#if showNewUser}}
-      {{>newUserForm}}
+  {{#if currentUser}}
+    {{>ideas}}
   {{else}}
-      {{>welcomeMessage}}
+    {{#if showNewUser}}
+        {{>newUserForm}}
+    {{else}}
+        {{>welcomeMessage}}
+    {{/if}}
   {{/if}}
   </div>
 </template>
@@ -197,9 +197,12 @@
 </template>
 
 <template name="idea">
-     <span class="seeIdea" title="Ver Idea">
+  <span>
+    <a href="{{pathFor 'ideaData'}}">
       <p id="descriptionIdea">{{idea}}</p>
-      </span>
+      <p id="descriptionIdea">{{tagsOfIdea}}</p>
+    </a>
+  </span>
 </template>
 <template name="persons">
     {{#each peopleInvolved.users}}
