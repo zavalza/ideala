@@ -8,3 +8,6 @@ insecure
 accounts-ui
 accounts-password
 iron-router
+bootstrap3-wysihtml5
+bootstrap-wysiwyg
+jquery
