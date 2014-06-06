@@ -102,10 +102,7 @@
   <div class="perfilIdeas">
       {{>idea}}
       <p class="submit"><input type="button"  class="followIdea" value="Kip"></p>
-      <p class="submit"><input type="button"  class="showComments" value="Comentar"></p>
-       {{#if showComments this._id}}
-        {{>comments}}
-      {{/if}}
+      {{>comments}}
   </div>
   </section>
   {{/each}}
@@ -126,7 +123,9 @@
       {{text}}
     {{/each}}
   {{/each}}
+  <p class="submit"><input type="button"  class="showComments" value="Ver todos"></p>
   <p><input type="text" name="textOfComment" id="textOfComment" placeholder="Nuevo comentario..."></p>
+  <p class="submit"><input type="button"  class="saveComment" value="Comentar"></p>
 </template>
 
 <template name="people">
