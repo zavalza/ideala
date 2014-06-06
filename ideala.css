@@ -8,7 +8,7 @@
 body 
   {
       font-weight: normal;
-      background: url('h1.jpg');
+      /*background: url('h1.jpg');*/
     background-repeat: no-repeat;
     background-size: 100%;
     background-attachment: fixed;
@@ -615,7 +615,7 @@ div#sectionProyectos
   width: 450px;
   height: auto;
 }
-div#editor {
+/*div#editor {
 max-height: 250px;
 height: 250px;
 background-color: white;
@@ -652,4 +652,4 @@ div[data-role="editor-toolbar"] {
 
 .dropdown-menu a {
   cursor: pointer;
-}
+}*/

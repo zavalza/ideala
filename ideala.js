@@ -1,6 +1,6 @@
 //DB Connnection
 Ideas = new Meteor.Collection("ideas")
-RelatedIdeas = new Meteor.Collection("relatedIdeas")
+Comments = new Meteor.Collection("comments")
 Projects = new Meteor.Collection("projects")
 
 //Routing (HTML pages)
@@ -37,6 +37,7 @@ if (Meteor.isClient) { //Client Side
 
   Meteor.startup(function () {
       Session.set("showWelcome", true);
+      Session.set("commentsToShow", []);
       Session.set("currentIdea", 0);
       Session.set("userToShow", 0);
   });
@@ -128,9 +129,7 @@ if (Meteor.isClient) { //Client Side
                               users: [],
                               roles:[]
                             },
-                relatedIdeas:{
-                  ideas: [],
-                },  
+                comments:[], 
                 referrer: document.referrer, timestamp: new Date()
                 };
       Session.set("ideaData", doc);
@@ -152,89 +151,6 @@ if (Meteor.isClient) { //Client Side
       return false
     },
 
-    /*No se implementa por ahora
-    'click .saveRelated': function (evt, tmpl) {
-
-    var idea = document.getElementById("idea").value;
-    var new_words = document.getElementById("tagsOfIdea").value;
-
-    if (idea=="" || new_words == "")
-    {
-      alert("Por favor llena los campos");
-      return false;
-    }
-
-    var doc = {
-                idea: idea, 
-                nameOfIdea: " ",
-                tagsOfIdea: new_words,
-                lastScore: 0,
-                points: 0,
-                votedBy:[],
-                peopleInvolved:{
-                              users: [],
-                              roles:[]
-                            },
-                relatedIdeas:{
-                  ideas: [],
-                },  
-                referrer: document.referrer, timestamp: new Date()
-
-                };
-
-    if (Meteor.userId())
-    {
-       
-        var words = new_words.replace(',',' ');
-        Meteor.call("updateUserProfile", Meteor.userId(), words);
-        Session.set("tagsOfIdea", " ")
-        var old_wordsArray = Meteor.user().profile.words;
-        var old_words = " ";
-        for(var i = 0; i < old_wordsArray.length; i++)
-        {
-          var old_words = old_words + " "+ old_wordsArray[i];
-        }
-        
-        var currentIdea = Session.get("currentIdea")
-        if( currentIdea != 0) //This idea tries to improve another
-        {
-          doc.peopleInvolved.users.push(Meteor.userId());
-          Meteor.call("addRelatedIdea", Meteor.userId(), doc, currentIdea);
-          Meteor.subscribe('similar_ideas', old_words +","+ new_words);
-          Session.set("currentIdea", 0);
-          Session.set("ideaData", " ");
-        }
-        else
-        {
-          doc.peopleInvolved.users.push(Meteor.userId());
-          Meteor.call("insertIdea", Meteor.userId(), doc);
-          Meteor.subscribe('similar_ideas', old_words +","+ new_words);
-          Session.set("ideaData", " ");
-        }
-        
-        Meteor.subscribe("userData");
-        Session.set("showSimilarIdeas", false);
-        Session.set("showIdeaData", false);
-        Session.set("showProfile", false);
-        Session.set("showAllIdeas", true);
-    }
-    else
-    {
-      Session.set("tagsOfIdea", new_words);
-      Session.set("ideaData", doc);
-      Session.set("showIdeaData", false);
-      Session.set("showProfile", false);
-      Session.set("showSimilarIdeas", false);
-      Session.set("showAllUsers",false)
-      Session.set("showAllIdeas", false);
-      Session.set("showNewIdea", false);
-      Session.set("showWelcome", true);
-      Session.set("showLogin", true);
-    }
-      return false
-    },
-    */
-
     'click .saveIdea': function (evt, tmpl) {
 
     if (Meteor.userId())
@@ -254,7 +170,7 @@ if (Meteor.isClient) { //Client Side
         if( currentIdea != 0) //This idea tries to improve another
         {
           doc.peopleInvolved.users.push(Meteor.userId());
-          Meteor.call("addRelatedIdea", Meteor.userId(), doc, currentIdea);
+          Meteor.call("addComment", Meteor.userId(), doc, currentIdea);
           Meteor.subscribe('similar_ideas', old_words +","+ new_words);
           Session.set("currentIdea", 0);
           Session.set("ideaData", " ");
@@ -276,28 +192,6 @@ if (Meteor.isClient) { //Client Side
     }
       return false
     },
-
-    'click .copyIdea': function (evt, tmpl) {
-    if (Meteor.userId())
-    {
-      var id = Session.get("currentIdea")
-      Meteor.call("followIdea", Meteor.userId(), id);
-      Session.set("showSimilarIdeas", false);
-      Session.set("showIdeaData", false);
-      Session.set("showWelcome", false);
-      Session.set("showLogin", false);
-      Session.set("showProfile", true);
-    }
-    else
-    {
-      Session.set("showSimilarIdeas", false);
-      Session.set("showIdeaData", false);
-      Session.set("showWelcome", true);
-      Session.set("showLogin", true);
-    }
-      return false
-    },
-
     'click .increase': function (evt, tmpl) {
       if(Meteor.userId())
       {
@@ -313,6 +207,7 @@ if (Meteor.isClient) { //Client Side
     'click .decrease': function (evt, tmpl) {
       if(Meteor.userId())
       {
+        
          Meteor.call("decrease", Meteor.userId(), this._id);
       }
       else
@@ -340,9 +235,7 @@ if (Meteor.isClient) { //Client Side
                               users: [],
                               roles:[role]
                             },
-                relatedIdeas:{
-                  ideas: [],
-                },    
+                comments:[],  
                 referrer: document.referrer, timestamp: new Date()
                 };
       Session.set("ideaData", doc);
@@ -353,6 +246,36 @@ if (Meteor.isClient) { //Client Side
       return false
     }
   });
+
+Template.ideas.events({
+
+    'click .followIdea': function (evt, tmpl) {
+    if (Meteor.userId())
+    {
+    
+       Meteor.call("followIdea", Meteor.userId(), this._id);
+    }
+    else
+    {
+    
+      alert("Necesitas ser usuario para dar kip");
+    }
+      return false
+    },
+
+    'click .showComments': function (evt, tmpl) {
+      var commentsToShow = Session.get("commentsToShow");
+      var selected = this._id;
+      if(commentsToShow.indexOf(selected) == -1)
+        commentsToShow.push(selected);
+      else
+        commentsToShow.splice(commentsToShow.indexOf(selected), 1);
+      Session.set("commentsToShow", commentsToShow);
+      return false
+    }
+  });
+
+
 
   Template.loginForm.events({
     'click .tryLogin' : function (evt, tmpl) {
@@ -395,7 +318,7 @@ if (Meteor.isClient) { //Client Side
               if( currentIdea != 0) //This idea tries to improve another
               {
                 doc.peopleInvolved.users.push(Meteor.userId());
-                Meteor.call("addRelatedIdea", Meteor.userId(), doc, currentIdea);
+                Meteor.call("addComment", Meteor.userId(), doc, currentIdea);
                 ideas = Meteor.subscribe('similar_ideas', old_words +","+ new_words);
                 Session.set("currentIdea", 0);
                 Session.set("ideaData", " ");
@@ -463,7 +386,7 @@ if (Meteor.isClient) { //Client Side
                                     roles:roles,
                                     words:[],
                                     ideas:[],
-                                    relatedIdeas:[],
+                                    comments:[],
                                     points:0,
                                   }
                           }, function(err){
@@ -497,7 +420,7 @@ if (Meteor.isClient) { //Client Side
                                               if( currentIdea != 0) //This idea tries to improve another
                                               {
                                                 doc.peopleInvolved.users.push(Meteor.userId());
-                                                Meteor.call("addRelatedIdea", Meteor.userId(), doc, currentIdea);
+                                                Meteor.call("addComment", Meteor.userId(), doc, currentIdea);
                                                 Meteor.subscribe('similar_ideas', old_words +","+ new_words);
                                                 Session.set("currentIdea", 0);
                                                 Session.set("ideaData", " ");
@@ -541,8 +464,22 @@ if (Meteor.isClient) { //Client Side
   });
 
   Template.ideas.helpers({
-    open_idea: function(){
+    open_idea: function(id){
     return Ideas.find();
+    },
+    showComments: function(currentComment) {
+      var commentsToShow = Session.get("commentsToShow");
+    if(commentsToShow.indexOf(currentComment) != -1)
+      return true;
+    else
+      return  false;
+    }
+  });
+
+  Template.comments.helpers({
+    commentData: function(commentId){
+     Meteor.subscribe("comment", commentId);
+    return Comments.find({_id: commentId});
     }
   });
 
@@ -582,9 +519,9 @@ if (Meteor.isClient) { //Client Side
   return Ideas.find({_id: ideaId});
   },
 
-  related_data: function (relatedId) {
-   Meteor.subscribe("relatedIdeas", relatedId);
-  return RelatedIdeas.find({_id: relatedId});
+  related_data: function (commentId) {
+   Meteor.subscribe("comments", commentId);
+  return Comments.find({_id: commentId});
   }
 
   });
@@ -594,9 +531,9 @@ if (Meteor.isClient) { //Client Side
     return Ideas.find({_id: Session.get("currentIdea")});
   },
 
-  idea_data: function (relatedId) {
-   Meteor.subscribe("relatedIdeas", relatedId);
-  return RelatedIdeas.find({_id: relatedId});
+  idea_data: function (commentId) {
+   Meteor.subscribe("comments", commentId);
+  return Comments.find({_id: commentId});
   },
   user_data: function(userId){
     Meteor.subscribe("userProfile", userId);
@@ -654,11 +591,11 @@ if (Meteor.isServer) { //Server Side
   }
   });
 
-  Meteor.publish("relatedIdeas", function (id) {
-  console.log("publishing related idea with id:");
+  Meteor.publish("comment", function (id) {
+  console.log("publishing comment with id:");
   if (id) {
     console.log(id);
-    return RelatedIdeas.find({_id: id});
+    return Comments.find({_id: id});
   } else {
     this.ready();
   }
@@ -721,32 +658,34 @@ if (Meteor.isServer) { //Server Side
           console.log(ideaId);
           Meteor.users.update({_id: userId, 'profile.ideas':{$nin:[ideaId]}},
           {$push: {'profile.ideas':ideaId}});
-      },
-
-      increase: function(userId, relatedId) {
-        console.log("Vote by " + userId + "on");
-         console.log(relatedId);
-          RelatedIdeas.update({_id: relatedId,'votedBy':{$nin:[userId]}},
+          Ideas.update({_id: ideaId,'votedBy':{$nin:[userId]}},
           {$inc: {'points':1}, $push: {'votedBy':userId}});
       },
 
-      decrease: function(userId, relatedId) {
+      increase: function(userId, commentId) {
+        console.log("Vote by " + userId + "on");
+         console.log(commentId);
+          Comments.update({_id: commentId,'votedBy':{$nin:[userId]}},
+          {$inc: {'points':1}, $push: {'votedBy':userId}});
+      },
+
+      decrease: function(userId, commentId) {
           console.log("Vote by " + userId + "on")
-          console.log(relatedId)
-          RelatedIdeas.update({_id: relatedId,'votedBy':{$nin:[userId]}},
+          console.log(commentId)
+          Comments.update({_id: commentId,'votedBy':{$nin:[userId]}},
           {$inc: {'points':-1}, $push: {'votedBy':userId}});
       },
 
-      addRelatedIdea: function(userId, doc, currentIdea) {
-          console.log('Adding RelatedIdea with doc');
+      addComment: function(userId, doc, currentIdea) {
+          console.log('Adding Comment with doc');
           console.log(doc);
           console.log("currentIdea: ");
           console.log(currentIdea);
-          var relatedId = RelatedIdeas.insert(doc);
+          var commentId = Comments.insert(doc);
           Ideas.update({_id: currentIdea},
-          {$push: {'relatedIdeas.ideas':relatedId}});
+          {$push: {'comments':commentId}});
           Meteor.users.update({_id: userId},
-          {$push: {'profile.relatedIdeas':relatedId}});
+          {$push: {'profile.comments':commentId}});
           Meteor.users.update({_id: userId},
           {$inc: {'profile.points':5}});
       },

@@ -1,6 +1,7 @@
 <head>
-   <title>Ideala</title>
+   <title>Kip</title>
    <link href='http://fonts.googleapis.com/css?family=Muli' rel='stylesheet' type='text/css'>
+   <!--wysiswg -->
    <meta charset="utf-8">
     <link rel="apple-touch-icon" href="//mindmup.s3.amazonaws.com/lib/img/apple-touch-icon.png" />
     <link rel="shortcut icon" href="http://mindmup.s3.amazonaws.com/lib/img/favicon.ico" >
@@ -11,6 +12,7 @@
     <script src="https://mindmup.s3.amazonaws.com/lib/jquery.hotkeys.js"></script>
     <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
     <script src="http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.js"></script>
+    <!--wysiswg -->
 </head>
 
 <body>
@@ -22,7 +24,7 @@
 <template name="navigation">
   <header>
           <div class="container">
-            <h1><a href="{{pathFor 'welcome'}}">Ideala</a></h1>
+            <h1><a href="{{pathFor 'welcome'}}">Kip</a></h1>
               <nav>
                 <ul>
                   <li><a href="{{pathFor 'ideas'}}">Ideas</a></li>
@@ -60,8 +62,8 @@
 </template>
 
 <template name="welcomeMessage">
-    <h1>Ideala</h1>
-    <p>Guarda una idea, observa cómo crece</p>
+    <h1>Kip</h1>
+    <p>Manteniendo las ideas en la realidad</p>
     <br>
     {{>newIdea}}
 </template>
@@ -99,9 +101,32 @@
   <section class="container">
   <div class="perfilIdeas">
       {{>idea}}
+      <p class="submit"><input type="button"  class="followIdea" value="Kip"></p>
+      <p class="submit"><input type="button"  class="showComments" value="Comentar"></p>
+       {{#if showComments this._id}}
+        {{>comments}}
+      {{/if}}
   </div>
   </section>
   {{/each}}
+</template>
+
+<template name="idea">
+  <span>
+    <a href="{{pathFor 'ideaData'}}">
+      <p id="descriptionIdea">{{points}} {{idea}}</p>
+      <p id="descriptionIdea">{{tagsOfIdea}}</p>
+    </a>
+  </span>
+</template>
+
+<template name="comments">
+  {{#each comments}}
+    {{#each commentData this}}
+      {{text}}
+    {{/each}}
+  {{/each}}
+  <p><input type="text" name="textOfComment" id="textOfComment" placeholder="Nuevo comentario..."></p>
 </template>
 
 <template name="people">
@@ -170,15 +195,6 @@
   </section>
 </template>
 
-<template name="idea">
-  <span>
-    <a href="{{pathFor 'ideaData'}}">
-      <p id="descriptionIdea">{{idea}}</p>
-      <p id="descriptionIdea">{{tagsOfIdea}}</p>
-    </a>
-  </span>
-</template>
-
 <template name="persons">
     {{#each peopleInvolved.users}}
       {{#each user this}}
@@ -207,9 +223,9 @@
           {{/each}}
         {{/each}}
       </div>
-        <p id="titulos">Ideas de Mejora</p>
+        <p id="titulos">Comentarios</p>
         <div id="pProyectos">
-        {{#each profile.relatedIdeas}}
+        {{#each profile.comments}}
           {{#each related_data this}}
               <div id="sectionProyectos">
               <span class="seeIdea" title="Ver Idea"><p>{{idea}} </p>
@@ -226,14 +242,13 @@
 <template name="ideaData">
     {{#each idea_to_show}}
     <section class="container">
-        <p>{{idea}}</p>
+        <p>{{points}} {{idea}}</p>
         <p>{{tagsOfIdea}}</p>
         {{>persons}}
          <p class="submit"><input type="submit"  class="copyIdea" value="Guardar esta idea"></p>
         {{#if video}}
         {{>video}}
         {{/if}}
-        {{>wysiwyg}}
         <h2>Comentarios</h2>
         {{#each relatedIdeas.ideas}}
           {{#each idea_data this}}
