@@ -120,7 +120,7 @@
 <template name="comments">
   {{#each comments}}
     {{#each commentData this}}
-      {{text}}
+      <p><img src="/up.png" height="42" width="42" class="increase">{{points}} {{text}}</p>
     {{/each}}
   {{/each}}
   <p class="submit"><input type="button"  class="showComments" value="Ver todos"></p>
@@ -249,13 +249,7 @@
         {{>video}}
         {{/if}}
         <h2>Comentarios</h2>
-        {{#each relatedIdeas.ideas}}
-          {{#each idea_data this}}
-              <p>{{idea}}</p>
-              <img src="up.png" height="42" width="42" class="increase"><p>{{points}}</p><img src="down.png" height="42" width="42" class="decrease">
-              {{>persons}}
-          {{/each}}
-        {{/each}}
+        {{>comments}}
     </section>
     {{/each}}
 </template>

@@ -192,18 +192,7 @@ if (Meteor.isClient) { //Client Side
     }
       return false
     },
-    'click .increase': function (evt, tmpl) {
-      if(Meteor.userId())
-      {
-         Meteor.call("increase", Meteor.userId(), this._id);
-      }
-      else
-      {
-        alert("Necesitas ser usuario para votar");
-      }
-      return false
-    },
-
+    //Decrease is not used
     'click .decrease': function (evt, tmpl) {
       if(Meteor.userId())
       {
@@ -263,6 +252,36 @@ Template.ideas.events({
       return false
     },
 
+    'click .increase': function (evt, tmpl) {
+      if(Meteor.userId())
+      {
+         Meteor.call("increase", Meteor.userId(), this._id);
+      }
+      else
+      {
+        alert("Necesitas ser usuario para votar");
+      }
+      return false
+    },
+
+    'click .saveComment': function (evt, tmpl) {
+      evt.preventDefault();
+      var text = tmpl.find('#textOfComment').value;
+      var currentIdea = this._id;
+      var doc = {user: Meteor.userId(),
+                idea: currentIdea,
+                text: text, 
+                images: [],
+                videos:[],
+                documents:[],
+                points:0,
+                votedBy:[], 
+                referrer: document.referrer, timestamp: new Date()
+                };
+       Meteor.call("addComment", Meteor.userId(), doc, currentIdea);
+      return false
+    },
+
     'click .showComments': function (evt, tmpl) {
       var commentsToShow = Session.get("commentsToShow");
       var selected = this._id;
@@ -275,7 +294,37 @@ Template.ideas.events({
     }
   });
 
+  Template.ideaData.events({
+    'click .increase': function (evt, tmpl) {
+      if(Meteor.userId())
+      {
+         Meteor.call("increase", Meteor.userId(), this._id);
+      }
+      else
+      {
+        alert("Necesitas ser usuario para votar");
+      }
+      return false
+    },
 
+    'click .saveComment': function (evt, tmpl) {
+      evt.preventDefault();
+      var text = tmpl.find('#textOfComment').value;
+      var currentIdea = this._id;
+      var doc = {user: Meteor.userId(),
+                idea: currentIdea,
+                text: text, 
+                images: [],
+                videos:[],
+                documents:[],
+                points:0,
+                votedBy:[], 
+                referrer: document.referrer, timestamp: new Date()
+                };
+       Meteor.call("addComment", Meteor.userId(), doc, currentIdea);
+      return false
+    },
+  });
 
   Template.loginForm.events({
     'click .tryLogin' : function (evt, tmpl) {
@@ -531,8 +580,8 @@ Template.ideas.events({
     return Ideas.find({_id: Session.get("currentIdea")});
   },
 
-  idea_data: function (commentId) {
-   Meteor.subscribe("comments", commentId);
+  commentData: function (commentId) {
+   Meteor.subscribe("comment", commentId);
   return Comments.find({_id: commentId});
   },
   user_data: function(userId){
