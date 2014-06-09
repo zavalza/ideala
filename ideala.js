@@ -236,36 +236,10 @@ if (Meteor.isClient) { //Client Side
     }
   });
 
-Template.ideas.events({
 
-    'click .followIdea': function (evt, tmpl) {
-    if (Meteor.userId())
-    {
-    
-       Meteor.call("followIdea", Meteor.userId(), this._id);
-    }
-    else
-    {
-    
-      alert("Necesitas ser usuario para dar kip");
-    }
-      return false
-    },
-
-    'click .increase': function (evt, tmpl) {
-      if(Meteor.userId())
-      {
-         Meteor.call("increase", Meteor.userId(), this._id);
-      }
-      else
-      {
-        alert("Necesitas ser usuario para votar");
-      }
-      return false
-    },
+  Template.newComment.events({
 
     'click .saveComment': function (evt, tmpl) {
-      evt.preventDefault();
       var text = tmpl.find('#textOfComment').value;
       var currentIdea = this._id;
       var doc = {user: Meteor.userId(),
@@ -279,6 +253,20 @@ Template.ideas.events({
                 referrer: document.referrer, timestamp: new Date()
                 };
        Meteor.call("addComment", Meteor.userId(), doc, currentIdea);
+       tmpl.find('#textOfComment').value = " ";
+      return false
+    }
+  });
+  Template.comments.events({
+    'click .increase': function (evt, tmpl) {
+      if(Meteor.userId())
+      {
+         Meteor.call("increase", Meteor.userId(), this._id);
+      }
+      else
+      {
+        alert("Necesitas ser usuario para votar");
+      }
       return false
     },
 
@@ -286,42 +274,25 @@ Template.ideas.events({
       var commentsToShow = Session.get("commentsToShow");
       var selected = this._id;
       if(commentsToShow.indexOf(selected) == -1)
-        commentsToShow.push(selected);
+          commentsToShow.push(selected);
       else
         commentsToShow.splice(commentsToShow.indexOf(selected), 1);
       Session.set("commentsToShow", commentsToShow);
       return false
     }
+
   });
 
-  Template.ideaData.events({
-    'click .increase': function (evt, tmpl) {
-      if(Meteor.userId())
-      {
-         Meteor.call("increase", Meteor.userId(), this._id);
-      }
-      else
-      {
-        alert("Necesitas ser usuario para votar");
-      }
-      return false
-    },
-
-    'click .saveComment': function (evt, tmpl) {
-      evt.preventDefault();
-      var text = tmpl.find('#textOfComment').value;
-      var currentIdea = this._id;
-      var doc = {user: Meteor.userId(),
-                idea: currentIdea,
-                text: text, 
-                images: [],
-                videos:[],
-                documents:[],
-                points:0,
-                votedBy:[], 
-                referrer: document.referrer, timestamp: new Date()
-                };
-       Meteor.call("addComment", Meteor.userId(), doc, currentIdea);
+  Template.idea.events({
+    'click .followIdea': function (evt, tmpl) {
+    if (Meteor.userId())
+    {
+       Meteor.call("followIdea", Meteor.userId(), this._id);
+    }
+    else
+    {
+      alert("Necesitas ser usuario para dar kip");
+    }
       return false
     },
   });
@@ -515,17 +486,27 @@ Template.ideas.events({
   Template.ideas.helpers({
     open_idea: function(id){
     return Ideas.find();
-    },
-    showComments: function(currentComment) {
-      var commentsToShow = Session.get("commentsToShow");
-    if(commentsToShow.indexOf(currentComment) != -1)
-      return true;
-    else
-      return  false;
     }
   });
 
   Template.comments.helpers({
+    commentToShow: function (idea) {
+      var commentsToShow = Session.get("commentsToShow");
+      var ideaId = idea._id;
+      if(commentsToShow.indexOf(ideaId) != -1)
+      {
+        //all
+        Meteor.subscribe("commentsOfIdea", ideaId);
+        return Comments.find({idea: ideaId}, {sort: {points: -1}});
+      }
+      else
+      {
+        //show only five
+        Meteor.subscribe("commentsOfIdea", ideaId);
+        return Comments.find({idea: ideaId}, {sort: {points: -1}, limit: 5});
+      }
+    },
+
     commentData: function(commentId){
      Meteor.subscribe("comment", commentId);
     return Comments.find({_id: commentId});
@@ -645,6 +626,16 @@ if (Meteor.isServer) { //Server Side
   if (id) {
     console.log(id);
     return Comments.find({_id: id});
+  } else {
+    this.ready();
+  }
+  });
+
+  Meteor.publish("commentsOfIdea", function (ideaId){
+    console.log("publishing comments of idea with id:");
+  if (ideaId) {
+    console.log(ideaId);
+    return Comments.find({idea: ideaId});
   } else {
     this.ready();
   }

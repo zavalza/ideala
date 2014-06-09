@@ -101,7 +101,6 @@
   <section class="container">
   <div class="perfilIdeas">
       {{>idea}}
-      <p class="submit"><input type="button"  class="followIdea" value="Kip"></p>
       {{>comments}}
   </div>
   </section>
@@ -113,19 +112,23 @@
     <a href="{{pathFor 'ideaData'}}">
       <p id="descriptionIdea">{{points}} {{idea}}</p>
       <p id="descriptionIdea">{{tagsOfIdea}}</p>
+      <p id="descriptionIdea">{{>persons}}</p>
     </a>
+    <p class="submit"><input type="button"  class="followIdea" value="Kip"></p>
   </span>
 </template>
 
 <template name="comments">
-  {{#each comments}}
-    {{#each commentData this}}
+  {{#each commentToShow this}}
       <p><img src="/up.png" height="42" width="42" class="increase">{{points}} {{text}}</p>
-    {{/each}}
   {{/each}}
   <p class="submit"><input type="button"  class="showComments" value="Ver todos"></p>
-  <p><input type="text" name="textOfComment" id="textOfComment" placeholder="Nuevo comentario..."></p>
-  <p class="submit"><input type="button"  class="saveComment" value="Comentar"></p>
+  {{>newComment}}
+</template>
+
+<template name="newComment">
+<p><input type="text" name="textOfComment" id="textOfComment" placeholder="Nuevo comentario..."></p>
+  <p class="submit"><input type="submit"  class="saveComment" value="Comentar"></p>
 </template>
 
 <template name="people">
@@ -241,10 +244,7 @@
 <template name="ideaData">
     {{#each idea_to_show}}
     <section class="container">
-        <p>{{points}} {{idea}}</p>
-        <p>{{tagsOfIdea}}</p>
-        {{>persons}}
-         <p class="submit"><input type="submit"  class="copyIdea" value="Guardar esta idea"></p>
+        {{>idea}}
         {{#if video}}
         {{>video}}
         {{/if}}
