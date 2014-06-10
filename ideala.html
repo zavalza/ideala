@@ -33,7 +33,7 @@
                     <li>{{>theUser}}</li>
                     <li><a href="#logout" class="tryLogout" id="salir">Salir</a></li>
                   {{else}}
-                    <li><a href="{{pathFor 'loginForm'}}" id="ingresar">Ingresar</a></li>
+                    <li><a href="{{pathFor 'loginForm'}}" id="ingresar">Comenzar</a></li>
                   {{/if}}
                 </ul>
               </nav>
@@ -42,6 +42,7 @@
 </template>
 
 <template name="main">
+
   {{#if currentUser}}
     {{>newIdea}}
   {{/if}}
@@ -65,7 +66,10 @@
     <h1>Kip</h1>
     <p>Manteniendo las ideas en la realidad</p>
     <br>
-    {{>newIdea}}
+    <p>Caracteristicas con imagenes y botones de link</p>
+    <p>Porqué Kip con boton "tengo una idea"</p>
+    <p>Prensa</p>
+    
 </template>
 
 <template name="newIdea">
@@ -112,9 +116,12 @@
     <a href="{{pathFor 'ideaData'}}">
       <p id="descriptionIdea">{{points}} {{idea}}</p>
       <p id="descriptionIdea">{{tagsOfIdea}}</p>
-      <p id="descriptionIdea">{{>persons}}</p>
     </a>
+      <p id="descriptionIdea">{{>persons}}</p>
     <p class="submit"><input type="button"  class="followIdea" value="Kip"></p>
+    {{#if canEdit this.peopleInvolved.users currentUser._id}}
+        <input type="submit"  class="editIdea" value="Editar">
+      {{/if}}
   </span>
 </template>
 
@@ -135,12 +142,12 @@
   <section class="container">
   {{#each user}}
     <div class="perfilIdeas">
-    <span class="person" title="Ver perfil">
+    <a href="{{pathFor 'profile'}}">
       {{profile.points}} {{profile.firstName}} {{profile.lastName}}
       {{#each profile.roles}}
         {{this}}
       {{/each}}
-    </span><br>
+    </a>
     </div>
   {{/each}}
   </section>
@@ -200,13 +207,10 @@
 <template name="persons">
     {{#each peopleInvolved.users}}
       {{#each user this}}
-        <span class="person" title="Ver perfil">
+        <a href="{{pathFor 'profile'}}">
         <p>{{profile.firstName}} {{profile.lastName}} </p>
-        </span>
+        </a>
       {{/each}}
-      {{#if canEdit this currentUser._id}}
-        <input type="submit"  class="copyIdea" value="Keep it">
-      {{/if}}
     {{/each}}
 </template>
 
@@ -270,16 +274,7 @@ http://youtu.be/EipGZpAUBws
   </a>
 {{/each}}
 </template>
-<!--Por ahora no se usa, hay que ver de que manera usamos el de new idea para guardar esto -->
-<template name="newRelatedIdea">
-  <form method="post" action="index.html">
-        <label>¿Cuál es tu idea?</label>
-        <p><textarea type="text" id="idea">{{ideaData.idea}}</textarea></p>
-        <label>Palabras clave de tu idea separadas por coma</label>
-        <p><input type="text" name="typeOfIdea" id="tagsOfIdea" value={{ideaData.tagsOfIdea}}></p>
-        <p class="submit"><input type="submit"  class="saveRelated" value="Añadir Idea"></p>    
-  </form>
-</template>
+
 <template name="wysiwyg">
   <div id="alerts"></div>
   <div class="btn-toolbar" data-role="editor-toolbar" data-target="#editor">

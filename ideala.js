@@ -295,6 +295,7 @@ if (Meteor.isClient) { //Client Side
     }
       return false
     },
+
   });
 
   Template.loginForm.events({
@@ -318,44 +319,10 @@ if (Meteor.isClient) { //Client Side
             return false;
           }
           else{
-            var new_words= Session.get("tagsOfIdea");
-            if((new_words != " "))
-            {
-                var words = new_words.replace(',',' ');
-                Meteor.call("updateUserProfile", Meteor.userId(), words);
-                Session.set("tagsOfIdea", " ")
-            }
-            var doc = Session.get('ideaData');
-            var old_wordsArray = Meteor.user().profile.words;
-            var old_words = " ";
-            for(var i = 0; i < old_wordsArray.length; i++)
-            {
-              var old_words = old_words + " "+ old_wordsArray[i];
-            }
-            if(doc != " ")
-            {
-              var currentIdea = Session.get("currentIdea")
-              if( currentIdea != 0) //This idea tries to improve another
-              {
-                doc.peopleInvolved.users.push(Meteor.userId());
-                Meteor.call("addComment", Meteor.userId(), doc, currentIdea);
-                ideas = Meteor.subscribe('similar_ideas', old_words +","+ new_words);
-                Session.set("currentIdea", 0);
-                Session.set("ideaData", " ");
-              }
-              else
-              {
-                doc.peopleInvolved.users.push(Meteor.userId());
-                Meteor.call("insertIdea", Meteor.userId(), doc);
-                ideas = Meteor.subscribe('similar_ideas', old_words +","+ new_words);
-                Session.set("ideaData", " ");
-              }
-            }
-            else
-            {
+              //Suscribir a tipo de ideas que se mostraran en la pagina de ideas
+              Router.go('ideas');
               ideas = Meteor.subscribe('similar_ideas', old_words);
-            } 
-             Router.go("ideas");
+              return false;
           }
         });
     }
@@ -483,10 +450,23 @@ if (Meteor.isClient) { //Client Side
     }
   });
 
+  //All ideas
   Template.ideas.helpers({
     open_idea: function(id){
     return Ideas.find();
     }
+  });
+
+  //One idea
+  Template.idea.helpers({
+     canEdit: function(users, currentUserId) {
+        for(var i=0; i < users.length; i++)
+        {
+           if(users[i]==currentUserId)
+                return true;
+        }
+        return false;
+        }
   });
 
   Template.comments.helpers({
@@ -523,12 +503,6 @@ if (Meteor.isClient) { //Client Side
     user: function(userId) {
     Meteor.subscribe("userProfile", userId);
     return  Meteor.users.find({_id: userId});
-    },
-    canEdit: function(userId, currentUserId) {
-    if(userId==currentUserId)
-      return true;
-    else
-      return  false;
     }
   });
 
@@ -669,7 +643,7 @@ if (Meteor.isServer) { //Server Side
 
     // Remove old indexes as you can only have one text index and if you add 
     // more fields to your index then you will need to recreate it.
-    Ideas._dropIndex(search_index_name);
+    //Ideas._dropIndex(search_index_name);
 
     //text
     Ideas._ensureIndex({
