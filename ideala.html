@@ -13,6 +13,14 @@
     <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
     <script src="http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.js"></script>
     <!--wysiswg -->
+    <!--UploadCare -->
+    <script>
+    UPLOADCARE_LOCALE = "es";
+    UPLOADCARE_TABS = "file url facebook gdrive box skydrive instagram evernote";
+    UPLOADCARE_AUTOSTORE = true;
+    UPLOADCARE_PUBLIC_KEY = "6d5ce1227bb996e6f117";
+    </script>
+    <script src="//ucarecdn.com/widget/1.2.2/uploadcare/uploadcare-1.2.2.min.js"></script>
 </head>
 
 <body>
@@ -120,7 +128,7 @@
       <p id="descriptionIdea">{{>persons}}</p>
     <p class="submit"><input type="button"  class="followIdea" value="Kip"></p>
     {{#if canEdit this.peopleInvolved.users currentUser._id}}
-        <input type="submit"  class="editIdea" value="Editar">
+        <a href="{{pathFor 'editIdea'}}"><input type="submit"  class="eIdea" value="Editar"></a>
       {{/if}}
   </span>
 </template>
@@ -151,6 +159,16 @@
     </div>
   {{/each}}
   </section>
+</template>
+
+<template name="editIdea">
+  {{#each ideaData}}
+  <h1>Edit</h1>
+  <input type="text" id="description" name="description" value="{{idea}}">
+  <label for="image"> Insertar imagen <input type="file" id="image" name="image" class="image"> </label>
+
+  <!--input type="hidden" role="uploadcare-uploader" -->
+  {{/each}}
 </template>
 
 <!-- Seccion:"LogInForm"-->
@@ -249,9 +267,8 @@
     {{#each idea_to_show}}
     <section class="container">
         {{>idea}}
-        {{#if video}}
         {{>video}}
-        {{/if}}
+        <!--{{>blocks}}-->
         <h2>Comentarios</h2>
         {{>comments}}
     </section>
@@ -266,6 +283,9 @@ http://youtu.be/EipGZpAUBws
 <iframe width="420" height="315" src="//www.youtube.com/embed/EipGZpAUBws" frameborder="0" allowfullscreen></iframe>
 <!-- <iframe width="420" height="315" src="//player.vimeo.com/video/91333666" frameborder="0" allowfullscreen></iframe>
  -->
+</template>
+<template name="blocks">
+
 </template>
 <template name="theUser">
 {{#each user}}

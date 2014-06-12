@@ -2,6 +2,7 @@
   "packages": {
     "iron-router": {},
     "bootstrap3-wysihtml5": {},
-    "bootstrap-wysiwyg": {}
+    "bootstrap-wysiwyg": {},
+    "collectionFS": {}
   }
 }

@@ -11,3 +11,5 @@ iron-router
 bootstrap3-wysihtml5
 bootstrap-wysiwyg
 jquery
+collectionFS
+cfs-gridfs
