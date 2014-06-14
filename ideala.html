@@ -83,7 +83,7 @@
 <template name="newIdea">
   <form method="post" action="index.html">
         <label>¿Cuál es tu idea?</label>
-        <p><textarea type="text" id="idea">{{ideaData.idea}}</textarea></p>
+        <p><textarea type="text" id="pitch">{{ideaData.pitch}}</textarea></p>
         <label>Palabras clave de tu idea separadas por coma</label>
         <p><input type="text" name="typeOfIdea" id="tagsOfIdea" value={{ideaData.tagsOfIdea}}></p>
         <p class="submit"><input type="submit"  class="searchIdea" value="Añadir Idea"></p>    
@@ -122,7 +122,7 @@
 <template name="idea">
   <span>
     <a href="{{pathFor 'ideaData'}}">
-      <p id="descriptionIdea">{{points}} {{idea}}</p>
+      <p id="descriptionIdea">{{points}} {{pitch}}</p>
       <p id="descriptionIdea">{{tagsOfIdea}}</p>
     </a>
       <p id="descriptionIdea">{{>persons}}</p>
@@ -164,13 +164,38 @@
 <template name="editIdea">
   {{#each ideaData}}
   <h1>Edit</h1>
-  <input type="text" id="description" name="description" value="{{idea}}">
-  <label for="image"> Insertar imagen <input type="file" id="image" name="image" class="image"> </label>
-
+  <input type="text" id="description" name="description" value="{{pitch}}"><br>
+  <!--Mostrar bloques actuales -->
+  {{#each files.id}}
+    {{>fileDisplay}}
+  {{/each}}
+  {{#if newText}}
+  <input type="button" id="isHeader" name="isHeader" value="Título">
+  <input type="button" id="isSubheader" name="isSubheader" value="Título">
+  <input type="button" id="isNormal" name="is Normal" value="Normal">
+  <input type="button" id="italic" name="italic" value="Cursiva">
+  <input type="button" id="blond" name="blond" value="Negrita">
+  <input type="text" id="text" name="text" placeholder="Escribe aqui"><br>
+  {{/if}}
+  {{#if newImage}}
+  <label for="image"> Insertar imagen <input type="file" id="image" name="image" class="image"> </label><br>
+  {{/if}}
+  <input type="button" id="newText" name="newText" class="newText" value="Añadir Texto">
+  <input type="button" id="newImage" name="newImage" class="newImage" value="Añadir Imagen"><br>
+  <a href="{{pathFor 'ideaData'}}">
+   <input type="submit" id="done" name="done" class="done" value="Hecho">
+  </a>
+  <!--new Link también será interesante -->
+  <!--posicion guardada en columnas de bootstrap o en tabla -->
   <!--input type="hidden" role="uploadcare-uploader" -->
   {{/each}}
 </template>
-
+<template name="fileDisplay">
+{{this}}
+{{#each fileFounded this}}
+  <p>Archivo</p>
+{{/each}}
+</template>
 <!-- Seccion:"LogInForm"-->
 <template name="loginForm">
   <section class="container">
@@ -242,11 +267,12 @@
         {{#each profile.ideas}}
           {{#each idea_data this}}
               <div id="sectionProyectos">
-              <span class="seeIdea" title="Ver Idea"><p>{{idea}} </p></span>
+              {{>idea}}
               </div>
           {{/each}}
         {{/each}}
       </div>
+        <!--Corregir esto para ver si mostraremos comentarios
         <p id="titulos">Comentarios</p>
         <div id="pProyectos">
         {{#each profile.comments}}
@@ -259,6 +285,7 @@
           {{/each}}
         {{/each}}
         </div>
+        -->
       </div>
     </section>
     {{/each}}

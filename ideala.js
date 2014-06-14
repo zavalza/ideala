@@ -1,6 +1,7 @@
 //DB Connnection
 Ideas = new Meteor.Collection("ideas")
 Comments = new Meteor.Collection("comments")
+Texts = new Meteor.Collection("texts") //opcion a guardar tipo de letra y tamaño, y comandos html de cursiva y negrita
 Projects = new Meteor.Collection("projects")
 
 //File Storage
@@ -60,6 +61,8 @@ if (Meteor.isClient) { //Client Side
 
   Meteor.startup(function () {
       Session.set("showWelcome", true);
+      Session.set("newText", false);
+      Session.set("newImage", false);
       Session.set("commentsToShow", []);
       Session.set("currentIdea", 0);
       Session.set("userToShow", 0);
@@ -132,25 +135,27 @@ if (Meteor.isClient) { //Client Side
       evt.preventDefault();
       Session.set("currentIdea", 0);
       Session.set("userToShow", 0);
-      var idea = document.getElementById("idea").value;
+      var pitch = document.getElementById("pitch").value;
       //Separacion de tags
       var tagsOfIdea = document.getElementById("tagsOfIdea").value;
 
-      if(idea=="" || tagsOfIdea == "")
+      if(pitch=="" || tagsOfIdea == "")
       {
         alert("Por favor llena los campos");
         return false;
       }
       var doc = {
-                pitch: idea, 
+                pitch: pitch, 
                 nameOfIdea: " ",
                 tagsOfIdea: tagsOfIdea,
-                video:" ",
-                blocks:{
-                      images:[],
-                      texts:[],
-                      order:[]
-                      },
+                texts:{
+                    id:[],
+                    position:[]
+                },
+                files:{
+                    id:[],
+                    position:[]
+                },
                 lastScore: 0,
                 points: 0,
                 votedBy:[],
@@ -245,9 +250,10 @@ if (Meteor.isClient) { //Client Side
       var doc = {user: Meteor.userId(),
                 idea: currentIdea,
                 text: text, 
-                images: [],
-                videos:[],
-                documents:[],
+                image: null,
+                video: null,
+                audio: null,
+                otherFile: null,
                 points:0,
                 votedBy:[], 
                 referrer: document.referrer, timestamp: new Date()
@@ -298,11 +304,29 @@ if (Meteor.isClient) { //Client Side
   });
 
   Template.editIdea.events({
+  'click .newText': function (evt, tmpl) {
+     Session.set("newText", !(Session.get("newText")));
+    },
+  'click .newImage': function (evt, tmpl) {
+      Session.set("newImage", !(Session.get("newImage")));
+    },
+  'click .done': function (evt, tmpl) {
+     var currentIdea = Session.get("currentIdea");
+      var newPitch = tmpl.find('#description').value;
+      Meteor.call("updatePitch", newPitch, currentIdea);
+      Router.go('ideaData');
+      return true;
+    },
   'change .image': function(event, template) {
+    var currentIdea = Session.get("currentIdea");
     FS.Utility.eachFile(event, function(file) {
       im = Images.insert(file, function (err, fileObj) {
         //Inserted new doc with ID fileObj._id, and kicked off the data upload using HTTP
+        if(err){
+          alert("Error al cargar el archivo");
+        }
       });
+      Meteor.call("addFile", im._id, currentIdea);
     });
   }
   });
@@ -380,7 +404,7 @@ if (Meteor.isClient) { //Client Side
                                     firstName:firstName,
                                     lastName:lastName,
                                     roles:roles,
-                                    words:[],
+                                    words:[], //change name to tags
                                     ideas:[],
                                     comments:[],
                                     points:0,
@@ -406,7 +430,6 @@ if (Meteor.isClient) { //Client Side
     }
   });
 
-
   
   Template.main.showSimilarIdeas = function() {
     return Session.get("showSimilarIdeas");
@@ -416,6 +439,13 @@ if (Meteor.isClient) { //Client Side
     return Session.get("showNewIdea");
   };
 
+  Template.editIdea.newText = function(){
+    return Session.get("newText");
+  };
+
+  Template.editIdea.newImage = function(){
+    return Session.get("newImage");
+  };
 
    Template.similar_ideas.helpers({
     matching_idea: function(){
@@ -449,6 +479,12 @@ if (Meteor.isClient) { //Client Side
       }
   });
 
+  Template.fileDisplay.helpers({
+      fileFounded: function(idF){
+        var im = Images.find({_id: idF});
+        alert(im.name)
+      }
+  });
   Template.comments.helpers({
     commentToShow: function (idea) {
       var commentsToShow = Session.get("commentsToShow");
@@ -682,6 +718,18 @@ if (Meteor.isServer) { //Server Side
           {$push: {'profile.comments':commentId}});
           Meteor.users.update({_id: userId},
           {$inc: {'profile.points':5}});
+      },
+
+      updatePitch: function(newPitch, currentIdea) {
+        console.log('Changing pitch of idea:');
+        console.log(currentIdea);
+        Ideas.update({_id: currentIdea},
+          {$set: {'pitch': newPitch}});
+      },
+
+      addFile: function(fileId, currentIdea){
+        Ideas.update({_id: currentIdea},
+          {$push: {'files.id': fileId}});
       },
 
       updateUserProfile:function(userId, words){
