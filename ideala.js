@@ -327,6 +327,8 @@ if (Meteor.isClient) { //Client Side
         }
       });
       Meteor.call("addFile", im._id, currentIdea);
+      var encontrada = Images.findOne({_id : im._id});
+        alert(encontrada._id)
     });
   }
   });
@@ -480,9 +482,9 @@ if (Meteor.isClient) { //Client Side
   });
 
   Template.fileDisplay.helpers({
-      fileFounded: function(idF){
-        var im = Images.find({_id: idF});
-        alert(im.name)
+      fileFounded: function(fileId){
+        Meteor.subscribe("file", fileId);
+        return Images.find({_id : fileId});
       }
   });
   Template.comments.helpers({
@@ -616,6 +618,16 @@ if (Meteor.isServer) { //Server Side
   if (id) {
     console.log(id);
     return Comments.find({_id: id});
+  } else {
+    this.ready();
+  }
+  });
+
+  Meteor.publish("file", function(id){
+    console.log("publishing file with id:");
+    if (id) {
+    console.log(id);
+    return Images.find({_id : id});
   } else {
     this.ready();
   }

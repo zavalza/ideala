@@ -191,10 +191,13 @@
   {{/each}}
 </template>
 <template name="fileDisplay">
-{{this}}
 {{#each fileFounded this}}
   <p>Archivo</p>
+  {{name}}
+  <img src="{{url}}">
 {{/each}}
+
+
 </template>
 <!-- Seccion:"LogInForm"-->
 <template name="loginForm">
