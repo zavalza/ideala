@@ -5,7 +5,8 @@
       "iron-router": {},
       "bootstrap3-wysihtml5": {},
       "bootstrap-wysiwyg": {},
-      "collectionFS": {}
+      "collectionFS": {},
+      "famono": {}
     },
     "packages": {
       "iron-router": {
@@ -27,6 +28,11 @@
         "git": "https://github.com/CollectionFS/Meteor-CollectionFS.git",
         "tag": "v0.4.8",
         "commit": "fea890b1e27799ccc9f71046748fb23a84330a16"
+      },
+      "famono": {
+        "git": "https://github.com/raix/Meteor-famono.git",
+        "tag": "v0.3.3",
+        "commit": "e953d5f1f7a9906d3df86472b9582f14cc3e4699"
       },
       "blaze-layout": {
         "git": "https://github.com/EventedMind/blaze-layout.git",

@@ -3,6 +3,7 @@
     "iron-router": {},
     "bootstrap3-wysihtml5": {},
     "bootstrap-wysiwyg": {},
-    "collectionFS": {}
+    "collectionFS": {},
+    "famono": {}
   }
 }
