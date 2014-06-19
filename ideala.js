@@ -64,6 +64,7 @@ if (Meteor.isClient) { //Client Side
       Session.set("showWelcome", true);
       Session.set("newText", false);
       Session.set("newImage", false);
+      Session.set("fbUser", false);
       Session.set("commentsToShow", []);
       Session.set("currentIdea", 0);
       Session.set("userToShow", 0);
@@ -80,6 +81,7 @@ if (Meteor.isClient) { //Client Side
   },
   passwordSignupFields: 'USERNAME_AND_OPTIONAL_EMAIL'
 });
+
 
   Template.navigation.events({
     'click .welcomeLink': function (evt, tmpl) {
@@ -350,7 +352,12 @@ if (Meteor.isClient) { //Client Side
         }, function (err) {
           if (err)
             Session.set('errorMessage', err.reason || 'Unknown error');
-      });
+          else
+          {
+            //Success
+            Session.set('fbUser', true);
+          }
+      }); 
       }
       else{
         alert("Error")
@@ -597,6 +604,25 @@ if (Meteor.isClient) { //Client Side
 /*********************************************************************************/
 if (Meteor.isServer) { //Server Side
 
+  Accounts.onCreateUser(function(options, user){
+    if(user.services.facebook)
+    {
+      console.log(user.services.facebook);
+      var firstName = user.services.facebook.first_name;
+      var lastName = user.services.facebook.last_name;
+      var profile ={
+                      firstName:firstName,
+                      lastName:lastName,
+                      roles: [],
+                      words:[], //change name to tags
+                      ideas:[],
+                      comments:[],
+                      points:0,
+                    }
+      user.profile = profile;
+    }
+    return user;
+  });
  
   Meteor.publish('similar_ideas', function(searchText) {
 
@@ -783,6 +809,25 @@ if (Meteor.isServer) { //Server Side
           Meteor.users.update({_id: userId},
           {$push: {'profile.words':wordsArray[i]}} );
         }
+      },
+
+      completeFbProfile:function(userId){
+        console.log('completing profile of user with id:');
+        console.log(userId);
+        Meteor.users.update({_id: userId},
+          {$set: {'profile.firstName': services.facebook.first_name}});
+        // username:username,
+        //                   email: email,
+        //                   password : password,
+        //                   profile: {
+        //                             firstName:firstName,
+        //                             lastName:lastName,
+        //                             roles:roles,
+        //                             words:[], //change name to tags
+        //                             ideas:[],
+        //                             comments:[],
+        //                             points:0,
+        //                           }
       },
 
       _searchIdeas: function (searchText) {
