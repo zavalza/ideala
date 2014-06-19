@@ -57,11 +57,13 @@ Router.map(function() {
 if (Meteor.isClient) { //Client Side
 
   /*Subsription variables, useful to sync data*/
-  ideas = Meteor.subscribe("similar_ideas", " ");
+  //ideas = Meteor.subscribe("similar_ideas", " ");
+  ideas = Meteor.subscribe("randomIdea", Meteor.userId());
   users = Meteor.subscribe("allUsers");
 
   Meteor.startup(function () {
       Session.set("showWelcome", true);
+      Session.set("showNewIdea", false);
       Session.set("newText", false);
       Session.set("newImage", false);
       Session.set("fbUser", false);
@@ -84,6 +86,10 @@ if (Meteor.isClient) { //Client Side
 
 
   Template.navigation.events({
+    'click .newIdea': function(evt, tmpl){
+      Session.set("showNewIdea", !(Session.get("showNewIdea")));
+    },
+
     'click .welcomeLink': function (evt, tmpl) {
       if(Meteor.userId())
       {
@@ -93,13 +99,14 @@ if (Meteor.isClient) { //Client Side
         {
           var old_words = old_words + " "+ old_wordsArray[i];
         }
-        ideas =  Meteor.subscribe('similar_ideas', old_words);
+        //ideas =  Meteor.subscribe('similar_ideas', old_words);
       }
         Router.go('welcome');
       },
 
     'click .ideasLink': function (evt, tmpl) {
-      ideas = Meteor.subscribe("allIdeas");
+      //ideas = Meteor.subscribe("allIdeas");
+      ideas = Meteor.subscribe("randomIdea", Meteor.userId())
       Router.go('ideas');
     },
 
@@ -174,12 +181,13 @@ if (Meteor.isClient) { //Client Side
                 };
       Session.set("ideaData", doc);
       Session.set("tagsOfIdea",tagsOfIdea);
-      ideas = Meteor.subscribe('similar_ideas', tagsOfIdea, function(){
+      /*ideas = Meteor.subscribe('similar_ideas', tagsOfIdea, function(){
         Session.set("showWelcome", false);
         Session.set("showNewIdea", false);
         Session.set("showAllIdeas",false);
         Session.set("showSimilarIdeas", true);  
-      });
+      });*/
+      ideas = Meteor.subscribe("randomIdea", Meteor.userId())
       // if(IdeasSubscription.error) //No results back
       // {
       //   Session.set("showWelcome", false);
@@ -191,47 +199,47 @@ if (Meteor.isClient) { //Client Side
       return false
     },
 
-    'click .saveIdea': function (evt, tmpl) {
+    // 'click .saveIdea': function (evt, tmpl) {
 
-    if (Meteor.userId())
-    {
-        var new_words = Session.get("tagsOfIdea");
-        var words = new_words.replace(',',' ');
-        Meteor.call("updateUserProfile", Meteor.userId(), words);
-        Session.set("tagsOfIdea", " ")
-        var old_wordsArray = Meteor.user().profile.words;
-        var old_words = " ";
-        for(var i = 0; i < old_wordsArray.length; i++)
-        {
-          var old_words = old_words + " "+ old_wordsArray[i];
-        }
-        var doc = Session.get("ideaData");
-        var currentIdea = Session.get("currentIdea")
-        if( currentIdea != 0) //This idea tries to improve another
-        {
-          doc.peopleInvolved.users.push(Meteor.userId());
-          Meteor.call("addComment", Meteor.userId(), doc, currentIdea);
-          Meteor.subscribe('similar_ideas', old_words +","+ new_words);
-          Session.set("currentIdea", 0);
-          Session.set("ideaData", " ");
-        }
-        else
-        {
-          doc.peopleInvolved.users.push(Meteor.userId());
-          Meteor.call("insertIdea", Meteor.userId(), doc);
-          Meteor.subscribe('similar_ideas', old_words +","+ new_words);
-          Session.set("ideaData", " ");
-        }
-        Session.set("showSimilarIdeas", false);
-        Meteor.subscribe("userData");
-        return true;
-    }
-    else
-    {
-      //This can not happen
-    }
-      return false
-    },
+    // if (Meteor.userId())
+    // {
+    //     var new_words = Session.get("tagsOfIdea");
+    //     var words = new_words.replace(',',' ');
+    //     Meteor.call("updateUserProfile", Meteor.userId(), words);
+    //     Session.set("tagsOfIdea", " ")
+    //     var old_wordsArray = Meteor.user().profile.words;
+    //     var old_words = " ";
+    //     for(var i = 0; i < old_wordsArray.length; i++)
+    //     {
+    //       var old_words = old_words + " "+ old_wordsArray[i];
+    //     }
+    //     var doc = Session.get("ideaData");
+    //     var currentIdea = Session.get("currentIdea")
+    //     if( currentIdea != 0) //This idea tries to improve another
+    //     {
+    //       doc.peopleInvolved.users.push(Meteor.userId());
+    //       Meteor.call("addComment", Meteor.userId(), doc, currentIdea);
+    //       Meteor.subscribe('similar_ideas', old_words +","+ new_words);
+    //       Session.set("currentIdea", 0);
+    //       Session.set("ideaData", " ");
+    //     }
+    //     else
+    //     {
+    //       doc.peopleInvolved.users.push(Meteor.userId());
+    //       Meteor.call("insertIdea", Meteor.userId(), doc);
+    //       Meteor.subscribe('similar_ideas', old_words +","+ new_words);
+    //       Session.set("ideaData", " ");
+    //     }
+    //     Session.set("showSimilarIdeas", false);
+    //     Meteor.subscribe("userData");
+    //     return true;
+    // }
+    // else
+    // {
+    //   //This can not happen
+    // }
+    //   return false
+    // },
     //Decrease is not used
     'click .decrease': function (evt, tmpl) {
       if(Meteor.userId())
@@ -387,7 +395,8 @@ if (Meteor.isClient) { //Client Side
           else{
               //Suscribir a tipo de ideas que se mostraran en la pagina de ideas
               Router.go('ideas');
-              ideas = Meteor.subscribe('similar_ideas', old_words);
+              //ideas = Meteor.subscribe('similar_ideas', old_words);
+              ideas = Meteor.subscribe("randomIdea", Meteor.userId())
               return false;
           }
         });
@@ -489,6 +498,10 @@ if (Meteor.isClient) { //Client Side
 
   //All ideas
   Template.ideas.helpers({
+    randomIdea: function(){
+      ideas = Meteor.subscribe("randomIdea", Meteor.userId());
+      return Ideas.find({'votedBy':{$nin:[Meteor.userId()]}});
+    },
     open_idea: function(id){
     return Ideas.find();
     }
@@ -623,6 +636,15 @@ if (Meteor.isServer) { //Server Side
       user.profile = profile;
     }
     return user;
+  });
+
+  Meteor.publish('randomIdea', function(userId){
+    
+    var cursor = Ideas.find({'votedBy':{$nin:[userId]}});
+    var rand = Math.floor(Math.random() * cursor.count());
+    //skip in results is not working, now we are NOT using random
+    //it will be intersting if we use the words of interest also
+    return Ideas.find({'votedBy':{$nin:[userId]}},{limit:1});
   });
  
   Meteor.publish('similar_ideas', function(searchText) {
