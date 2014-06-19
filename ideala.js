@@ -67,8 +67,19 @@ if (Meteor.isClient) { //Client Side
       Session.set("commentsToShow", []);
       Session.set("currentIdea", 0);
       Session.set("userToShow", 0);
+
   });
 
+  Accounts.ui.config({
+  requestPermissions: {
+    facebook: ['public_profile'],
+    github: ['user', 'repo']
+  },
+  requestOfflineToken: {
+    google: true
+  },
+  passwordSignupFields: 'USERNAME_AND_OPTIONAL_EMAIL'
+});
 
   Template.navigation.events({
     'click .welcomeLink': function (evt, tmpl) {
@@ -332,6 +343,20 @@ if (Meteor.isClient) { //Client Side
   });
 
   Template.loginForm.events({
+    'click .tryFacebookLogin': function(evt, tmpl){
+      if(Accounts.loginServicesConfigured()){
+        Meteor.loginWithFacebook({
+        requestPermissions: ['public_profile']
+        }, function (err) {
+          if (err)
+            Session.set('errorMessage', err.reason || 'Unknown error');
+      });
+      }
+      else{
+        alert("Error")
+      }
+    },
+
     'click .tryLogin' : function (evt, tmpl) {
       evt.preventDefault();
       var username = tmpl.find('#username').value;

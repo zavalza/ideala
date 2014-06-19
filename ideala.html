@@ -60,6 +60,7 @@
     <br>
     <p>Caracteristicas con imagenes y botones de link</p>
     <a href="{{pathFor 'loginForm'}}"><button type="button" class="btn btn-primary">Comenzar</button></a>
+    {{>loginButtons}}
     <p>Porqué Kip con boton "tengo una idea"</p>
     <p>Prensa</p>
     
@@ -191,7 +192,7 @@
               <span class="pull-right"><a href="{{pathFor 'newUserForm'}}">Crear una cuenta</a></span><span><a href="#">Ayuda?</a></span>
               <button class="btn btn-primary btn-lg btn-block tryLogin">Entrar</button>
               <h3 class="text-center">O</h3>
-              <a href=""><img src="loginfacebook.png"></a>
+              <img class="tryFacebookLogin" src="loginfacebook.png">
             </div>
           </form>
       </div>
