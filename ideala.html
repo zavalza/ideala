@@ -55,25 +55,91 @@
 </template>
 
 <template name="welcomeMessage">
-    <h1>Kip</h1>
-    <p>Manteniendo las ideas en la realidad</p>
-    <br>
-    <p>Caracteristicas con imagenes y botones de link</p>
-    <a href="{{pathFor 'loginForm'}}"><button type="button" class="btn btn-primary">Comenzar</button></a>
-    {{>loginButtons}}
-    <p>Porqué Kip con boton "tengo una idea"</p>
-    <p>Prensa</p>
+  <div class="header alt vert">
+  <div class="container">
     
+    <h1>Kip</h1>
+      <p class="lead">Manteniendo ideas en la realidad</p>
+      <div>&nbsp;</div>
+      <a href="{{pathFor 'loginForm'}}"><button type="button" class="btn btn-primary btn-lg">Comenzar</button></a>
+  </div>
+  </div>
+
+  <div class="featurette" id="sec2">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <h1>Características</h1>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-2 col-md-offset-2 text-center">
+        <div class="featurette-item">
+          <i class="icon-rocket"></i>
+          <h4>Rocket</h4>
+          <p>Up-up-and-away with this starter template.</p>
+        </div>
+      </div>
+      <div class="col-md-2 text-center">
+        <div class="featurette-item">
+          <i class="icon-magnet"></i>
+          <h4>Magnet</h4>
+          <p>For you are a magnet and I am steel.</p>
+        </div>
+      </div>
+      <div class="col-md-2 text-center">
+        <div class="featurette-item">
+          <i class="icon-shield"></i>
+          <h4>Shield</h4>
+          <p>Protect yourself. Don't design like it's 1999.</p>
+        </div>
+      </div>
+      <div class="col-md-2 text-center">
+        <div class="featurette-item">
+          <i class="icon-pencil"></i>
+          <h4>Scholar</h4>
+          <p>Because lead pencils are pretty smart looking.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="blurb">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-5">
+        <h1><i class="icon-plane icon-3x"></i></h1>
+      </div>
+      <div class="col-md-7">
+        <h1 class="pull-right">¿Por qué Kip?</h1>
+        <p class="lead pull-right">Creemos que las personas necesitan compartir sus ideas</p>
+        <p class="pull-right"><a href="{{pathFor 'loginForm'}}"><button type="button" class="btn btn-primary">Tengo una idea</button></a></p>
+      </div>
+    </div>
+  </div>
+</div>
+    <p>Prensa</p>
 </template>
 
 <template name="newIdea">
-  <form method="post" action="index.html">
+  <div class="row">                  
+ <!-- main col left --> 
+ <div class="col-sm-5">
+  <div class="form-group" style="padding:14px;">
+        <textarea class="form-control" id="pitch" placeholder="¿Cuál es tu idea?"></textarea>
+        <label>Palabras clave de tu idea separadas por coma</label>
+        <p><input type="text" name="typeOfIdea" id="tagsOfIdea"></p>
+  </div>
+  <button class="btn btn-primary pull-right searchIdea" type="button">Añadir</button>
+</div>
+</div>
+  <!-- <form method="post" action="index.html">
         <label>¿Cuál es tu idea?</label>
         <p><textarea type="text" id="pitch">{{ideaData.pitch}}</textarea></p>
         <label>Palabras clave de tu idea separadas por coma</label>
         <p><input type="text" name="typeOfIdea" id="tagsOfIdea" value={{ideaData.tagsOfIdea}}></p>
         <p><input type="submit"  class="searchIdea" value="Añadir Idea"></p>    
-  </form>
+  </form> -->
 </template>
 
 <template name="similar_ideas">
@@ -114,8 +180,12 @@
 </template>
 
 <template name="newComment">
-<p><input type="text" name="textOfComment" id="textOfComment" placeholder="Nuevo comentario..."></p>
-  <p><input type="submit"  class="saveComment" value="Comentar"></p>
+<form>
+<div class="input-group">
+  <input type="text" class="form-control" id="textOfComment" placeholder="Nuevo comentario...">
+  <span class="input-group-btn"><button class="btn btn-lg btn-primary saveComment" type="button">Comentar</button></span>
+</div>
+</form>
 </template>
 
 <template name="people">
@@ -192,7 +262,7 @@
               <span class="pull-right"><a href="{{pathFor 'newUserForm'}}">Crear una cuenta</a></span><span><a href="#">Ayuda?</a></span>
               <button class="btn btn-primary btn-lg btn-block tryLogin">Entrar</button>
               <h3 class="text-center">O</h3>
-              <img class="tryFacebookLogin" src="loginfacebook.png">
+              <img class="btn tryFacebookLogin" src="loginfacebook.png">
             </div>
           </form>
       </div>

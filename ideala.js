@@ -356,6 +356,7 @@ if (Meteor.isClient) { //Client Side
           {
             //Success
             Session.set('fbUser', true);
+            Router.go('ideas');
           }
       }); 
       }
