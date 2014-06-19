@@ -56,11 +56,6 @@ Router.map(function() {
 
 if (Meteor.isClient) { //Client Side
 
-  /*Famo.us  */
-  famousPolyfills;
-  famous.core.famous;
-
-
   /*Subsription variables, useful to sync data*/
   ideas = Meteor.subscribe("similar_ideas", " ");
   users = Meteor.subscribe("allUsers");
@@ -74,40 +69,6 @@ if (Meteor.isClient) { //Client Side
       Session.set("userToShow", 0);
   });
 
-  Template.ideaData.rendered = function(){
-    var Engine = require("famous/core/Engine");
-  var Modifier = require("famous/core/Modifier");
-  //Object of type Transform sets position, rotation angle etc.
-  var Transform = require("famous/core/Transform");
-  var Surface = require("famous/core/Surface");
-  //Context is root of famo.us render tree. 
-  var context = Engine.createContext();
-  /*var context = Engine.createContext(destElement);
-  If you don't specify container element to Context constructor new div is added into document body.
-  Note that you can add multiple contexts into document. 
-  */
-
-  //Modifier tells engine how to render surfaces below it in the render tree.
-  //Surfaces are nodes that get drawn to the screen.
-  var modifier = new Modifier({ 
-    origin: [0.5, 0.5],
-    transform : Transform.rotateZ(1)
-});
-
-var surface = new Surface({
-    content: "Hello!", 
-    size: [100, 100], 
-    properties: { 
-        lineHeight: "100px",
-        textAlign: "center", 
-        backgroundColor: 'orange'
-    } 
-});
-
-context.add(modifier).add(surface);
-
-modifier.setTransform(Transform.rotateZ(0), { duration: 2000, curve: 'spring' });
-  }
 
   Template.navigation.events({
     'click .welcomeLink': function (evt, tmpl) {

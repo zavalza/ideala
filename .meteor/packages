@@ -8,9 +8,10 @@ insecure
 accounts-ui
 accounts-password
 iron-router
-bootstrap3-wysihtml5
-bootstrap-wysiwyg
 jquery
 collectionFS
 cfs-gridfs
-famono
+bootstrap-3
+less
+bootstrap3-less
+font-awesome-4-less

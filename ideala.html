@@ -1,6 +1,7 @@
 <head>
    <title>Kip</title>
-   <link href='http://fonts.googleapis.com/css?family=Muli' rel='stylesheet' type='text/css'>
+   <!--Mobile first -->
+   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
 <body>
@@ -10,23 +11,28 @@
 
  <!-- Barra de navegacion-->
 <template name="navigation">
-  <header>
-          <div class="container">
-            <h1><a href="{{pathFor 'welcome'}}">Kip</a></h1>
-              <nav>
-                <ul>
-                  <li><a href="{{pathFor 'ideas'}}">Ideas</a></li>
-                  <li><a  href="{{pathFor 'people'}}">Personas</a></li>
-                  {{#if currentUser}}
-                    <li>{{>theUser}}</li>
-                    <li><a href="#logout" class="tryLogout" id="salir">Salir</a></li>
-                  {{else}}
-                    <li><a href="{{pathFor 'loginForm'}}" id="ingresar">Comenzar</a></li>
-                  {{/if}}
-                </ul>
-              </nav>
-          </div>
-  </header>
+  <nav class="navbar navbar-default" role="navigation">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse"
+            data-target=".navbar-ex1-collapse">
+      <span class="sr-only">Desplegar navegación</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="{{pathFor 'welcome'}}">Kip</a>
+    </div> 
+    <div class="collapse navbar-collapse navbar-ex1-collapse">  
+      <ul class="nav navbar-nav">
+        {{#if currentUser}}
+          <li><a href="{{pathFor 'ideas'}}">Ideas</a></li>
+          <li><a  href="{{pathFor 'people'}}">Personas</a></li>
+          <li>{{>theUser}}</li>
+          <li><a href="#logout" class="tryLogout">Salir</a></li>
+        {{/if}}
+      </ul>
+    </div> 
+  </nav>
 </template>
 
 <template name="main">
@@ -41,13 +47,11 @@
 
   <!-- Seccion:"Welcome"-->
 <template name="welcome">
-  <div class="wpage">
   {{#if currentUser}}
     {{>ideas}}
   {{else}}
         {{>welcomeMessage}}
   {{/if}}
-  </div>
 </template>
 
 <template name="welcomeMessage">
@@ -55,6 +59,7 @@
     <p>Manteniendo las ideas en la realidad</p>
     <br>
     <p>Caracteristicas con imagenes y botones de link</p>
+    <a href="{{pathFor 'loginForm'}}"><button type="button" class="btn btn-primary">Comenzar</button></a>
     <p>Porqué Kip con boton "tengo una idea"</p>
     <p>Prensa</p>
     
@@ -66,23 +71,15 @@
         <p><textarea type="text" id="pitch">{{ideaData.pitch}}</textarea></p>
         <label>Palabras clave de tu idea separadas por coma</label>
         <p><input type="text" name="typeOfIdea" id="tagsOfIdea" value={{ideaData.tagsOfIdea}}></p>
-        <p class="submit"><input type="submit"  class="searchIdea" value="Añadir Idea"></p>    
+        <p><input type="submit"  class="searchIdea" value="Añadir Idea"></p>    
   </form>
 </template>
 
 <template name="similar_ideas">
-  <section class="container">
-  <div class="perfilIdeas">
   <h2>Ideas similares</h2>
-  <p class="submit"><input type="submit"  class="saveIdea" value="Mi idea es diferente"></p>
-  </div>
-  </section>
+  <p><input type="submit"  class="saveIdea" value="Mi idea es diferente"></p>
   {{#each matching_idea}}
-  <section class="container">
-  <div class="perfilIdeas">
       {{>idea}}
-  </div>
-  </section>
   {{else}}
   <h3>No se encontraron ideas similares</h3>
   {{/each}}
@@ -90,55 +87,45 @@
 
 <template name="ideas">
   {{#each open_idea}}
-  <section class="container">
-  <div class="perfilIdeas">
       {{>idea}}
       {{>comments}}
-  </div>
-  </section>
   {{/each}}
 </template>
 
 <template name="idea">
-  <span>
     <a href="{{pathFor 'ideaData'}}">
-      <p id="descriptionIdea">{{points}} {{pitch}}</p>
-      <p id="descriptionIdea">{{tagsOfIdea}}</p>
+      <p><span class="badge">{{points}}</span> {{pitch}}</p>
+      <p>{{tagsOfIdea}}</p>
     </a>
-      <p id="descriptionIdea">{{>persons}}</p>
-    <p class="submit"><input type="button"  class="followIdea" value="Kip"></p>
+      <p>{{>persons}}</p>
+    <p><input type="button"  class="followIdea" value="Kip"></p>
     {{#if canEdit this.peopleInvolved.users currentUser._id}}
         <a href="{{pathFor 'editIdea'}}"><input type="submit"  class="eIdea" value="Editar"></a>
       {{/if}}
-  </span>
 </template>
 
 <template name="comments">
   {{#each commentToShow this}}
-      <p><img src="/up.png" height="42" width="42" class="increase">{{points}} {{text}}</p>
+      <p><img src="/up.png" height="42" width="42" class="increase"><span class="badge">{{points}}</span>  {{text}}</p>
   {{/each}}
-  <p class="submit"><input type="button"  class="showComments" value="Ver todos"></p>
+  <p><input type="button"  class="showComments" value="Ver todos"></p>
   {{>newComment}}
 </template>
 
 <template name="newComment">
 <p><input type="text" name="textOfComment" id="textOfComment" placeholder="Nuevo comentario..."></p>
-  <p class="submit"><input type="submit"  class="saveComment" value="Comentar"></p>
+  <p><input type="submit"  class="saveComment" value="Comentar"></p>
 </template>
 
 <template name="people">
-  <section class="container">
   {{#each user}}
-    <div class="perfilIdeas">
     <a href="{{pathFor 'profile'}}">
-      {{profile.points}} {{profile.firstName}} {{profile.lastName}}
+      <span class="badge">{{profile.points}}</span>  {{profile.firstName}} {{profile.lastName}}
       {{#each profile.roles}}
         {{this}}
       {{/each}}
     </a>
-    </div>
   {{/each}}
-  </section>
 </template>
 
 <template name="editIdea">
@@ -182,55 +169,62 @@
   {{/each}}
 {{/if}}
 </template>
-<!-- Seccion:"LogInForm"-->
+
 <template name="loginForm">
-  <section class="container">
-          <div class="login">
-                <h1>Inicia Sesión </h1>
-                  <form method="post" action="index.html">
-                    <a href=""><img src="loginfacebook.png"></a>
-                    <a href="{{pathFor 'newUserForm'}}">Crear una cuenta</a>
-                    <p><input type="text" id="username" name="username" placeholder="Usuario"></p>
-                    <p><input type="password" id="password" name="password" value="" placeholder="Contraseña"></p>
-                    <p class="remember_me">
-                      <label>
-                          <input type="checkbox" name="remember_me" id="remember_me">
-                           Recordar en esta computadora
-                        </label>
-                    </p>
-                    <p class="submit"><input type="submit" class="tryLogin" id="submitBoton" name="commit" value="Entrar"></p>
-                    <div class="login-help">
-              <p>¿Olvidaste tu contraseña? <a href="index.html">Haz clic aquí para resetearla</a>.</p>
-          </div>
-        </form>
-          </div>
-      </section>
+<!--login modal-->
+<div id="loginModal" class="modal show" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+  <div class="modal-content">
+      <div class="modal-header">
+          <a href="{{pathFor 'welcome'}}"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button></a>
+          <h1 class="text-center">Iniciar sesión</h1>
+      </div>
+      <div class="modal-body">
+          <form class="form col-md-12 center-block">
+            <div class="form-group">
+              <input class="form-control input-lg" id="username" placeholder="Usuario" type="text">
+            </div>
+            <div class="form-group">
+              <input class="form-control input-lg" id="password" placeholder="Contraseña" type="password">
+            </div>
+            <div class="form-group">
+              <span class="pull-right"><a href="{{pathFor 'newUserForm'}}">Crear una cuenta</a></span><span><a href="#">Ayuda?</a></span>
+              <button class="btn btn-primary btn-lg btn-block tryLogin">Entrar</button>
+              <h3 class="text-center">O</h3>
+              <a href=""><img src="loginfacebook.png"></a>
+            </div>
+          </form>
+      </div>
+      <div class="modal-footer">
+          <div class="col-md-12">
+          <a href="{{pathFor 'welcome'}}"><button class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</button></a>
+      </div>  
+      </div>
+  </div>
+  </div>
+</div>
 </template>
 
 <!-- Seccion:"newUserForm"-->
 <template name="newUserForm">
-  <section>
-    <div class="userR">
-      <h1>Nuevo usuario</h1>
-      <form name="newUserForm">
-        <p><input type="text" class="form-control" id="firstName" placeholder="Nombre"></p>
-        <p><input type="text" class="form-control" id="lastName" placeholder="Apellido"></p>
-        <p><input type="text" class="form-control" id="username" placeholder="Usuario"></p>
-        <p><input type="text" class="form-control" id="email" placeholder="Correo Electrónico"></p>
-        <p><input type="password" class="form-control" id="password" placeholder="Contraseña"></p>
-        <p><label>¿Qué roles te gusta realizar en un proyecto?</label><br>
-        <input type="checkbox" name="role" value="administración">Administrarlo<br>
-        <input type="checkbox" name="role" value="desarrollo">Desarrollarlo (Parte técnica)<br>
-        <input type="checkbox" name="role" value="diseño">Diseñarlo<br>
-        <input type="checkbox" name="role" value="ventas">Venderlo<br>
-        <input type="checkbox" name="role" value="marketing">Difundirlo/promocionarlo<br>
-        <input type="checkbox" name="role" value="inversionista">Financearlo<br>
-        </p>
-        <input type="checkbox" name="role" value="mentoría">Mentoría<br>
-        <p class="submit"><input id="submitBoton" class="createUser" type="submit" name="commit" value="Registrarse"></p>
-        </form>
-    </div>
-  </section>
+<h1>Nuevo usuario</h1>
+<form name="newUserForm">
+  <p><input type="text" class="form-control" id="firstName" placeholder="Nombre"></p>
+  <p><input type="text" class="form-control" id="lastName" placeholder="Apellido"></p>
+  <p><input type="text" class="form-control" id="username" placeholder="Usuario"></p>
+  <p><input type="text" class="form-control" id="email" placeholder="Correo Electrónico"></p>
+  <p><input type="password" class="form-control" id="password" placeholder="Contraseña"></p>
+  <p><label>¿Qué roles te gusta realizar en un proyecto?</label><br>
+  <input type="checkbox" name="role" value="administración">Administrarlo<br>
+  <input type="checkbox" name="role" value="desarrollo">Desarrollarlo (Parte técnica)<br>
+  <input type="checkbox" name="role" value="diseño">Diseñarlo<br>
+  <input type="checkbox" name="role" value="ventas">Venderlo<br>
+  <input type="checkbox" name="role" value="marketing">Difundirlo/promocionarlo<br>
+  <input type="checkbox" name="role" value="inversionista">Financearlo<br>
+  </p>
+  <input type="checkbox" name="role" value="mentoría">Mentoría<br>
+  <p><input id="submitBoton" class="createUser" type="submit" name="commit" value="Registrarse"></p>
+  </form>
 </template>
 
 <template name="persons">
@@ -245,19 +239,13 @@
 
 <template name="profile">
     {{#each user}}
-    <section class="container">
-      <div class="perfilUsuario">
-        <h1>{{profile.firstName}} {{profile.lastName}} {{profile.points}}</h1>
-        <p id="titulos">Ideas</p>
-        <div id="pProyectos">
-        {{#each profile.ideas}}
-          {{#each idea_data this}}
-              <div id="sectionProyectos">
-              {{>idea}}
-              </div>
+      <h1>{{profile.firstName}} {{profile.lastName}} <span class="badge">{{profile.points}}</span> </h1>
+      <p id="titulos">Ideas</p>
+      {{#each profile.ideas}}
+        {{#each idea_data this}}
+            {{>idea}}
           {{/each}}
         {{/each}}
-      </div>
         <!--Corregir esto para ver si mostraremos comentarios
         <p id="titulos">Comentarios</p>
         <div id="pProyectos">
@@ -272,19 +260,15 @@
         {{/each}}
         </div>
         -->
-      </div>
-    </section>
     {{/each}}
 </template>
 <template name="ideaData">
     {{#each idea_to_show}}
-    <section class="container">
         {{>idea}}
         {{>video}}
         <!--{{>blocks}}-->
         <h2>Comentarios</h2>
         {{>comments}}
-    </section>
     {{/each}}
 </template>
 <template name="video">

@@ -1,12 +1,2 @@
-/* CSS General*/
-body 
-  {
-    overflow: auto;
-    position: static;
-  }
-
-  html {
-    overflow: visible;
-    position: static;
-}
+.modal-footer {   border-top: 0px; }
 
