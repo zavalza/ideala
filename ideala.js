@@ -668,6 +668,7 @@ if (Meteor.isServer) { //Server Side
     return user;
   });
 
+
   Meteor.publish('randomIdea', function(userId){
     
     var cursor = Ideas.find({'votedBy':{$nin:[userId]}});
