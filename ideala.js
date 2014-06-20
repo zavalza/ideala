@@ -153,7 +153,58 @@ if (Meteor.isClient) { //Client Side
       return false
     },
 
-    'click .searchIdea': function (evt, tmpl) {
+    // 'click .searchIdea': function (evt, tmpl) {
+    //   evt.preventDefault();
+    //   Session.set("currentIdea", 0);
+    //   Session.set("userToShow", 0);
+    //   var pitch = document.getElementById("pitch").value;
+    //   //Separacion de tags
+    //   var tagsOfIdea = document.getElementById("tagsOfIdea").value;
+
+    //   if(pitch=="" || tagsOfIdea == "")
+    //   {
+    //     alert("Por favor llena los campos");
+    //     return false;
+    //   }
+    //   var doc = {
+    //             pitch: pitch, 
+    //             nameOfIdea: " ",
+    //             tagsOfIdea: tagsOfIdea,
+    //             blocks:[], //either text block or file id. if block is text, it has HTML tag
+    //             lastScore: 0,
+    //             points: 0,
+    //             votedBy:[],
+    //             peopleInvolved:{
+    //                           users: [],
+    //                           roles:[]
+    //                         },
+    //             comments:[], 
+    //             referrer: document.referrer, timestamp: new Date()
+    //             };
+    //   Session.set("ideaData", doc);
+    //   Session.set("tagsOfIdea",tagsOfIdea);
+    //   /*ideas = Meteor.subscribe('similar_ideas', tagsOfIdea, function(){
+    //     Session.set("showWelcome", false);
+    //     Session.set("showNewIdea", false);
+    //     Session.set("showAllIdeas",false);
+    //     Session.set("showSimilarIdeas", true);  
+    //   });*/
+    //   ideas = Meteor.subscribe("randomIdea", Meteor.userId())
+    //   // if(IdeasSubscription.error) //No results back
+    //   // {
+    //   //   Session.set("showWelcome", false);
+    //   //   Session.set("showNewIdea", false);
+    //   //   Session.set("showAllIdeas",true);
+    //   //   alert("No hubo ideas similares, tu idea ha sido guardada")
+    //   // }
+
+    //   return false
+    // },
+
+    'click .saveIdea': function (evt, tmpl) {
+
+    if (Meteor.userId())
+    {
       evt.preventDefault();
       Session.set("currentIdea", 0);
       Session.set("userToShow", 0);
@@ -181,67 +232,45 @@ if (Meteor.isClient) { //Client Side
                 comments:[], 
                 referrer: document.referrer, timestamp: new Date()
                 };
-      Session.set("ideaData", doc);
-      Session.set("tagsOfIdea",tagsOfIdea);
-      /*ideas = Meteor.subscribe('similar_ideas', tagsOfIdea, function(){
-        Session.set("showWelcome", false);
-        Session.set("showNewIdea", false);
-        Session.set("showAllIdeas",false);
-        Session.set("showSimilarIdeas", true);  
-      });*/
-      ideas = Meteor.subscribe("randomIdea", Meteor.userId())
-      // if(IdeasSubscription.error) //No results back
-      // {
-      //   Session.set("showWelcome", false);
-      //   Session.set("showNewIdea", false);
-      //   Session.set("showAllIdeas",true);
-      //   alert("No hubo ideas similares, tu idea ha sido guardada")
-      // }
 
+        // var new_words = Session.get("tagsOfIdea");
+        var words = tagsOfIdea.replace(',',' ');
+        Meteor.call("updateUserProfile", Meteor.userId(), words);
+        Session.set("tagsOfIdea", " ")
+        // var old_wordsArray = Meteor.user().profile.words;
+        // var old_words = " ";
+        // for(var i = 0; i < old_wordsArray.length; i++)
+        // {
+        //   var old_words = old_words + " "+ old_wordsArray[i];
+        // }
+        // var doc = Session.get("ideaData");
+        // var currentIdea = Session.get("currentIdea")
+        // if( currentIdea != 0) //This idea tries to improve another
+        // {
+        //   doc.peopleInvolved.users.push(Meteor.userId());
+        //   Meteor.call("addComment", Meteor.userId(), doc, currentIdea);
+        //   Meteor.subscribe('similar_ideas', old_words +","+ new_words);
+        //   Session.set("currentIdea", 0);
+        //   Session.set("ideaData", " ");
+        // }
+        
+        doc.peopleInvolved.users.push(Meteor.userId());
+        Meteor.call("insertIdea", Meteor.userId(), doc);
+        //Meteor.subscribe('similar_ideas', old_words +","+ new_words);
+        Session.set("ideaData", " ");
+        Session.set("showSimilarIdeas", false);
+        Session.set("showNewIdea", false);
+        Meteor.subscribe("userData");
+        ideas = Meteor.subscribe("randomIdea", Meteor.userId())
+        return false;
+    }
+    else
+    {
+      //This can not happen
+      alert("Necesitas iniciar sesión");
+    }
       return false
     },
-
-    // 'click .saveIdea': function (evt, tmpl) {
-
-    // if (Meteor.userId())
-    // {
-    //     var new_words = Session.get("tagsOfIdea");
-    //     var words = new_words.replace(',',' ');
-    //     Meteor.call("updateUserProfile", Meteor.userId(), words);
-    //     Session.set("tagsOfIdea", " ")
-    //     var old_wordsArray = Meteor.user().profile.words;
-    //     var old_words = " ";
-    //     for(var i = 0; i < old_wordsArray.length; i++)
-    //     {
-    //       var old_words = old_words + " "+ old_wordsArray[i];
-    //     }
-    //     var doc = Session.get("ideaData");
-    //     var currentIdea = Session.get("currentIdea")
-    //     if( currentIdea != 0) //This idea tries to improve another
-    //     {
-    //       doc.peopleInvolved.users.push(Meteor.userId());
-    //       Meteor.call("addComment", Meteor.userId(), doc, currentIdea);
-    //       Meteor.subscribe('similar_ideas', old_words +","+ new_words);
-    //       Session.set("currentIdea", 0);
-    //       Session.set("ideaData", " ");
-    //     }
-    //     else
-    //     {
-    //       doc.peopleInvolved.users.push(Meteor.userId());
-    //       Meteor.call("insertIdea", Meteor.userId(), doc);
-    //       Meteor.subscribe('similar_ideas', old_words +","+ new_words);
-    //       Session.set("ideaData", " ");
-    //     }
-    //     Session.set("showSimilarIdeas", false);
-    //     Meteor.subscribe("userData");
-    //     return true;
-    // }
-    // else
-    // {
-    //   //This can not happen
-    // }
-    //   return false
-    // },
     //Decrease is not used
     'click .decrease': function (evt, tmpl) {
       if(Meteor.userId())
@@ -678,29 +707,29 @@ if (Meteor.isServer) { //Server Side
     return Ideas.find({'votedBy':{$nin:[userId]}},{limit:1});
   });
  
-  Meteor.publish('similar_ideas', function(searchText) {
+  // Meteor.publish('similar_ideas', function(searchText) {
 
-         var doc = {};
+  //        var doc = {};
 
-    var ideasIds = Meteor.call("searchIdeas",searchText);
+  //   var ideasIds = Meteor.call("searchIdeas",searchText);
    
-    console.log(ideasIds)
-    if(ideasIds.length > 0)
-   {
-        doc._id = {
-            $in: ideasIds
-        };
+  //   console.log(ideasIds)
+  //   if(ideasIds.length > 0)
+  //  {
+  //       doc._id = {
+  //           $in: ideasIds
+  //       };
 
-      var matchingIdeas = Ideas.find(doc,{sort:{lastScore:-1}});
-      return matchingIdeas;
-    }
-    else
-    {
-      console.log("subscription has no results back");
-      return Ideas.find({});
-    }
+  //     var matchingIdeas = Ideas.find(doc,{sort:{lastScore:-1}});
+  //     return matchingIdeas;
+  //   }
+  //   else
+  //   {
+  //     console.log("subscription has no results back");
+  //     return Ideas.find({});
+  //   }
 
-  });
+  // });
 
   Meteor.publish("userProfile", function (idOfUser) {
   console.log("publishing profile of user with id:");
@@ -774,25 +803,25 @@ if (Meteor.isServer) { //Server Side
   }
   });
 
-  Meteor.startup(function () {
-    // code to run on server at startup
-    //Comment this line the first time, so Meteor can find the index_name afterwards
-    search_index_name = 'ideasFinder'
+  // Meteor.startup(function () {
+  //   // code to run on server at startup
+  //   //Comment this line the first time, so Meteor can find the index_name afterwards
+  //   search_index_name = 'ideasFinder'
 
-    // Remove old indexes as you can only have one text index and if you add 
-    // more fields to your index then you will need to recreate it.
-    Ideas._dropIndex(search_index_name);
+  //   // Remove old indexes as you can only have one text index and if you add 
+  //   // more fields to your index then you will need to recreate it.
+  //   Ideas._dropIndex(search_index_name);
 
-    //text
-    Ideas._ensureIndex({
-        idea: 'text',
-        tagsOfIdea: 'text'
-    }, {
-        name: 'ideasFinder'
-    },{
-      weight: {idea: 1, tagsOfIdea: 3}
-    });
-  });
+  //   //text
+  //   Ideas._ensureIndex({
+  //       idea: 'text',
+  //       tagsOfIdea: 'text'
+  //   }, {
+  //       name: 'ideasFinder'
+  //   },{
+  //     weight: {idea: 1, tagsOfIdea: 3}
+  //   });
+  // });
 
     Meteor.methods({
       insertIdea: function(userId, doc) {
@@ -891,51 +920,51 @@ if (Meteor.isServer) { //Server Side
         //                           }
       },
 
-      _searchIdeas: function (searchText) {
-      console.log(typeof(searchText));
-      console.log(searchText);
+      // _searchIdeas: function (searchText) {
+      // console.log(typeof(searchText));
+      // console.log(searchText);
       
-      var Future = Npm.require('fibers/future');
-      var future = new Future();
-      MongoInternals.defaultRemoteCollectionDriver().mongo.db.executeDbCommand({
-          text:'ideas', //Collection
-          search: searchText, //String to search
-          //limit:3
-          // project: { //No funciona en nuestra base de datos
-          // id: 1 // Only take the ids
-          // }
-          }, function(error, results) {
-        console.log(results)
-        if (results.documents[0].results[0] && results.documents[0].ok === 1) {
-          future.return(results.documents[0].results);
-          //console.log(results.documents[0].results[0].obj)
-          }
-          else {
-              future.return('');
-              console.log("No results in text search")
-          }
-      });
-      return future.wait();
-      },
+      // var Future = Npm.require('fibers/future');
+      // var future = new Future();
+      // MongoInternals.defaultRemoteCollectionDriver().mongo.db.executeDbCommand({
+      //     text:'ideas', //Collection
+      //     search: searchText, //String to search
+      //     //limit:3
+      //     // project: { //No funciona en nuestra base de datos
+      //     // id: 1 // Only take the ids
+      //     // }
+      //     }, function(error, results) {
+      //   console.log(results)
+      //   if (results.documents[0].results[0] && results.documents[0].ok === 1) {
+      //     future.return(results.documents[0].results);
+      //     //console.log(results.documents[0].results[0].obj)
+      //     }
+      //     else {
+      //         future.return('');
+      //         console.log("No results in text search")
+      //     }
+      // });
+      // return future.wait();
+      // },
 
-      // Helper that extracts the users ids from the search results
-      searchIdeas: function (searchText) {
-        console.log(searchText)
-      if (searchText && searchText !== '') {
-          console.log('Searching Ideas...');
-          var searchResults = Meteor.call("_searchIdeas", searchText);
-          console.log('Ideas back');
-          var ids=[]
-          for (var i = 0; i < searchResults.length; i++) {
-              var id = searchResults[i].obj._id;
-              var score = searchResults[i].score;
-              console.log(score);
-              Ideas.update({_id: id}, {$set: {'lastScore':score}});
-              ids.push(id);
-          }
-          console.log(ids);
-          return ids;
-      }
-      }
+      // // Helper that extracts the users ids from the search results
+      // searchIdeas: function (searchText) {
+      //   console.log(searchText)
+      // if (searchText && searchText !== '') {
+      //     console.log('Searching Ideas...');
+      //     var searchResults = Meteor.call("_searchIdeas", searchText);
+      //     console.log('Ideas back');
+      //     var ids=[]
+      //     for (var i = 0; i < searchResults.length; i++) {
+      //         var id = searchResults[i].obj._id;
+      //         var score = searchResults[i].score;
+      //         console.log(score);
+      //         Ideas.update({_id: id}, {$set: {'lastScore':score}});
+      //         ids.push(id);
+      //     }
+      //     console.log(ids);
+      //     return ids;
+      // }
+      // }
   });
 }

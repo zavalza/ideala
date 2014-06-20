@@ -1,5 +1,5 @@
 <head>
-   <title>Kip</title>
+   <title>MatchIdeas</title>
    <!--Mobile first -->
    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
@@ -20,7 +20,7 @@
       <span class="icon-bar"></span>
       <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="{{pathFor 'welcome'}}">Kip</a>
+      <a class="navbar-brand" href="{{pathFor 'welcome'}}">MatchIdeas</a>
     </div> 
     <div class="collapse navbar-collapse navbar-ex1-collapse">  
       <ul class="nav navbar-nav navbar-right">
@@ -61,7 +61,7 @@
   <div class="header alt vert">
   <div class="container">
     
-    <h1>Kip</h1>
+    <h1>MatchIdeas</h1>
       <p class="lead">Manteniendo ideas en la realidad</p>
       <div>&nbsp;</div>
       <a href="{{pathFor 'loginForm'}}"><button type="button" class="btn btn-primary btn-lg">Comenzar</button></a>
@@ -79,29 +79,29 @@
       <div class="col-md-2 col-md-offset-2 text-center">
         <div class="featurette-item">
           <i class="icon-rocket"></i>
-          <h4>Rocket</h4>
-          <p>Up-up-and-away with this starter template.</p>
+          <h4>Salva</h4>
+          <p>Guarda tus ideas, llevalas toda la vida</p>
         </div>
       </div>
       <div class="col-md-2 text-center">
         <div class="featurette-item">
           <i class="icon-magnet"></i>
-          <h4>Magnet</h4>
-          <p>For you are a magnet and I am steel.</p>
+          <h4>Valida</h4>
+          <p>Escucha a la comunidad, ¿será el siguiente Facebook?</p>
         </div>
       </div>
       <div class="col-md-2 text-center">
         <div class="featurette-item">
           <i class="icon-shield"></i>
-          <h4>Shield</h4>
-          <p>Protect yourself. Don't design like it's 1999.</p>
+          <h4>Comenta</h4>
+          <p>Comenta otras ideas y ayuda a que se lleven acabo</p>
         </div>
       </div>
       <div class="col-md-2 text-center">
         <div class="featurette-item">
           <i class="icon-pencil"></i>
-          <h4>Scholar</h4>
-          <p>Because lead pencils are pretty smart looking.</p>
+          <h4>Emprende</h4>
+          <p>Aquí comienza tu negocio</p>
         </div>
       </div>
     </div>
@@ -114,14 +114,15 @@
         <h1><i class="icon-plane icon-3x"></i></h1>
       </div>
       <div class="col-md-7">
-        <h1 class="pull-right">¿Por qué Kip?</h1>
+        <h1 class="pull-right">¿Por qué MatchIdeas?</h1>
         <p class="lead pull-right">Creemos que las personas necesitan compartir sus ideas</p>
         <p class="pull-right"><a href="{{pathFor 'loginForm'}}"><button type="button" class="btn btn-primary">Tengo una idea</button></a></p>
       </div>
     </div>
   </div>
 </div>
-    <p>Prensa</p>
+    <!-- <p>Prensa</p>
+    <div>{{>loginButtons}}</div> -->
 </template>
 
 <template name="newIdea">
@@ -133,7 +134,7 @@
             <label>Palabras clave de tu idea separadas por coma</label>
             <p><input type="text" name="typeOfIdea" id="tagsOfIdea"></p>
       </div>
-      <button class="btn btn-primary pull-right searchIdea" type="button">Añadir</button>
+      <button class="btn btn-primary pull-right saveIdea" type="submit">Añadir</button>
     </div>
   </div>
   <!-- <form method="post" action="index.html">
@@ -177,7 +178,7 @@
         </a>
         <p>{{>persons}}</p>
         <hr>
-        <button class="btn btn-danger  voteIdea" type="button">No Kip</button><button class="btn btn-success followIdea" type="button">Kip</button>
+        <button class="btn btn-danger  voteIdea" type="button">No Match</button><button class="btn btn-success followIdea" type="button">Match</button>
         {{#if canEdit this.peopleInvolved.users currentUser._id}}
         <a href="{{pathFor 'editIdea'}}"><button class="btn btn-primary pull-right eIdea" type="button">Editar</button></a>
         {{/if}}
