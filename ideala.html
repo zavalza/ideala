@@ -165,23 +165,37 @@
 </template>
 
 <template name="idea">
-    <a href="{{pathFor 'ideaData'}}">
-      <p><span class="badge">{{points}}</span> {{pitch}}</p>
-      <p>{{tagsOfIdea}}</p>
-    </a>
-      <p>{{>persons}}</p>
-    <p><input type="button"  class="followIdea" value="Kip"></p>
-    {{#if canEdit this.peopleInvolved.users currentUser._id}}
-        <a href="{{pathFor 'editIdea'}}"><input type="submit"  class="eIdea" value="Editar"></a>
-      {{/if}}
+<div class="container">
+  <div class="panel panel-default">
+     <div class="panel-heading"></div>
+      <div class="panel-body">
+        <img src="//placehold.it/150x150" class="img-circle pull-center">
+        <div class="clearfix"></div>
+        <a href="{{pathFor 'ideaData'}}">
+        <p><span class="badge">{{points}}</span> {{pitch}}</p>
+        <p>{{tagsOfIdea}}</p>
+        </a>
+        <p>{{>persons}}</p>
+        <hr>
+        <button class="btn btn-danger  voteIdea" type="button">No Kip</button><button class="btn btn-success followIdea" type="button">Kip</button>
+        {{#if canEdit this.peopleInvolved.users currentUser._id}}
+        <a href="{{pathFor 'editIdea'}}"><button class="btn btn-primary pull-right eIdea" type="button">Editar</button></a>
+        {{/if}}
+      </div>
+    </div>
+</div>
 </template>
 
 <template name="comments">
+  <div class="container">
   {{#each commentToShow this}}
       <p><img src="/up.png" height="42" width="42" class="increase"><span class="badge">{{points}}</span>  {{text}}</p>
   {{/each}}
-  <p><input type="button"  class="showComments" value="Ver todos"></p>
+  {{#if moreComments}}
+    <p><input type="button"  class="showComments" value="Ver todos"></p>
+  {{/if}}
   {{>newComment}}
+  </div>
 </template>
 
 <template name="newComment">
@@ -283,14 +297,48 @@
 
 <!-- Seccion:"newUserForm"-->
 <template name="newUserForm">
-<h1>Nuevo usuario</h1>
-<form name="newUserForm">
-  <p><input type="text" class="form-control" id="firstName" placeholder="Nombre"></p>
-  <p><input type="text" class="form-control" id="lastName" placeholder="Apellido"></p>
-  <p><input type="text" class="form-control" id="username" placeholder="Usuario"></p>
-  <p><input type="text" class="form-control" id="email" placeholder="Correo Electrónico"></p>
-  <p><input type="password" class="form-control" id="password" placeholder="Contraseña"></p>
-  <p><label>¿Qué roles te gusta realizar en un proyecto?</label><br>
+<div id="newUserModal" class="modal show" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+  <div class="modal-content">
+      <div class="modal-header">
+          <a href="{{pathFor 'welcome'}}"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button></a>
+          <h1 class="text-center">Nuevo Usuario</h1>
+      </div>
+      <div class="modal-body">
+          <form class="form col-md-12 center-block" name="newUserForm">
+            <div class="form-group">
+              <input type="text" class="form-control" id="firstName" placeholder="Nombre">
+            </div>
+            <div class="form-group">
+            <input type="text" class="form-control" id="lastName" placeholder="Apellido">
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-control" id="username" placeholder="Usuario">
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-control" id="email" placeholder="Correo Electrónico">
+            </div>
+            <div class="form-group">
+              <input type="password" class="form-control" id="password" placeholder="Contraseña">
+            </div>
+            <div class="form-group">
+              <button class="btn btn-primary btn-lg btn-block createUser">Registrarse</button>
+              <h3 class="text-center">O</h3>
+              <img class="btn tryFacebookLogin" src="loginfacebook.png">
+            </div>
+          </form>
+      </div>
+      <div class="modal-footer">
+          <div class="col-md-12">
+          <a href="{{pathFor 'welcome'}}"><button class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</button></a>
+      </div>  
+      </div>
+  </div>
+  </div>
+</div>
+
+  
+  <!-- <p><label>¿Qué roles te gusta realizar en un proyecto?</label><br>
   <input type="checkbox" name="role" value="administración">Administrarlo<br>
   <input type="checkbox" name="role" value="desarrollo">Desarrollarlo (Parte técnica)<br>
   <input type="checkbox" name="role" value="diseño">Diseñarlo<br>
@@ -298,9 +346,7 @@
   <input type="checkbox" name="role" value="marketing">Difundirlo/promocionarlo<br>
   <input type="checkbox" name="role" value="inversionista">Financearlo<br>
   </p>
-  <input type="checkbox" name="role" value="mentoría">Mentoría<br>
-  <p><input id="submitBoton" class="createUser" type="submit" name="commit" value="Registrarse"></p>
-  </form>
+  <input type="checkbox" name="role" value="mentoría">Mentoría<br> -->
 </template>
 
 <template name="persons">
@@ -316,7 +362,6 @@
 <template name="profile">
     {{#each user}}
       <h1>{{profile.firstName}} {{profile.lastName}} <span class="badge">{{profile.points}}</span> </h1>
-      <p id="titulos">Ideas</p>
       {{#each profile.ideas}}
         {{#each idea_data this}}
             {{>idea}}

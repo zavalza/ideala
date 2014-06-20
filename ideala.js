@@ -64,6 +64,7 @@ if (Meteor.isClient) { //Client Side
   Meteor.startup(function () {
       Session.set("showWelcome", true);
       Session.set("showNewIdea", false);
+      Session.set("moreComments", false);
       Session.set("newText", false);
       Session.set("newImage", false);
       Session.set("fbUser", false);
@@ -107,6 +108,7 @@ if (Meteor.isClient) { //Client Side
     'click .ideasLink': function (evt, tmpl) {
       //ideas = Meteor.subscribe("allIdeas");
       ideas = Meteor.subscribe("randomIdea", Meteor.userId())
+      Session.set("moreComments", false);
       Router.go('ideas');
     },
 
@@ -304,6 +306,17 @@ if (Meteor.isClient) { //Client Side
   });
 
   Template.idea.events({
+    'click .voteIdea': function (evt, tmpl) {
+    if (Meteor.userId())
+    {
+       Meteor.call("voteIdea", Meteor.userId(), this._id);
+    }
+    else
+    {
+      alert("Necesitas ser usuario para votar");
+    }
+      return false
+    },
     'click .followIdea': function (evt, tmpl) {
     if (Meteor.userId())
     {
@@ -411,9 +424,9 @@ if (Meteor.isClient) { //Client Side
       var username = tmpl.find('#username').value;
       var email = tmpl.find('#email').value;;
       var password = tmpl.find('#password').value;
-      var role_checkbox = document.getElementsByName("role");
-
-      if(firstName=="" || lastName=="" || username=="" || password=="" || role_checkbox.length==0)
+      //var role_checkbox = document.getElementsByName("role");
+      //|| role_checkbox.length==0
+      if(firstName=="" || lastName=="" || username=="" || password=="" )
         {
           alert("Hay campos vacios");
           return false;
@@ -429,14 +442,14 @@ if (Meteor.isClient) { //Client Side
         alert("El password no es válido. Debe tener al menos una letra minúscula, una mayúscula y un número.")
         return false;
       }
-      var roles=[];
-      for (var i = 0; i < role_checkbox.length; i++)
-      {
-          if (role_checkbox[i].checked == true)
-          {
-              roles.push(role_checkbox[i].value);
-          }
-      }
+      // var roles=[];
+      // for (var i = 0; i < role_checkbox.length; i++)
+      // {
+      //     if (role_checkbox[i].checked == true)
+      //     {
+      //         roles.push(role_checkbox[i].value);
+      //     }
+      // }
 
       Accounts.createUser({
                           username:username,
@@ -445,7 +458,7 @@ if (Meteor.isClient) { //Client Side
                           profile: {
                                     firstName:firstName,
                                     lastName:lastName,
-                                    roles:roles,
+                                    roles:[],
                                     words:[], //change name to tags
                                     ideas:[],
                                     comments:[],
@@ -481,6 +494,10 @@ if (Meteor.isClient) { //Client Side
     return Session.get("showNewIdea");
   };
 
+  Template.comments.moreComments = function(){
+    return Session.get("moreComments");
+  }
+
   Template.editIdea.newText = function(){
     return Session.get("newText");
   };
@@ -499,6 +516,7 @@ if (Meteor.isClient) { //Client Side
   //All ideas
   Template.ideas.helpers({
     randomIdea: function(){
+      Session.set("moreComments", false);
       ideas = Meteor.subscribe("randomIdea", Meteor.userId());
       return Ideas.find({'votedBy':{$nin:[Meteor.userId()]}});
     },
@@ -540,6 +558,7 @@ if (Meteor.isClient) { //Client Side
   });
   Template.comments.helpers({
     commentToShow: function (idea) {
+      Session.set("moreComments", false);
       var commentsToShow = Session.get("commentsToShow");
       var ideaId = idea._id;
       if(commentsToShow.indexOf(ideaId) != -1)
@@ -552,7 +571,12 @@ if (Meteor.isClient) { //Client Side
       {
         //show only five
         Meteor.subscribe("commentsOfIdea", ideaId);
-        return Comments.find({idea: ideaId}, {sort: {points: -1}, limit: 5});
+        var cursor = Comments.find({idea: ideaId}, {sort: {points: -1}});
+        if (cursor.count() > 5)
+        {
+          Session.set("moreComments", true);
+        }
+        return Comments.find({idea: ideaId}, {sort: {points: -1}, limit: 5}) ;
       }
     },
 
@@ -619,12 +643,19 @@ if (Meteor.isClient) { //Client Side
 if (Meteor.isServer) { //Server Side
 
   Accounts.onCreateUser(function(options, user){
+    var firstName, lastName;
     if(user.services.facebook)
     {
       console.log(user.services.facebook);
-      var firstName = user.services.facebook.first_name;
-      var lastName = user.services.facebook.last_name;
-      var profile ={
+      firstName = user.services.facebook.first_name;
+      lastName = user.services.facebook.last_name;
+    }
+    else{
+      console.log(options)
+      var firstName = options.profile.firstName;
+      var lastName = options.profile.lastName;  
+    }
+    var profile ={
                       firstName:firstName,
                       lastName:lastName,
                       roles: [],
@@ -633,8 +664,7 @@ if (Meteor.isServer) { //Server Side
                       comments:[],
                       points:0,
                     }
-      user.profile = profile;
-    }
+    user.profile = profile;
     return user;
   });
 
@@ -772,6 +802,13 @@ if (Meteor.isServer) { //Server Side
           {$push: {'profile.ideas':ideaId}});
           Meteor.users.update({_id: userId},
           {$inc: {'profile.points':10}});
+      },
+
+      voteIdea: function(userId, ideaId){
+        console.log('voting Idea with id');
+        console.log(ideaId);
+        Ideas.update({_id: ideaId,'votedBy':{$nin:[userId]}},
+          {$push: {'votedBy':userId}});
       },
 
       followIdea: function(userId, ideaId) {
