@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+
+    <title>Meteor is offline?</title>
+
+    <link rel="stylesheet" type="text/css" href="css/meteor.cordova.css">
+    
+    <script charset="utf-8" type="text/javascript" src="cordova.js"></script>
+
+    <script charset="utf-8" type="text/javascript" src="js/meteor-cordova.js"></script>
+
+    <script type="text/javascript">
+
+      function tryAgain() {
+        window.location.replace("/index.html");
+      }
+
+    </script>
+
+  </head>
+  <body>
+    
+    <h1>Could not load the app</h1>
+    
+    <small>Requires internet connection</small><br/>
+    
+    <br/>
+    <br/>
+    
+    <button onclick="tryAgain();">Try again</button>
+
+  </body>
+</html>

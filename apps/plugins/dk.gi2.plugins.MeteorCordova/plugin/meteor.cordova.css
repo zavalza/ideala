@@ -1,0 +1,32 @@
+/* Main fullscreen layout */
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html {
+  -ms-touch-action: none;
+  height: 100%;
+  background-color: black;
+}
+
+html, body, iframe {
+  overflow: hidden;
+}
+
+body {
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background-color: black;
+}
+
+iframe {
+  background-color: black;
+  border: none;
+  height: 100%;
+  width: 100%;
+}
+/* EO Main layout */
