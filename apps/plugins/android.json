@@ -4,10 +4,24 @@
         "uninstalled": []
     },
     "config_munge": {
-        "files": {}
+        "files": {
+            "res/xml/config.xml": {
+                "parents": {
+                    "/*": [
+                        {
+                            "xml": "<feature name=\"InAppBrowser\"><param name=\"android-package\" value=\"org.apache.cordova.inappbrowser.InAppBrowser\" /></feature>",
+                            "count": 1
+                        }
+                    ]
+                }
+            }
+        }
     },
     "installed_plugins": {
         "dk.gi2.plugins.MeteorCordova": {
+            "PACKAGE_NAME": "com.phonegap.helloworld"
+        },
+        "org.apache.cordova.inappbrowser": {
             "PACKAGE_NAME": "com.phonegap.helloworld"
         }
     },

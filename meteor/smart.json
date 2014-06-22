@@ -5,6 +5,7 @@
     "bootstrap-3": {},
     "bootstrap3-less": {},
     "font-awesome-4-less": {},
-    "cordova": {}
+    "cordova": {},
+    "phonegap-oauth": {}
   }
 }

@@ -7,7 +7,8 @@
       "bootstrap-3": {},
       "bootstrap3-less": {},
       "font-awesome-4-less": {},
-      "cordova": {}
+      "cordova": {},
+      "phonegap-oauth": {}
     },
     "packages": {
       "iron-router": {
@@ -39,6 +40,11 @@
         "git": "https://github.com/raix/Meteor-cordova.git",
         "tag": "v0.0.8",
         "commit": "4eff8b9a853673f5f4b450a0102e78f554836da4"
+      },
+      "phonegap-oauth": {
+        "git": "https://github.com/AdamBrodzinski/meteor-phonegap-oauth.git",
+        "tag": "v0.1.4",
+        "commit": "09de9417967381153218ad4393bd63981e22756c"
       },
       "blaze-layout": {
         "git": "https://github.com/EventedMind/blaze-layout.git",

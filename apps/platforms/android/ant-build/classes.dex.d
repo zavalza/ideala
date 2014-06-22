@@ -1,9 +1,23 @@
-/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/apps/platforms/android/ant-build/classes.dex : \
-/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/apps/platforms/android/ant-build/classes/com/phonegap/helloworld/HelloWorld.class \
-/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/apps/platforms/android/ant-build/classes/com/phonegap/helloworld/R$attr.class \
-/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/apps/platforms/android/ant-build/classes/com/phonegap/helloworld/R$drawable.class \
-/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/apps/platforms/android/ant-build/classes/com/phonegap/helloworld/R.class \
-/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/apps/platforms/android/ant-build/classes/com/phonegap/helloworld/BuildConfig.class \
-/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/apps/platforms/android/ant-build/classes/com/phonegap/helloworld/R$string.class \
-/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/apps/platforms/android/ant-build/classes/com/phonegap/helloworld/R$xml.class \
-/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/apps/platforms/android/ant-build/dexedLibs/classes-92fdc36e0922aa0261b6d5ab613c40cb.jar \
+/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/MatchIdeas/apps/platforms/android/ant-build/classes.dex : \
+/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/MatchIdeas/apps/platforms/android/ant-build/classes/com/phonegap/helloworld/HelloWorld.class \
+/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/MatchIdeas/apps/platforms/android/ant-build/classes/com/phonegap/helloworld/R$attr.class \
+/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/MatchIdeas/apps/platforms/android/ant-build/classes/com/phonegap/helloworld/R$drawable.class \
+/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/MatchIdeas/apps/platforms/android/ant-build/classes/com/phonegap/helloworld/R.class \
+/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/MatchIdeas/apps/platforms/android/ant-build/classes/com/phonegap/helloworld/BuildConfig.class \
+/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/MatchIdeas/apps/platforms/android/ant-build/classes/com/phonegap/helloworld/R$string.class \
+/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/MatchIdeas/apps/platforms/android/ant-build/classes/com/phonegap/helloworld/R$xml.class \
+/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/MatchIdeas/apps/platforms/android/ant-build/classes/org/apache/cordova/inappbrowser/InAppBrowserDialog.class \
+/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/MatchIdeas/apps/platforms/android/ant-build/classes/org/apache/cordova/inappbrowser/InAppBrowser$5$1.class \
+/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/MatchIdeas/apps/platforms/android/ant-build/classes/org/apache/cordova/inappbrowser/InAppBrowser$5$2.class \
+/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/MatchIdeas/apps/platforms/android/ant-build/classes/org/apache/cordova/inappbrowser/InAppBrowser$3.class \
+/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/MatchIdeas/apps/platforms/android/ant-build/classes/org/apache/cordova/inappbrowser/InAppChromeClient.class \
+/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/MatchIdeas/apps/platforms/android/ant-build/classes/org/apache/cordova/inappbrowser/InAppBrowser$1.class \
+/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/MatchIdeas/apps/platforms/android/ant-build/classes/org/apache/cordova/inappbrowser/InAppBrowser$5$4.class \
+/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/MatchIdeas/apps/platforms/android/ant-build/classes/org/apache/cordova/inappbrowser/InAppBrowser$2.class \
+/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/MatchIdeas/apps/platforms/android/ant-build/classes/org/apache/cordova/inappbrowser/InAppBrowser.class \
+/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/MatchIdeas/apps/platforms/android/ant-build/classes/org/apache/cordova/inappbrowser/InAppBrowser$4$1.class \
+/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/MatchIdeas/apps/platforms/android/ant-build/classes/org/apache/cordova/inappbrowser/InAppBrowser$InAppBrowserClient.class \
+/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/MatchIdeas/apps/platforms/android/ant-build/classes/org/apache/cordova/inappbrowser/InAppBrowser$4.class \
+/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/MatchIdeas/apps/platforms/android/ant-build/classes/org/apache/cordova/inappbrowser/InAppBrowser$5$3.class \
+/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/MatchIdeas/apps/platforms/android/ant-build/classes/org/apache/cordova/inappbrowser/InAppBrowser$5.class \
+/home/paulz/Dropbox_serio/Dropbox/Ideala/Paul Zavalza/MatchIdeas/apps/platforms/android/ant-build/dexedLibs/classes-b0b43080672bbb119e297762b83ed2cb.jar \
